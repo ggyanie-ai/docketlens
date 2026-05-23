@@ -1,11 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createContext, type ReactNode, useContext, useState } from "react";
+import { createContext, type ReactNode, useContext, useId, useState } from "react";
 
 const Ctx = createContext<{
   value: string;
   set: (v: string) => void;
+  baseId: string;
 } | null>(null);
 
 export function Tabs({
@@ -23,12 +24,13 @@ export function Tabs({
 }) {
   const [internal, setInternal] = useState(defaultValue ?? "");
   const v = value ?? internal;
+  const baseId = useId();
   const set = (nv: string) => {
     setInternal(nv);
     onValueChange?.(nv);
   };
   return (
-    <Ctx.Provider value={{ value: v, set }}>
+    <Ctx.Provider value={{ value: v, set, baseId }}>
       <div className={className}>{children}</div>
     </Ctx.Provider>
   );
@@ -63,7 +65,10 @@ export function TabsTrigger({
     <button
       type="button"
       role="tab"
+      id={`${ctx.baseId}-tab-${value}`}
+      aria-controls={`${ctx.baseId}-panel-${value}`}
       aria-selected={active}
+      tabIndex={active ? 0 : -1}
       onClick={() => ctx.set(value)}
       className={cn(
         "inline-flex h-7 items-center rounded-[var(--radius-sm)] px-3 text-xs font-medium transition-colors",
@@ -89,5 +94,15 @@ export function TabsContent({
 }) {
   const ctx = useContext(Ctx)!;
   if (ctx.value !== value) return null;
-  return <div className={className}>{children}</div>;
+  return (
+    <div
+      role="tabpanel"
+      id={`${ctx.baseId}-panel-${value}`}
+      aria-labelledby={`${ctx.baseId}-tab-${value}`}
+      tabIndex={0}
+      className={className}
+    >
+      {children}
+    </div>
+  );
 }

@@ -79,6 +79,12 @@
       defendants split, judge, "Open case" link. 250 ms enter / 120 ms
       leave debounce, auto-flips to the left if it'd overflow the
       viewport, closes on scroll / resize / Esc.
+- [x] Accessibility audit pass: SkipToContent link, aria-current on
+      sidebar + site-header active nav, sr-only `<label>` on search
+      input, `aria-busy` + `role="region"` on AI summary flow, full
+      ARIA wiring on Tabs primitive (tablist/tab/tabpanel with id
+      linkage + roving tabindex). docs/A11Y.md captures landmarks,
+      decisions, and the 0.2.0 deferred-items list.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -102,6 +108,7 @@
 - [x] docs/API.md
 - [x] docs/RUNBOOK.md
 - [x] docs/CHANGELOG.md
+- [x] docs/A11Y.md
 - [x] CONTRIBUTING.md
 
 ## What's NOT done (open queue for upcoming wakeups)
@@ -110,8 +117,9 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Accessibility audit pass** — `axe` on the 8 highest-traffic
-      routes; fix contrast, labels, landmarks.
+- [ ] **Honor prefers-reduced-motion** on framer-motion components
+      (live docket stream, AI exec card, hover preview, mobile sheet).
+      Wrap with useReducedMotion() guard. Discovered during a11y audit.
 
 ### Content
 - [ ] **2 more blog posts** — "What we learned ingesting the first

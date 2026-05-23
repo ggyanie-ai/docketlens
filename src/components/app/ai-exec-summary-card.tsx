@@ -120,11 +120,13 @@ export function AiExecSummaryCard(props: AiExecSummaryCardProps) {
           className="mt-3 w-full"
           onClick={generate}
           disabled={status === "loading"}
+          aria-busy={status === "loading"}
           aria-live="polite"
+          aria-describedby="ai-exec-card"
         >
           {status === "loading" ? (
             <>
-              <Loader2 className="size-4 animate-spin" />
+              <Loader2 aria-hidden className="size-4 animate-spin" />
               Generating…
             </>
           ) : (
@@ -134,7 +136,12 @@ export function AiExecSummaryCard(props: AiExecSummaryCardProps) {
       )}
 
       {status === "ready" && (
-        <div ref={generatedRef} className="mt-4 animate-fade-in-up">
+        <div
+          ref={generatedRef}
+          role="region"
+          aria-label="AI-generated executive brief"
+          className="mt-4 animate-fade-in-up"
+        >
           <div className="flex items-center justify-between mb-3">
             <p className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[color:var(--color-success)]">
               <Check className="size-3" />

@@ -53,8 +53,15 @@ export default function SearchPage() {
           <Card className="p-6">
             <div className="flex gap-3">
               <div className="relative flex-1">
-                <SearchIcon className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--color-fg-subtle)]" />
+                <label htmlFor="search-q" className="sr-only">
+                  Search dockets by case name, number, party, attorney, or judge
+                </label>
+                <SearchIcon
+                  aria-hidden
+                  className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--color-fg-subtle)]"
+                />
                 <Input
+                  id="search-q"
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}

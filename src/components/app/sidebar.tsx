@@ -116,6 +116,7 @@ export function SidebarContent({
                 <Link
                   href={item.href as never}
                   onClick={onNavigate}
+                  aria-current={active ? "page" : undefined}
                   title={collapsed ? item.label : undefined}
                   aria-label={collapsed ? item.label : undefined}
                   className={cn(

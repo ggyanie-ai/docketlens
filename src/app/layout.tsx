@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SkipToContent } from "@/components/skip-to-content";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -70,6 +71,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
+        <SkipToContent />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
