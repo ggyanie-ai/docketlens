@@ -121,6 +121,14 @@
       list + per-item Load/Delete; the Save button toggles an inline
       mini-form with an auto-suggested name (e.g. "\"apple\" · S.D.N.Y.
       · Patent"). Sonner toasts on save + delete + duplicate-name guard.
+- [x] Watchlist detail/edit page at `/watchlists/[id]` — header
+      with color dot + entity-type badge + Pause/Delete actions;
+      three-tab body (Matches / Configure / Activity) where Matches
+      lists curated docket entries that hit each watchlist, Configure
+      is a full edit form (basics, filters, cadence) with dirty-state
+      reset + save toasts, Activity shows a recharts bar chart of
+      matches/day; right-rail with Stats + Channels cards.
+      generateStaticParams over SAMPLE_WATCHLISTS; unknown id ↪ 404.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -160,8 +168,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Watchlist edit page** — `/watchlists/[id]` (currently only
-      `/watchlists/new`).
 - [ ] **Settings → API keys generate flow** with one-time reveal.
 - [ ] **/inbox** — in-app alert inbox reading `alert_deliveries`
       where channel='in_app'.
