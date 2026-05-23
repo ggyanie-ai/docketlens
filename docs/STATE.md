@@ -145,6 +145,15 @@
       Mark-unread / Archive / View-watchlist actions. Sidebar nav
       gained an Inbox entry with badge. Sample data in
       src/lib/sample-inbox.ts mirrors `alert_deliveries` row shape.
+- [x] /audit-log: admin-only event timeline over `audit_events`.
+      Restricted banner with CSV-export action, 4-cell stats strip
+      (Total / Last 24h / Failures / Busiest category), free-text
+      filter + 7-category tab filter (Auth, Watchlist, API key,
+      Alert, Billing, Data pipeline, Settings). Each row expands to
+      show metadata as pretty-printed JSON, IP/UA detail, occurred-at
+      timestamp. Failure rows highlighted in the danger color.
+      Footer retention note (7-year + SOC2 + SIEM streaming on
+      Enterprise). Sample data in src/lib/sample-audit.ts.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -184,7 +193,7 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **/audit-log** — admin-only view over `audit_events`.
+- _(none currently queued — the Features queue is now empty)_
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
