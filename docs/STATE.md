@@ -129,6 +129,14 @@
       reset + save toasts, Activity shows a recharts bar chart of
       matches/day; right-rail with Stats + Channels cards.
       generateStaticParams over SAMPLE_WATCHLISTS; unknown id ↪ 404.
+- [x] API keys generate flow on /api-keys: inline new-key form with
+      4-scope grid, client-side `crypto.getRandomValues` token
+      generation (24-byte base64url body, `dkl_live_` prefix), and a
+      one-time reveal overlay with copy-to-clipboard. User keys
+      persist to localStorage under `dl-api-keys-user` (mirrors the
+      `api_keys` Drizzle row); demo seed keys keep their "demo"
+      badge and are not revocable client-side. Revoke removes from
+      storage with confirmation toast.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -168,7 +176,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Settings → API keys generate flow** with one-time reveal.
 - [ ] **/inbox** — in-app alert inbox reading `alert_deliveries`
       where channel='in_app'.
 - [ ] **/audit-log** — admin-only view over `audit_events`.
