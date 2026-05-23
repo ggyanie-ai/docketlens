@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { SAMPLE_DOCKETS, SAMPLE_WATCHLISTS } from "@/lib/sample-data";
 import { timeAgo } from "@/lib/utils";
 import { ActivityChart } from "@/components/app/activity-chart";
+import { CourtHeatmap } from "@/components/app/court-heatmap";
+import { Leaderboard } from "@/components/app/leaderboard";
 
 const KPIS = [
   {
@@ -179,6 +181,16 @@ export default function DashboardPage() {
                 ))}
               </ul>
             </Card>
+          </section>
+
+          {/* Court × NOS heatmap */}
+          <section>
+            <CourtHeatmap />
+          </section>
+
+          {/* Leaderboard */}
+          <section>
+            <Leaderboard />
           </section>
 
           {/* Recent activity feed */}
