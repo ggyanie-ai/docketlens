@@ -96,6 +96,12 @@
       name, sr-only "(most popular)" annotation on Pro column, and
       `aria-hidden` icons with sr-only "Included" / "Not included"
       text replacing the bare Check/X icons.
+- [x] Two more blog posts: "Lessons from ingesting the first million
+      RECAP entries" (engineering field notes — rate limits, dedupe,
+      judge-name drift, raw-JSON cache strategy) and "Open Courts
+      Act: where it stands in May 2026" (policy explainer + what
+      passage would mean for DocketLens). Both wired through the
+      existing typed `POSTS` array; sitemap.ts auto-includes them.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -132,9 +138,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **2 more blog posts** — "What we learned ingesting the first
-      million RECAP entries" and "Open Courts Act: where it stands in
-      May 2026."
 - [ ] **Press kit page** — `/press` with logos (svg), product
       screenshots, founder quote, contact.
 - [ ] **Changelog page** — `/changelog` reading from
