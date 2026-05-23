@@ -48,55 +48,92 @@ export default function PricingPage() {
         <PricingPreview withHeading={false} />
 
         <section className="mx-auto max-w-7xl px-6 pb-24">
-          <h2 className="font-serif text-2xl tracking-tight mb-8 text-center">
+          <h2
+            id="feature-comparison-heading"
+            className="font-serif text-2xl tracking-tight mb-8 text-center"
+          >
             Compare every feature
           </h2>
           <Card className="overflow-hidden">
-            <table className="w-full">
+            <table
+              className="w-full border-collapse"
+              aria-labelledby="feature-comparison-heading"
+            >
+              <caption className="sr-only">
+                Side-by-side comparison of DocketLens plans — Free, Pro, and
+                Team — across twelve features.
+              </caption>
               <thead>
                 <tr>
-                  {PLAN_HEADERS.map((h, i) => (
-                    <th
-                      key={h}
-                      className={`text-left px-6 py-4 text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-subtle)] border-b border-[color:var(--color-border)] ${
-                        i === 0 ? "" : "text-center"
-                      } ${i === 2 ? "bg-[color:var(--color-accent-soft)]/20" : ""}`}
-                    >
-                      {h}
-                    </th>
-                  ))}
+                  {PLAN_HEADERS.map((h, i) => {
+                    const isHighlight = h === "Pro";
+                    return (
+                      <th
+                        key={h}
+                        scope="col"
+                        className={`px-6 py-4 text-xs uppercase tracking-[0.18em] text-[color:var(--color-fg-subtle)] border-b border-[color:var(--color-border)] ${
+                          i === 0 ? "text-left" : "text-center"
+                        } ${isHighlight ? "bg-[color:var(--color-accent-soft)]/20 text-[color:var(--color-fg)]" : ""}`}
+                      >
+                        {h}
+                        {isHighlight && (
+                          <span className="sr-only"> (most popular)</span>
+                        )}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
-                {ROWS.map((row, ri) => (
-                  <tr
-                    key={row[0]}
-                    className={
-                      ri % 2 === 0
-                        ? "bg-[color:var(--color-bg)]"
-                        : "bg-[color:var(--color-bg-subtle)]/30"
-                    }
-                  >
-                    {row.map((cell, ci) => (
-                      <td
-                        key={ci}
-                        className={`px-6 py-3 text-sm border-b border-[color:var(--color-border)] ${
-                          ci === 0
-                            ? "font-medium"
-                            : "text-center text-[color:var(--color-fg-muted)]"
-                        } ${ci === 2 ? "bg-[color:var(--color-accent-soft)]/15" : ""}`}
+                {ROWS.map((row, ri) => {
+                  const [feature, free, pro, team] = row;
+                  const cells: Cell[] = [free, pro, team];
+                  const stripe =
+                    ri % 2 === 0
+                      ? "bg-[color:var(--color-bg)]"
+                      : "bg-[color:var(--color-bg-subtle)]/30";
+                  return (
+                    <tr key={feature} className={stripe}>
+                      <th
+                        scope="row"
+                        className="px-6 py-3 text-left text-sm font-medium border-b border-[color:var(--color-border)]"
                       >
-                        {cell === true ? (
-                          <Check className="inline size-4 text-[color:var(--color-accent)]" />
-                        ) : cell === false ? (
-                          <X className="inline size-4 text-[color:var(--color-fg-subtle)]" />
-                        ) : (
-                          cell
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+                        {feature}
+                      </th>
+                      {cells.map((cell, ci) => {
+                        const isPro = ci === 1; // 0=Free, 1=Pro, 2=Team
+                        return (
+                          <td
+                            key={ci}
+                            className={`px-6 py-3 text-sm border-b border-[color:var(--color-border)] text-center text-[color:var(--color-fg-muted)] ${
+                              isPro ? "bg-[color:var(--color-accent-soft)]/15" : ""
+                            }`}
+                          >
+                            {cell === true ? (
+                              <>
+                                <Check
+                                  aria-hidden
+                                  className="inline size-4 text-[color:var(--color-accent)]"
+                                />
+                                <span className="sr-only">Included</span>
+                              </>
+                            ) : cell === false ? (
+                              <>
+                                <X
+                                  aria-hidden
+                                  className="inline size-4 text-[color:var(--color-fg-subtle)]"
+                                />
+                                <span className="sr-only">Not included</span>
+                              </>
+                            ) : (
+                              cell
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </Card>

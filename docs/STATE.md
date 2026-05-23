@@ -91,6 +91,11 @@
       globals.css that collapses every animation/transition to
       ~0 ms — catches Tailwind `animate-ping` / `animate-spin`, our
       custom keyframes, sidebar width transition, sheet slide, etc.
+- [x] Pricing comparison table semantics: `<caption className="sr-only">`,
+      `<th scope="col">` headers, `<th scope="row">` for each feature
+      name, sr-only "(most popular)" annotation on Pro column, and
+      `aria-hidden` icons with sr-only "Included" / "Not included"
+      text replacing the bare Check/X icons.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -123,9 +128,8 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Pricing comparison table — semantic cleanup** — add
-      `<caption>`, `<th scope="col">` on header row, `<th scope="row">`
-      on feature names. Discovered in A11Y.md known-gaps list.
+- _(none currently queued — the polish queue is now empty; next:
+  content + features below)_
 
 ### Content
 - [ ] **2 more blog posts** — "What we learned ingesting the first
