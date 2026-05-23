@@ -108,6 +108,13 @@
       table (OKLCH + hex), founder quote, screenshot tiles that
       deep-link to the live pages, press@docketlens.ai CTA. Added
       to sitemap + footer "Company" column.
+- [x] Public `/changelog` page reading `docs/CHANGELOG.md` at build
+      time. Tiny in-house `<Markdown>` renderer
+      (src/lib/markdown.tsx) — block parser for h1-h3 / paragraphs /
+      bullet lists / blockquotes / hr, inline parser for **bold**,
+      *em*, `code`, and `[text](href)` links. Avoids pulling in
+      remark/unified for the few features we need. CHANGELOG.md
+      gained a 0.1.1 entry covering the eleven polish-pass wakeups.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -144,8 +151,7 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Changelog page** — `/changelog` reading from
-      `docs/CHANGELOG.md` via MDX.
+- _(none currently queued — Content queue is now empty)_
 
 ### Features
 - [ ] **Saved searches CRUD** — wire the "Save" button on /search to

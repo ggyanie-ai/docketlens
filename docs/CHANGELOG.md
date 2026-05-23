@@ -2,6 +2,70 @@
 
 We track changes by ISO date (UTC). Stable shipping starts at 1.0.0.
 
+## 0.1.1 — 2026-05-23 (polish pass)
+
+A series of post-foundation passes over the same Memorial Day
+weekend — UI breadth, accessibility, content. No breaking changes.
+
+### Added
+
+- **Court × month density heatmap** on the dashboard — custom SVG,
+  five NOS presets (All / Patent / Securities / Antitrust / Trade
+  Secret), seeded deterministic data, OKLCH-uniform color scale,
+  hover tooltip.
+- **Most-active leaderboard** on the dashboard — Judges / Firms /
+  Corporate parties tabs with inline bar charts + 90-day trend deltas.
+- **Loading skeletons** across `/dashboard`, `/search`, `/dockets/[id]`,
+  `/watchlists`, `/alerts`. Pure CSS shimmer via a new `<Skeleton>`
+  primitive.
+- **Mobile menu** — `<Sheet>` slide-in drawer + `<MobileNav>`
+  hamburger in the topbar. Desktop sidebar now hidden below `md`;
+  the sheet wraps the shared `<SidebarContent>` so the nav stays
+  single-source.
+- **Sidebar collapsed mode** — w-60 ↔ w-14 icon-only view with
+  localStorage persistence, edge-of-aside toggle button, native
+  title-attr tooltips on icons.
+- **AI exec-summary flow** on the docket detail — sonner loading
+  toast → simulated latency → success toast + inline animated
+  reveal of a three-paragraph extractive brief. Token + latency
+  meta strip, copy-to-clipboard action.
+- **/alerts empty state** behind `?empty=1` — editorial hero
+  (animated ping bell, accent glow), three channel-option cards
+  (Email / Webhook / In-app), "how alerts work" three-step strip.
+- **/search hover preview** — viewport-fixed framer-motion popover
+  with case header, latest AI one-line summary, plaintiff vs
+  defendant split, judge, "Open case" link. 250 ms enter / 120 ms
+  leave debounce, viewport-overflow flip, closes on scroll / resize / Esc.
+- **Skip-to-content link** as the first focusable element on every
+  page (JS finds the page's `<main>` so no per-page anchor is
+  needed).
+- **Two more blog posts** — "What we learned ingesting the first
+  million RECAP entries" and "Open Courts Act: where it stands in
+  May 2026."
+- **Press kit** at `/press` — quick-facts grid, copyable boilerplate,
+  4 downloadable SVG brand assets, brand-colors table, founder
+  quote, screenshot tiles.
+
+### Changed
+
+- **Pricing comparison table** now uses semantic table markup
+  (`<caption>`, `<th scope="col">`, `<th scope="row">`, `aria-hidden`
+  icons + sr-only "Included" / "Not included").
+- **Tabs primitive** gains full ARIA wiring — tablist / tab /
+  tabpanel with id linkage and roving tabindex.
+- **Sidebar + site-header** active links now carry
+  `aria-current="page"`.
+- **Search input** gets a visible-to-AT `<label className="sr-only">`.
+
+### Accessibility
+
+- `prefers-reduced-motion: reduce` is honored two ways:
+  `<MotionConfig reducedMotion="user">` at root for framer-motion,
+  plus a global CSS `@media` block that collapses every animation
+  and transition to ~0 ms.
+- New `docs/A11Y.md` documents landmarks, decisions, and the
+  remaining 0.2.0 gaps (court-heatmap tabular fallback, axe-in-CI).
+
 ## 0.1.0 — 2026-05-23 (private beta)
 
 Initial private beta. Code-complete, not yet wired to production

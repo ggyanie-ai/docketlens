@@ -14,10 +14,10 @@ const cols = [
   {
     title: "Resources",
     links: [
-      { href: "/docs", label: "Documentation" },
-      { href: "/api", label: "API reference" },
       { href: "/blog", label: "Blog" },
+      { href: "/changelog", label: "Changelog" },
       { href: "/legal/data-sources", label: "Data sources" },
+      { href: "/press", label: "Press kit" },
     ],
   },
   {
