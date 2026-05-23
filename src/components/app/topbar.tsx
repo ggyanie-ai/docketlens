@@ -1,0 +1,72 @@
+"use client";
+
+import { Search, Bell } from "lucide-react";
+import { Kbd } from "@/components/ui/kbd";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Avatar } from "@/components/ui/avatar";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownLabel,
+  DropdownSeparator,
+} from "@/components/ui/dropdown";
+
+export function Topbar({ title }: { title: string }) {
+  return (
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-[color:var(--color-border)] bg-[color:var(--color-bg)]/85 backdrop-blur-md px-6">
+      <div className="flex items-center gap-3">
+        <h1 className="font-serif text-xl tracking-tight">{title}</h1>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="hidden sm:inline-flex items-center gap-2 h-9 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-bg-subtle)] px-3 text-sm text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] transition-colors min-w-[280px]"
+          aria-label="Open command palette"
+        >
+          <Search className="size-3.5" />
+          <span className="flex-1 text-left">Search cases, parties, judges…</span>
+          <Kbd>⌘K</Kbd>
+        </button>
+
+        <button
+          type="button"
+          aria-label="Alerts"
+          className="relative inline-flex size-9 items-center justify-center rounded-[var(--radius-md)] text-[color:var(--color-fg-muted)] hover:bg-[color:var(--color-bg-subtle)] hover:text-[color:var(--color-fg)] transition-colors"
+        >
+          <Bell className="size-4" />
+          <span className="absolute top-2 right-2 size-1.5 rounded-full bg-[color:var(--color-accent)]" />
+        </button>
+
+        <ThemeToggle />
+
+        <Dropdown
+          align="end"
+          trigger={
+            <button
+              type="button"
+              aria-label="Account menu"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-md)] p-1 hover:bg-[color:var(--color-bg-subtle)] transition-colors"
+            >
+              <Avatar name="GG" size={28} />
+            </button>
+          }
+        >
+          <DropdownLabel>Signed in as</DropdownLabel>
+          <div className="px-2.5 pb-2 text-sm font-medium">
+            ggyanie.ai@gmail.com
+          </div>
+          <DropdownSeparator />
+          <DropdownItem>Account settings</DropdownItem>
+          <DropdownItem>Billing</DropdownItem>
+          <DropdownItem>API keys</DropdownItem>
+          <DropdownSeparator />
+          <DropdownItem>Documentation</DropdownItem>
+          <DropdownItem>Keyboard shortcuts</DropdownItem>
+          <DropdownSeparator />
+          <DropdownItem destructive>Sign out</DropdownItem>
+        </Dropdown>
+      </div>
+    </header>
+  );
+}
