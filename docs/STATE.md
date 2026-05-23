@@ -190,10 +190,31 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- _(none currently queued — Content queue is now empty)_
+- [ ] **Public API reference page at `/docs/api`** — render the
+      existing docs/API.md through the `<Markdown>` renderer; the
+      footer Resources column links there. Add a stylish code-sample
+      block component.
+- [ ] **`/contact` page** — simple form (name, email, body, topic
+      select), Resend-stubbed submit, "we reply within 24h" copy.
+      Replace the placeholder Contact link we removed from the
+      footer.
+- [ ] **`/email-preview` (internal dev tool)** — render the
+      `renderDigestEmail()` output inline so the operator can
+      review the daily digest template without sending it.
+- [ ] **Comparison page `/vs/pacer`** — honest side-by-side: PACER
+      vs DocketLens (cost, UX, AI, alerts, search). Companion
+      `/vs/lex-machina` later.
 
 ### Features
-- _(none currently queued — the Features queue is now empty)_
+- [ ] **Onboarding checklist on /dashboard for empty orgs** —
+      shows when watchlists.length === 0: "Create your first watch
+      → Pick a channel → Wait for the first alert." Dismissable.
+- [ ] **Demo data toggle** on /dashboard — small switch top-right
+      that lets a logged-out viewer browse with seeded data
+      (already shipped on /demo but link from /dashboard too).
+- [ ] **Webhook signing example** — Settings → Integrations gains
+      a small "verify our HMAC" code-sample card with Node + Python
+      tabs.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
