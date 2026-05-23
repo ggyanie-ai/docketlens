@@ -1,9 +1,9 @@
 "use client";
 
-import { Search, Bell } from "lucide-react";
-import { Kbd } from "@/components/ui/kbd";
+import { Bell } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
+import { CommandPalette } from "@/components/app/command-palette";
 import {
   Dropdown,
   DropdownItem,
@@ -19,15 +19,7 @@ export function Topbar({ title }: { title: string }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="hidden sm:inline-flex items-center gap-2 h-9 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-bg-subtle)] px-3 text-sm text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] transition-colors min-w-[280px]"
-          aria-label="Open command palette"
-        >
-          <Search className="size-3.5" />
-          <span className="flex-1 text-left">Search cases, parties, judges…</span>
-          <Kbd>⌘K</Kbd>
-        </button>
+        <CommandPalette />
 
         <button
           type="button"
