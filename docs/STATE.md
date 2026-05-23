@@ -55,6 +55,11 @@
       topbar. Desktop sidebar hidden below `md`; sheet wraps shared
       `<SidebarContent>` so the nav is single-source. Esc + backdrop
       + route-change all close the drawer; body scroll locks.
+- [x] Sidebar collapsed (icon-only) mode: w-60 ↔ w-14 transition,
+      localStorage-persisted, edge-of-aside toggle button, native
+      title-attr tooltips on icons, badge indicators reduced to
+      colored dots, footer Upgrade card collapses to a single
+      Sparkles button.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -86,7 +91,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Sidebar collapsed mode** (icon-only) with localStorage state.
 - [ ] **Toast for "AI summary generated"** wire to a fake action so
       we can show the flow.
 - [ ] **Empty-state for /alerts when channels=0** (currently always
