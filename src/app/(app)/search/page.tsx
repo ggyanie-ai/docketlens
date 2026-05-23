@@ -1,17 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Search as SearchIcon, Filter, BookmarkPlus, ArrowUpRight } from "lucide-react";
+import { Search as SearchIcon, Filter, BookmarkPlus } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Empty } from "@/components/ui/empty";
+import { CaseResultRow } from "@/components/app/case-result-row";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
-import { timeAgo } from "@/lib/utils";
 
 const COURTS = [
   "S.D.N.Y.", "N.D. Cal.", "D. Del.", "E.D. Tex.", "D.D.C.", "C.D. Cal.", "N.D. Ill.",
@@ -142,59 +140,7 @@ export default function SearchPage() {
             <Card className="overflow-hidden">
               <ul>
                 {filtered.map((d) => (
-                  <li
-                    key={d.id}
-                    className="border-b border-[color:var(--color-border)] last:border-b-0 hover:bg-[color:var(--color-bg-subtle)]/50 transition-colors"
-                  >
-                    <Link
-                      href={`/dockets/${d.id}` as never}
-                      className="block px-5 py-5"
-                    >
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-[11px] text-[color:var(--color-fg-subtle)]">
-                          {d.court} · {d.caseNumber}
-                        </span>
-                        {d.tags.slice(0, 3).map((t) => (
-                          <Badge
-                            key={t}
-                            variant={
-                              t === "Hot"
-                                ? "danger"
-                                : t === "Patent"
-                                ? "accent"
-                                : t === "Securities"
-                                ? "warning"
-                                : t === "Antitrust"
-                                ? "info"
-                                : "default"
-                            }
-                          >
-                            {t}
-                          </Badge>
-                        ))}
-                        <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-mono text-[color:var(--color-fg-subtle)]">
-                          Last filing {timeAgo(d.entries[d.entries.length - 1]?.dateFiled ?? d.filed)}
-                          <ArrowUpRight className="size-3" />
-                        </span>
-                      </div>
-                      <h3 className="mt-2 text-base font-medium tracking-tight">
-                        {d.caseName}
-                      </h3>
-                      <p className="mt-1 text-sm text-[color:var(--color-fg-muted)]">
-                        {d.natureOfSuit} · {d.judge} ·{" "}
-                        <span className="font-mono">{d.entries.length}</span>{" "}
-                        docket entries
-                      </p>
-                      {d.entries[d.entries.length - 1]?.summaryOne && (
-                        <p className="mt-2 text-[13px] leading-relaxed text-[color:var(--color-fg-muted)]">
-                          <span className="text-[color:var(--color-accent)] font-medium">
-                            Latest:
-                          </span>{" "}
-                          {d.entries[d.entries.length - 1].summaryOne}
-                        </p>
-                      )}
-                    </Link>
-                  </li>
+                  <CaseResultRow key={d.id} d={d} />
                 ))}
               </ul>
             </Card>

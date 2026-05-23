@@ -73,6 +73,12 @@
       badges, and a three-step "how alerts work" strip. Discoverable
       from the populated state via a small "Preview empty state"
       button so marketing can screenshot it.
+- [x] /search hover preview: `<CaseResultRow>` client component with
+      a viewport-fixed framer-motion popover (380×~280px) showing
+      court · case number, AI one-line latest filing, plaintiffs vs
+      defendants split, judge, "Open case" link. 250 ms enter / 120 ms
+      leave debounce, auto-flips to the left if it'd overflow the
+      viewport, closes on scroll / resize / Esc.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -104,8 +110,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Hover preview on case cards in /search** — popover with first
-      AI summary + parties.
 - [ ] **Accessibility audit pass** — `axe` on the 8 highest-traffic
       routes; fix contrast, labels, landmarks.
 
