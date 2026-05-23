@@ -1,0 +1,48 @@
+name: ingest
+on:
+  schedule:
+    # Hourly at :23, 7 days a week. Adjust per CourtListener rate limit.
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Window (e.g. 1h, 24h, 7d)"
+        default: "2h"
+        required: false
+      court:
+        description: "Single court id (optional, e.g. nysd)"
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    concurrency:
+      group: ingest
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Ingest
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.since }}" ]; then ARGS="$ARGS --since=${{ inputs.since }}"; fi
+          if [ -n "${{ inputs.court }}" ]; then ARGS="$ARGS --court=${{ inputs.court }}"; fi
+          pnpm ingest $ARGS
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          COURTLISTENER_TOKEN: ${{ secrets.COURTLISTENER_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL_SUMMARY: ${{ secrets.ANTHROPIC_MODEL_SUMMARY }}
+          ANTHROPIC_MODEL_DEEP: ${{ secrets.ANTHROPIC_MODEL_DEEP }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
