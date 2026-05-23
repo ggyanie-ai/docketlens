@@ -48,6 +48,9 @@
       presets, hover tooltip, OKLCH-uniform color scale)
 - [x] Dashboard: leaderboard widget (judges / firms / corporate
       parties tabs with inline bar charts + 90-day trend deltas)
+- [x] Loading skeletons: `<Skeleton>` + `<SkeletonText>` primitives
+      and route-level `loading.tsx` for /dashboard, /search,
+      /dockets/[id], /watchlists, /alerts (CSS shimmer, no JS)
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -79,8 +82,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Loading skeletons** on dashboard, search, docket detail
-      (currently popped-in).
 - [ ] **Mobile menu** — sidebar collapses on `md` breakpoint; add a
       hamburger + sheet on the topbar for app routes.
 - [ ] **Sidebar collapsed mode** (icon-only) with localStorage state.
