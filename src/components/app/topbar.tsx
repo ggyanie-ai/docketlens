@@ -4,6 +4,7 @@ import { Bell } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { CommandPalette } from "@/components/app/command-palette";
+import { MobileNav } from "@/components/app/mobile-nav";
 import {
   Dropdown,
   DropdownItem,
@@ -13,9 +14,12 @@ import {
 
 export function Topbar({ title }: { title: string }) {
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-[color:var(--color-border)] bg-[color:var(--color-bg)]/85 backdrop-blur-md px-6">
-      <div className="flex items-center gap-3">
-        <h1 className="font-serif text-xl tracking-tight">{title}</h1>
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-[color:var(--color-border)] bg-[color:var(--color-bg)]/85 backdrop-blur-md px-4 sm:px-6">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <MobileNav />
+        <h1 className="font-serif text-lg sm:text-xl tracking-tight truncate">
+          {title}
+        </h1>
       </div>
 
       <div className="flex items-center gap-2">

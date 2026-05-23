@@ -26,19 +26,32 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarContentProps {
+  /** Called whenever a nav link is activated. Sheet uses this to auto-close. */
+  onNavigate?: () => void;
+  /** Hide the wordmark/header — useful when the sheet provides its own. */
+  hideHeader?: boolean;
+}
+
+export function SidebarContent({ onNavigate, hideHeader }: SidebarContentProps) {
   const path = usePathname();
   return (
-    <aside className="flex h-dvh w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
-      <div className="flex h-14 items-center px-5 border-b border-[color:var(--color-border)]">
-        <Link href="/dashboard" className="ring-focus rounded">
-          <Wordmark />
-        </Link>
-      </div>
+    <>
+      {!hideHeader && (
+        <div className="flex h-14 items-center px-5 border-b border-[color:var(--color-border)]">
+          <Link
+            href="/dashboard"
+            onClick={onNavigate}
+            className="ring-focus rounded"
+          >
+            <Wordmark />
+          </Link>
+        </div>
+      )}
 
       <div className="px-3 py-3">
         <Button asChild variant="accent" size="md" className="w-full justify-start">
-          <Link href={"/watchlists/new" as never}>
+          <Link href={"/watchlists/new" as never} onClick={onNavigate}>
             <PlusCircle className="size-4" />
             New watchlist
             <Kbd className="ml-auto">N</Kbd>
@@ -55,6 +68,7 @@ export function Sidebar() {
               <li key={item.href}>
                 <Link
                   href={item.href as never}
+                  onClick={onNavigate}
                   className={cn(
                     "group flex items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm transition-colors",
                     active
@@ -103,6 +117,7 @@ export function Sidebar() {
             <li key={w.label}>
               <Link
                 href={"/watchlists" as never}
+                onClick={onNavigate}
                 className="flex items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] hover:bg-[color:var(--color-bg-subtle)]/60 transition-colors"
               >
                 <span
@@ -131,10 +146,21 @@ export function Sidebar() {
             5 watches · 7-day history · daily digest.
           </p>
           <Button asChild variant="default" size="sm" className="mt-3 w-full">
-            <Link href={"/pricing" as never}>Upgrade to Pro</Link>
+            <Link href={"/pricing" as never} onClick={onNavigate}>
+              Upgrade to Pro
+            </Link>
           </Button>
         </div>
       </div>
+    </>
+  );
+}
+
+/** Desktop sidebar — hidden on screens narrower than `md`. */
+export function Sidebar() {
+  return (
+    <aside className="hidden md:flex h-dvh w-60 shrink-0 flex-col border-r border-[color:var(--color-border)] bg-[color:var(--color-bg)]">
+      <SidebarContent />
     </aside>
   );
 }
