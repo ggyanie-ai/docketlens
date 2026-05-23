@@ -85,6 +85,12 @@
       ARIA wiring on Tabs primitive (tablist/tab/tabpanel with id
       linkage + roving tabindex). docs/A11Y.md captures landmarks,
       decisions, and the 0.2.0 deferred-items list.
+- [x] prefers-reduced-motion honored two ways: `<MotionConfig
+      reducedMotion="user">` at root layout (covers every
+      framer-motion component) plus a global CSS `@media` block in
+      globals.css that collapses every animation/transition to
+      ~0 ms — catches Tailwind `animate-ping` / `animate-spin`, our
+      custom keyframes, sidebar width transition, sheet slide, etc.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -117,9 +123,9 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Honor prefers-reduced-motion** on framer-motion components
-      (live docket stream, AI exec card, hover preview, mobile sheet).
-      Wrap with useReducedMotion() guard. Discovered during a11y audit.
+- [ ] **Pricing comparison table — semantic cleanup** — add
+      `<caption>`, `<th scope="col">` on header row, `<th scope="row">`
+      on feature names. Discovered in A11Y.md known-gaps list.
 
 ### Content
 - [ ] **2 more blog posts** — "What we learned ingesting the first

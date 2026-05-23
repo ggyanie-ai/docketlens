@@ -181,3 +181,22 @@
   .animate-fade-in-up { animation: dl-fade-in-up 600ms cubic-bezier(0.16, 1, 0.3, 1) both; }
   .animate-shimmer    { animation: dl-shimmer 2.4s linear infinite; }
 }
+
+/* ----------------------------------------------------------------------------
+   Reduced motion — honor the OS-level preference. We keep state changes
+   instantaneous (no fade, no slide, no shimmer, no ping) but never break
+   functionality. Pairs with `<MotionConfig reducedMotion="user">` at the
+   root which handles framer-motion components.
+   --------------------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
