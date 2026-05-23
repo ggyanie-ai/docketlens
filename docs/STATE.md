@@ -137,6 +137,14 @@
       `api_keys` Drizzle row); demo seed keys keep their "demo"
       badge and are not revocable client-side. Revoke removes from
       storage with confirmation toast.
+- [x] /inbox: email-style two-pane in-app alert center. Left list
+      grouped chronologically with unread-dot indicators, filter
+      tabs (All / Unread / Read / Archived) with unread-count badge,
+      bulk Mark-all-read. Right pane shows the selected message
+      with AI summary callout, watchlist source, and Open-case /
+      Mark-unread / Archive / View-watchlist actions. Sidebar nav
+      gained an Inbox entry with badge. Sample data in
+      src/lib/sample-inbox.ts mirrors `alert_deliveries` row shape.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -176,8 +184,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **/inbox** — in-app alert inbox reading `alert_deliveries`
-      where channel='in_app'.
 - [ ] **/audit-log** — admin-only view over `audit_events`.
 
 ### Auth (Tuesday wire-up — don't break the stub)

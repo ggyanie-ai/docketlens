@@ -8,6 +8,7 @@ import {
   Search,
   Bookmark,
   Bell,
+  Inbox,
   KeyRound,
   Settings,
   PlusCircle,
@@ -26,6 +27,7 @@ const STORAGE_KEY = "dl-sidebar-collapsed";
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/search", label: "Search dockets", icon: Search, kbd: "S" },
+  { href: "/inbox", label: "Inbox", icon: Inbox, badge: "4" },
   { href: "/watchlists", label: "Watchlists", icon: Bookmark, badge: "4" },
   { href: "/alerts", label: "Alerts", icon: Bell, badge: "12" },
   { href: "/api-keys", label: "API keys", icon: KeyRound, pro: true },
