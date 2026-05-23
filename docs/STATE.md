@@ -66,6 +66,13 @@
       deterministically from the docket props (parties, NOS, judge,
       last entry). Token/latency meta strip, Copy action. Header
       "AI exec summary" button now anchor-links to #ai-exec-card.
+- [x] /alerts empty state: `?empty=1` searchParam toggles a
+      beautiful "no channels yet" placeholder with editorial hero
+      (animated ping bell, grid mask, accent glow), three channel-
+      option cards (Email / Webhook / In-app) with plan + cadence
+      badges, and a three-step "how alerts work" strip. Discoverable
+      from the populated state via a small "Preview empty state"
+      button so marketing can screenshot it.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -97,8 +104,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Empty-state for /alerts when channels=0** (currently always
-      has data).
 - [ ] **Hover preview on case cards in /search** — popover with first
       AI summary + parties.
 - [ ] **Accessibility audit pass** — `axe` on the 8 highest-traffic
