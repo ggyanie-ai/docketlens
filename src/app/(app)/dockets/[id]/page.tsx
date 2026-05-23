@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { AiExecSummaryCard } from "@/components/app/ai-exec-summary-card";
 import { SAMPLE_DOCKETS, type SampleDocket } from "@/lib/sample-data";
 
 const ENTRY_ICON: Record<string, typeof FileText> = {
@@ -103,9 +104,11 @@ export default async function DocketDetailPage({
                 <BookmarkPlus className="size-4" />
                 Save to list
               </Button>
-              <Button variant="outline" size="md">
-                <Sparkles className="size-4" />
-                AI exec summary
+              <Button asChild variant="outline" size="md">
+                <a href="#ai-exec-card">
+                  <Sparkles className="size-4" />
+                  AI exec summary
+                </a>
               </Button>
               <Button variant="outline" size="md">
                 <Share2 className="size-4" />
@@ -280,20 +283,25 @@ export default async function DocketDetailPage({
                 </dl>
               </Card>
 
-              <Card className="p-5 bg-gradient-to-br from-[color:var(--color-accent-soft)]/30 to-transparent">
-                <p className="eyebrow mb-2">
-                  <Sparkles className="inline size-3 mr-1 -translate-y-px" />
-                  AI exec summary
-                </p>
-                <p className="text-[13px] leading-relaxed text-[color:var(--color-fg-muted)]">
-                  Generate a three-paragraph executive brief of this entire
-                  docket — the case in plain English, the parties and dollar
-                  amounts, and what's procedurally next.
-                </p>
-                <Button variant="accent" size="sm" className="mt-3 w-full">
-                  Generate ($0.04)
-                </Button>
-              </Card>
+              <AiExecSummaryCard
+                caseName={docket.caseName}
+                court={docket.courtFull}
+                caseNumber={docket.caseNumber}
+                natureOfSuit={docket.natureOfSuit}
+                juryDemand={docket.juryDemand}
+                judge={docket.judge}
+                parties={docket.parties.map((p) => ({ name: p.name, role: p.role }))}
+                lastEntry={
+                  docket.entries[docket.entries.length - 1]
+                    ? {
+                        type: docket.entries[docket.entries.length - 1].type,
+                        short: docket.entries[docket.entries.length - 1].short,
+                        dateFiled:
+                          docket.entries[docket.entries.length - 1].dateFiled,
+                      }
+                    : undefined
+                }
+              />
             </aside>
           </div>
         </div>

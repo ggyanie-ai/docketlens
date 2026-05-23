@@ -60,6 +60,12 @@
       title-attr tooltips on icons, badge indicators reduced to
       colored dots, footer Upgrade card collapses to a single
       Sparkles button.
+- [x] AI exec-summary toast flow on /dockets/[id]: idle → sonner
+      loading toast → ~2s simulated latency → success toast + inline
+      animated reveal of a three-paragraph extractive brief derived
+      deterministically from the docket props (parties, NOS, judge,
+      last entry). Token/latency meta strip, Copy action. Header
+      "AI exec summary" button now anchor-links to #ai-exec-card.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -91,8 +97,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Toast for "AI summary generated"** wire to a fake action so
-      we can show the flow.
 - [ ] **Empty-state for /alerts when channels=0** (currently always
       has data).
 - [ ] **Hover preview on case cards in /search** — popover with first
