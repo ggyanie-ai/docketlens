@@ -102,6 +102,12 @@
       Act: where it stands in May 2026" (policy explainer + what
       passage would mean for DocketLens). Both wired through the
       existing typed `POSTS` array; sitemap.ts auto-includes them.
+- [x] Press kit page at `/press` — quick-facts grid, copyable
+      boilerplate (`<CopyButton>` client island), brand asset
+      downloads (4 SVG variants in `public/press/`), brand colors
+      table (OKLCH + hex), founder quote, screenshot tiles that
+      deep-link to the live pages, press@docketlens.ai CTA. Added
+      to sitemap + footer "Company" column.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -138,8 +144,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Press kit page** — `/press` with logos (svg), product
-      screenshots, founder quote, contact.
 - [ ] **Changelog page** — `/changelog` reading from
       `docs/CHANGELOG.md` via MDX.
 

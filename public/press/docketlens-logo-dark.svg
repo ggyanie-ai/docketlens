@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128" role="img" aria-label="DocketLens logo (dark)">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB454"/>
+      <stop offset="1" stop-color="#C97A2D"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="5" width="3" height="22" rx="1" fill="url(#g)"/>
+  <rect x="9"  y="7"  width="19" height="3" rx="1" fill="#F4F4EF" fill-opacity="0.85"/>
+  <rect x="9"  y="12" width="15" height="3" rx="1" fill="#F4F4EF" fill-opacity="0.65"/>
+  <rect x="9"  y="17" width="17" height="3" rx="1" fill="#F4F4EF" fill-opacity="0.45"/>
+  <rect x="9"  y="22" width="11" height="3" rx="1" fill="#F4F4EF" fill-opacity="0.30"/>
+</svg>
