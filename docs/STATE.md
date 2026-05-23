@@ -115,6 +115,12 @@
       *em*, `code`, and `[text](href)` links. Avoids pulling in
       remark/unified for the few features we need. CHANGELOG.md
       gained a 0.1.1 entry covering the eleven polish-pass wakeups.
+- [x] Saved searches CRUD on /search: localStorage-persisted under
+      `dl-saved-searches` (shape mirrors the `saved_searches` Drizzle
+      row for an easy Tuesday cutover). `<SavedSearchesPanel>` shows
+      list + per-item Load/Delete; the Save button toggles an inline
+      mini-form with an auto-suggested name (e.g. "\"apple\" · S.D.N.Y.
+      · Patent"). Sonner toasts on save + delete + duplicate-name guard.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -154,8 +160,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Saved searches CRUD** — wire the "Save" button on /search to
-      a real flow. Schema already has `saved_searches`.
 - [ ] **Watchlist edit page** — `/watchlists/[id]` (currently only
       `/watchlists/new`).
 - [ ] **Settings → API keys generate flow** with one-time reveal.

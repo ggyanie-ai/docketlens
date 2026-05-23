@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search as SearchIcon, Filter, BookmarkPlus } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
@@ -9,7 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Empty } from "@/components/ui/empty";
 import { CaseResultRow } from "@/components/app/case-result-row";
+import { SavedSearchesPanel } from "@/components/app/saved-searches-panel";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
+import {
+  loadSavedSearches,
+  persistSavedSearches,
+  newSavedSearch,
+  type SavedSearch,
+} from "@/lib/saved-searches";
 
 const COURTS = [
   "S.D.N.Y.", "N.D. Cal.", "D. Del.", "E.D. Tex.", "D.D.C.", "C.D. Cal.", "N.D. Ill.",
@@ -27,6 +34,42 @@ export default function SearchPage() {
   const [activeCourt, setActiveCourt] = useState<string | null>(null);
   const [activeNos, setActiveNos] = useState<string | null>(null);
   const [scope, setScope] = useState("all");
+
+  const [saved, setSaved] = useState<SavedSearch[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setSaved(loadSavedSearches());
+  }, []);
+
+  const currentQuery = useMemo(
+    () => ({ q, court: activeCourt, nos: activeNos, scope }),
+    [q, activeCourt, activeNos, scope]
+  );
+
+  function handleSave(name: string) {
+    const entry = newSavedSearch(currentQuery, name);
+    setSaved((prev) => {
+      const next = [entry, ...prev];
+      persistSavedSearches(next);
+      return next;
+    });
+    setSaving(false);
+  }
+  function handleDelete(id: string) {
+    setSaved((prev) => {
+      const next = prev.filter((s) => s.id !== id);
+      persistSavedSearches(next);
+      return next;
+    });
+  }
+  function handleLoad(s: SavedSearch) {
+    setQ(s.query.q);
+    setActiveCourt(s.query.court);
+    setActiveNos(s.query.nos);
+    setScope(s.query.scope);
+    setSaving(false);
+  }
 
   const filtered = useMemo(() => {
     return SAMPLE_DOCKETS.filter((d) => {
@@ -73,7 +116,12 @@ export default function SearchPage() {
               <Button variant="accent" size="lg">
                 Search
               </Button>
-              <Button variant="outline" size="lg">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setSaving((s) => !s)}
+                aria-expanded={saving}
+              >
                 <BookmarkPlus className="size-4" />
                 Save
               </Button>
@@ -122,6 +170,17 @@ export default function SearchPage() {
               </Button>
             </div>
           </Card>
+
+          <SavedSearchesPanel
+            saved={saved}
+            currentQuery={currentQuery}
+            saving={saving}
+            onStartSave={() => setSaving(true)}
+            onCancelSave={() => setSaving(false)}
+            onSave={handleSave}
+            onDelete={handleDelete}
+            onLoad={handleLoad}
+          />
 
           <div className="flex items-center justify-between">
             <Tabs value={scope} onValueChange={setScope}>
