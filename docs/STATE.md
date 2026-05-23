@@ -44,6 +44,10 @@
 - [x] /alerts — channels + delivery history
 - [x] /settings — 6-tab settings panel
 - [x] /api-keys — Team-gated key management
+- [x] Dashboard: court × month density heatmap (custom SVG, 5 NOS
+      presets, hover tooltip, OKLCH-uniform color scale)
+- [x] Dashboard: leaderboard widget (judges / firms / corporate
+      parties tabs with inline bar charts + 90-day trend deltas)
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -75,10 +79,6 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Heatmap widget on dashboard** — court × NOS density heatmap
-      using recharts (12 mo). Real visual ambition.
-- [ ] **Top judges / top firms leaderboard** on dashboard (card with
-      tiny bar chart per row).
 - [ ] **Loading skeletons** on dashboard, search, docket detail
       (currently popped-in).
 - [ ] **Mobile menu** — sidebar collapses on `md` breakpoint; add a
