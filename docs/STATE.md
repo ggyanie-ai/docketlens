@@ -365,6 +365,23 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `GET /api/widget-stats?id=dkt_…[&days=7]` — owner-side read
+      interface to the privacy-preserving impression counters from
+      /api/widget-ping. Returns `{ docket {id, case_name?, court?},
+      window {days, from, to}, series [{day, count}], total,
+      grand_total_all_dockets, meta { access_model, privacy,
+      max_days } }`. Aggregate counts only — privacy invariant from
+      the ping endpoint is restated in the response meta block.
+      Requires Bearer auth (any plan) so anonymous scrapers can't
+      enumerate docket popularity; documented as
+      `access_model: "any_authenticated"` with a v0 note that
+      future versions will narrow to org-scoped access via
+      watchlist matches. Days clamped 1–30, defaults to 7. 400
+      missing/malformed id, 401 unauth. private, max-age=60.
+      OpenAPI spec + discovery endpoint updated with WidgetStats
+      schema. Verified end-to-end: 401 unauth, 400 missing,
+      400 malformed, 200 valid with case name resolved and
+      sums correct.
 - [x] `GET /widget/{id}/json` — JSON twin of the iframe widget. Same
       shape the HTML widget renders (case_name, court, docket_number,
       filed, judge, NOS, status, top 3 entries, parties, tags) so
@@ -501,11 +518,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/api/widget-stats?id=dkt_…`** — exposes the 7-day daily
-      series from `widgetStats()` as JSON. Owner-only (require an
-      org-scoped API key) — privacy promise is that *we* aren't
-      surfacing who's reading, only the embedder is reading their
-      own embed counts.
+- [ ] **Webhook signature verifier playground** — small client-side
+      page at /tools/verify-webhook that pastes a payload + signature
+      header and tells the user whether the HMAC matches. Mirrors
+      the four-language examples on /settings.
+- [ ] **Saved-search RSS feeds** — `GET /api/v1/saved-searches/{id}/feed.xml`
+      that re-runs the saved search and emits each match as an RSS
+      item. Lets users add a saved search to their RSS reader of
+      choice without polling the dashboard.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

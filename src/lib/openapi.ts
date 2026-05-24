@@ -179,6 +179,46 @@ export const openapi = {
         },
       },
     },
+    "/api/widget-stats": {
+      get: {
+        tags: ["System"],
+        summary: "Widget impression rollups",
+        description:
+          "Returns the daily impression series for one embedded docket plus totals. Aggregate counts only — no IP, user-agent, referrer, cookie, or session is stored per impression. Requires auth so docket popularity can't be enumerated by anonymous scrapers.",
+        operationId: "widgetStats",
+        parameters: [
+          {
+            name: "id",
+            in: "query",
+            required: true,
+            description: "Docket id (`dkt_…`).",
+            schema: { type: "string", pattern: "^dkt_[A-Za-z0-9_-]+$" },
+            example: "dkt_helios_v_northgate",
+          },
+          {
+            name: "days",
+            in: "query",
+            description: "Window in days. Clamped to 1–30.",
+            schema: { type: "integer", minimum: 1, maximum: 30, default: 7 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Stats payload",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/WidgetStats" },
+              },
+            },
+          },
+          "400": {
+            description: "Missing or malformed `id`",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
     "/api/v1/dockets/{id}/ai-summaries": {
       get: {
         tags: ["Dockets"],
@@ -489,6 +529,63 @@ export const openapi = {
             properties: {
               courts: { type: "array", items: { type: "string" } },
               natureOfSuitCodes: { type: "array", items: { type: "string" } },
+            },
+          },
+        },
+      },
+      WidgetStats: {
+        type: "object",
+        required: ["docket", "window", "series", "total", "meta"],
+        properties: {
+          docket: {
+            type: "object",
+            required: ["id"],
+            properties: {
+              id: { type: "string" },
+              case_name: { type: ["string", "null"] },
+              court: { type: ["string", "null"] },
+            },
+          },
+          window: {
+            type: "object",
+            required: ["days", "from", "to"],
+            properties: {
+              days: { type: "integer" },
+              from: { type: "string", format: "date" },
+              to: { type: "string", format: "date" },
+            },
+          },
+          series: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["day", "count"],
+              properties: {
+                day: { type: "string", format: "date" },
+                count: { type: "integer", minimum: 0 },
+              },
+            },
+          },
+          total: {
+            type: "integer",
+            minimum: 0,
+            description: "Sum of counts in this docket's window.",
+          },
+          grand_total_all_dockets: {
+            type: "integer",
+            minimum: 0,
+            description: "Sum across all dockets in the same window — useful for ops dashboards.",
+          },
+          meta: {
+            type: "object",
+            properties: {
+              access_model: {
+                type: "string",
+                enum: ["any_authenticated"],
+                description: "v0: any valid API key can read any docket's stats. Future versions narrow to org-scoped access via watchlist matches.",
+              },
+              privacy: { type: "string" },
+              max_days: { type: "integer" },
             },
           },
         },

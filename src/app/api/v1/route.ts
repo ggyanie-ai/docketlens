@@ -20,6 +20,7 @@ export async function GET() {
       { method: "POST", path: "/api/v1/watchlists",      desc: "Create a watchlist (Team plan)" },
       { method: "GET",  path: "/api/v1/openapi.json",    desc: "OpenAPI 3.1 spec for this API" },
       { method: "GET",  path: "/api/health",             desc: "Liveness probe (no auth)" },
+      { method: "GET",  path: "/api/widget-stats?id=",   desc: "Widget impression daily series (aggregate, auth required)" },
     ],
   });
 }
