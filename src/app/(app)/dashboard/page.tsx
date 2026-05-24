@@ -21,6 +21,7 @@ import { timeAgo } from "@/lib/utils";
 import { ActivityChart } from "@/components/app/activity-chart";
 import { CourtHeatmap } from "@/components/app/court-heatmap";
 import { Leaderboard } from "@/components/app/leaderboard";
+import { OnboardingChecklist } from "@/components/app/onboarding-checklist";
 
 const KPIS = [
   {
@@ -63,7 +64,14 @@ const ENTRY_ICON: Record<string, typeof FileText> = {
   Stipulation: FileText,
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ empty?: string }>;
+}) {
+  const sp = await searchParams;
+  const isEmpty = sp.empty === "1";
+
   const recentEntries = SAMPLE_DOCKETS.flatMap((d) =>
     d.entries.map((e) => ({ docket: d, entry: e }))
   )
@@ -74,11 +82,36 @@ export default function DashboardPage() {
     )
     .slice(0, 6);
 
+  if (isEmpty) {
+    return (
+      <>
+        <Topbar title="Dashboard" />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-5xl px-6 py-12">
+            <div className="mb-6 flex items-center gap-2 flex-wrap">
+              <p className="eyebrow">Empty-org preview</p>
+              <Link
+                href={"/dashboard" as never}
+                className="text-xs font-mono text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] underline underline-offset-2"
+              >
+                ← back to populated dashboard
+              </Link>
+            </div>
+            <OnboardingChecklist variant="hero" />
+          </div>
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <Topbar title="Dashboard" />
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
+          {/* Onboarding (dismissible) */}
+          <OnboardingChecklist variant="inline" />
+
           {/* KPIs */}
           <section>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[color:var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden">

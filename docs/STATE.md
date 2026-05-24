@@ -199,6 +199,15 @@
       led by self-serve pricing and 10× lower TCO. Worked
       example: 10-attorney boutique → $250k vs $4k. Trademark
       disclaimer in the footer.
+- [x] Dashboard onboarding checklist: `<OnboardingChecklist>` client
+      component with two variants — `hero` (full-card empty-state)
+      and `inline` (compact, dismissible strip above the KPIs).
+      4 steps (watchlist · channel · API key · tour) with
+      individual checkboxes + progress bar; localStorage state
+      under `dl-onboarding-steps` + `dl-onboarding-dismissed`,
+      "reopen" affordance after dismissal. /dashboard accepts
+      `?empty=1` to render only the hero variant for first-run +
+      marketing screenshots.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -238,9 +247,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Onboarding checklist on /dashboard for empty orgs** —
-      shows when watchlists.length === 0: "Create your first watch
-      → Pick a channel → Wait for the first alert." Dismissable.
 - [ ] **Demo data toggle** on /dashboard — small switch top-right
       that lets a logged-out viewer browse with seeded data
       (already shipped on /demo but link from /dashboard too).
