@@ -365,6 +365,23 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Widget impression counter — privacy-preserving aggregate
+      pings. `GET /api/widget-ping?id=dkt_…` increments a
+      `widget_pings` table keyed by (docket_id, UTC day) and returns
+      a 42-byte transparent GIF. NO IP, user-agent, referrer,
+      session, cookie, or fingerprint is stored — only the daily
+      count. Hard no-store + no-cache headers so the pixel fires
+      every render. Bad id still returns the GIF (4xx informational
+      only) so the widget never shows a broken-image icon. The
+      counter table is created lazily via `CREATE TABLE IF NOT
+      EXISTS` in `src/lib/widget-pings.ts` (helpers:
+      `recordWidgetImpression`, `widgetStats(docketId, days=7)`,
+      `widgetTotal(days=30)`) — intentionally not in the Drizzle
+      schema/migration pipeline, since it has nothing to migrate
+      forward and shouldn't be coupled to user-data migrations.
+      `/widget/[id]` renders the pixel off-screen
+      (`left: -9999px`) so it's invisible. Verified end-to-end:
+      multiple hits aggregate into one row per docket per day.
 - [x] oEmbed 1.0 discovery — `GET /api/oembed?url=<docket-url>&format=json`
       returns `{ version, type: "rich", title, author_name (court),
       provider_name, provider_url, cache_age, html (the widget iframe
@@ -441,10 +458,13 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Per-widget event ping (optional, privacy-preserving)** —
-      add a `1x1` server-side `<img>` ping to each widget render
-      so we can answer "is anyone embedding these" without setting
-      cookies. Aggregate counts only; no IP storage.
+- [ ] **Surface widget-impression rollups in the dashboard** —
+      add a small "your embeds" card to /dashboard showing the
+      top-pinged dockets last 7 days. Read-only; reuses
+      `widgetStats()` + `widgetTotal()` helpers.
+- [ ] **`/api/v1/docket/{id}/ai-summaries`** — expose the three
+      summary tiers (one_liner, paragraph, exec) through the public
+      REST API. Pro+ keys only for `paragraph` + `exec`.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

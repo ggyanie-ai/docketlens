@@ -127,6 +127,17 @@ export default async function WidgetCasePage({
           </a>
         </span>
       </div>
+
+      {/* Privacy-preserving impression pixel — counts only docket_id + day.
+          No IP, UA, referrer, cookies. See src/lib/widget-pings.ts. */}
+      <img
+        src={`/api/widget-ping?id=${encodeURIComponent(d.id)}`}
+        width={1}
+        height={1}
+        alt=""
+        aria-hidden
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1 }}
+      />
     </article>
   );
 }
