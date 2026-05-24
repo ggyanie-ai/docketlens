@@ -292,6 +292,75 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/saved-searches/{id}/feed.xml": {
+      get: {
+        tags: ["Search"],
+        summary: "Saved-search RSS feed",
+        description:
+          "RSS 2.0 feed of dockets matching a saved search. Designed for any RSS reader (NetNewsWire, Feedbin, Reeder, Inoreader). v0 carries the actual filters through query params (`q`, `court`, `nos`, `scope`, `name`, `limit`); once DB-backed saved searches land, the path id alone will suffice. **The feed URL is the secret** — anyone with it can read the feed. Treat it like a Calendly link.",
+        operationId: "savedSearchFeed",
+        security: [],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "Saved-search id (`srch_…`). Used as the feed guid prefix.",
+            schema: { type: "string" },
+            example: "srch_F3kQ9pR2Lm",
+          },
+          {
+            name: "q",
+            in: "query",
+            description: "Free-text query (case name, docket number, party, judge).",
+            schema: { type: "string" },
+          },
+          {
+            name: "court",
+            in: "query",
+            description: "Court short name (e.g. `S.D.N.Y.`).",
+            schema: { type: "string" },
+          },
+          {
+            name: "nos",
+            in: "query",
+            description: "Nature-of-Suit code (e.g. `410`).",
+            schema: { type: "string" },
+          },
+          {
+            name: "scope",
+            in: "query",
+            description: "Convenience scope filter.",
+            schema: {
+              type: "string",
+              enum: ["all", "patent", "securities", "antitrust"],
+            },
+          },
+          {
+            name: "name",
+            in: "query",
+            description: "Human-readable feed title (used in <title> only).",
+            schema: { type: "string" },
+          },
+          {
+            name: "limit",
+            in: "query",
+            description: "Max items. Clamped to 1–50.",
+            schema: { type: "integer", minimum: 1, maximum: 50, default: 20 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "RSS 2.0 XML",
+            content: {
+              "application/rss+xml": {
+                schema: { type: "string", format: "xml" },
+              },
+            },
+          },
+        },
+      },
+    },
     "/api/v1/watchlists": {
       get: {
         tags: ["Watchlists"],

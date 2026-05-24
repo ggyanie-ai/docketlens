@@ -21,6 +21,7 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/openapi.json",    desc: "OpenAPI 3.1 spec for this API" },
       { method: "GET",  path: "/api/health",             desc: "Liveness probe (no auth)" },
       { method: "GET",  path: "/api/widget-stats?id=",   desc: "Widget impression daily series (aggregate, auth required)" },
+      { method: "GET",  path: "/api/v1/saved-searches/:id/feed.xml", desc: "RSS 2.0 feed of matches for a saved search" },
     ],
   });
 }

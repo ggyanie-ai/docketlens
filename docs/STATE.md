@@ -365,6 +365,24 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Saved-search RSS feed — `GET /api/v1/saved-searches/{id}/feed.xml`
+      with `?q=&court=&nos=&scope=&name=&limit=` query params. Renders
+      RSS 2.0 via the in-house emitter; each item is one matching
+      docket with title=`court · case_name`, description=top entry's
+      one-liner + court/NOS/judge meta, categories = docket tags,
+      pubDate = filing date. v0 carries the filter set through URL
+      params (the `{id}` is a stable guid prefix); once DB-backed
+      saved searches land, the id alone will suffice. Feed URL is
+      the secret — treat it like a Calendly link. No auth (RSS
+      readers rarely handle Bearer headers). Public 5-min edge
+      cache with 1-hour SWR. `x-robots-tag: noindex` so search
+      engines don't crawl per-user feeds. New helper
+      `src/lib/search/filter.ts` (`runSearch`, `describeQuery`)
+      shared with the /search page so the feed and the UI agree on
+      results. OpenAPI + discovery updated. Verified end-to-end:
+      empty query returns all 6 sample dockets; nos=410 narrows to
+      the FTC antitrust case only; scope=patent returns Quantix MDL
+      + Optera.
 - [x] `/tools/verify-webhook` — client-side HMAC playground. Three
       inputs (signing secret · raw request body · X-DocketLens-
       Signature header), one "Verify" button that computes
@@ -530,10 +548,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Saved-search RSS feeds** — `GET /api/v1/saved-searches/{id}/feed.xml`
-      that re-runs the saved search and emits each match as an RSS
-      item. Lets users add a saved search to their RSS reader of
-      choice without polling the dashboard.
+- [ ] **Subscribe-to-feed button on the /search saved-searches panel** —
+      one-click "Copy RSS URL" per saved search using the new
+      /api/v1/saved-searches/{id}/feed.xml route. Builds the URL with
+      the saved search's current filters as query params.
+- [ ] **Atom alternative for the saved-search feed** — accept
+      `Accept: application/atom+xml` or `?format=atom` and emit Atom
+      1.0 instead of RSS 2.0. Some readers (Inoreader categories,
+      Kagi labels) prefer Atom.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
