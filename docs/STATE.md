@@ -365,6 +365,21 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `/widget/[id]` embeddable case widget — iframe-friendly card
+      for journalists/bloggers. Renders court · case number · case
+      name · filed date · judge · NOS · status · the three most
+      recent docket entries · "Powered by DocketLens" attribution
+      footer. Scoped CSS in `src/app/widget/widget.css` under
+      `.docketlens-widget-root` so the cascade can't leak from a
+      host page; OKLCH tokens redeclared locally; `prefers-color-
+      scheme: dark` honored via `data-theme="auto"`. Framing
+      permission set via `Content-Security-Policy: frame-ancestors *`
+      in next.config.ts headers() for /widget/:path*; no
+      X-Frame-Options is set. `/widget` itself is a marketing-style
+      index that previews three live embeds, generates a copy-paste
+      `<iframe>` snippet for each, and documents the attribution +
+      no-tracking promises. noindex on widget instances; included in
+      sitemap for the index page.
 - [x] OpenAPI 3.1 spec served at `/api/v1/openapi.json` — hand-written
       typed `openapi` object in `src/lib/openapi.ts` describing every
       endpoint (discovery, dockets list+detail, search, watchlists
@@ -403,14 +418,18 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/widget/[id]` embeddable case widget** — minimal,
-      iframe-friendly card for a single docket. Journalists and
-      bloggers can `<iframe>` it into their post; we get
-      attribution + traffic.
 - [ ] **`/docs/api-reference` page** — Scalar / Redoc-style
       interactive renderer pointed at `/api/v1/openapi.json`. Can
       be a static client component that fetches the spec on mount;
       no third-party JS bundles in the marketing routes.
+- [ ] **`/oembed` endpoint** — minimal oEmbed JSON discovery for
+      `/widget/[id]` so Notion / Wordpress / Ghost auto-unfurl the
+      iframe when users paste a `docketlens.ai/demo/dkt_…` link.
+      Spec: https://oembed.com.
+- [ ] **Per-widget event ping (optional, privacy-preserving)** —
+      add a `1x1` server-side `<img>` ping to each widget render
+      so we can answer "is anyone embedding these" without setting
+      cookies. Aggregate counts only; no IP storage.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

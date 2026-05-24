@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/donate",
     "/lookup",
     "/glossary",
+    "/widget",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",
