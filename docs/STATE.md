@@ -172,6 +172,13 @@
       (Docs / Press / Pricing / Bug), office-hours card. New
       `<Select>` UI primitive matches Input styling. Wired into
       sitemap + footer Company column (restored Contact link).
+- [x] `/email-preview` internal dev tool: server-rendered side-by-
+      side preview of `renderDigestEmail()` against synthetic match
+      items. `?cadence=instant|hourly|daily` URL param drives the
+      variant (1 / 3 / all sample dockets). Subject + plaintext
+      (mono code block) + HTML (600px sandboxed iframe). `noindex`
+      metadata so it never lands in search. Sample → schema row
+      adapters built so future DB swap-in is mechanical.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -208,9 +215,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/email-preview` (internal dev tool)** — render the
-      `renderDigestEmail()` output inline so the operator can
-      review the daily digest template without sending it.
 - [ ] **Comparison page `/vs/pacer`** — honest side-by-side: PACER
       vs DocketLens (cost, UX, AI, alerts, search). Companion
       `/vs/lex-machina` later.
