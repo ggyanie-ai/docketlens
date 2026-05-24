@@ -260,10 +260,27 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- _(none currently queued — Content queue is now empty)_
+- [ ] **`/status` page** — public status dashboard. Uptime stat
+      tiles, ingest worker last run, CL API quota remaining,
+      Anthropic / Resend / Stripe service indicators. Honest
+      "we'll wire real signals Tuesday."
+- [ ] **`/jurisdictions` page** — beautiful index of every covered
+      federal court (94 districts + 13 circuits + bankruptcy +
+      Supreme Court) grouped by region, with per-court deep-links
+      into `/search?court=…`. SEO + completeness signal.
+- [ ] **`/comparison` index** — landing for the /vs/* pages with a
+      framing paragraph and links to vs/pacer + vs/lex-machina.
+- [ ] **`/.well-known/security.txt`** route + a small
+      `/security` page describing PGP key, scope, response time,
+      and Hall of Fame placeholder.
 
 ### Features
-- _(none currently queued — Features queue is now empty)_
+- [ ] **CSV export on /search results** — small "Export 12
+      results · CSV" button that runs client-side csv-stringify
+      on the currently-filtered SAMPLE_DOCKETS slice.
+- [ ] **`/shortcuts` page** — comprehensive keyboard reference
+      table. Already promised in the command-palette tip + the
+      account menu's "Keyboard shortcuts" item.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
