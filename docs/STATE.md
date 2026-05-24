@@ -293,6 +293,16 @@
       before/after side-by-side + monthly cost + pull quote,
       cross-link to the other two personas, closing CTA. Sitemap
       includes all three.
+- [x] `/donate` page: editorial citizenship surface acknowledging
+      the Free Law Project. Hero + dual CTA (donate.free.law +
+      free.law). 3-card suggested-amounts strip ($5 / $15 / $50,
+      matched to free / Pro / Team tiers). "What DocketLens does"
+      side-by-side: Today (attribution everywhere) vs As-we-scale
+      (5%-of-MRR donation commit once we hit $10k MRR + upstream
+      PRs). 3 free-options cards (install RECAP extension,
+      contribute on GitHub, evangelize). "Why this page exists" pull
+      paragraph + closing CTA with not-affiliated disclaimer.
+      Sitemap includes /donate.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -329,11 +339,7 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/donate` page** acknowledging the Free Law Project. We
-      ride on RECAP entirely — this page recognises that, links to
-      their donation form, and explains why our $49/mo customers
-      should consider a $5/mo donation too. Brand-citizenship
-      signal + good karma.
+- _(none currently queued — Content queue is now empty)_
 
 ### Features
 - [ ] **RSS feeds** for `/blog` and `/changelog`. Two route
