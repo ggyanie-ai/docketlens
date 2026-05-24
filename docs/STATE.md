@@ -283,6 +283,16 @@
       API keys → /api-keys, Documentation → /docs, Keyboard
       shortcuts → /shortcuts, Sign out → /login). Sitemap includes
       /shortcuts.
+- [x] Persona landings at `/use/[slug]`: dynamic route with
+      generateStaticParams over `src/content/personas.ts`.
+      Three shipped slugs — `journalists` (newsroom alerts before
+      the press release), `investors` (litigation-as-signal,
+      Slack/REST API/Team-tier pitch), `lawyers` (Bloomberg Law on
+      a solo's budget). Each page: hero with eyebrow + accent-
+      italic title, 3-feature grid, "worked example" with
+      before/after side-by-side + monthly cost + pull quote,
+      cross-link to the other two personas, closing CTA. Sitemap
+      includes all three.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -319,11 +329,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Three persona-specific landing pages**: `/use/journalists`,
-      `/use/investors`, `/use/lawyers`. Each leads with the
-      persona's job-to-be-done, names 3 relevant features, ships
-      with a worked-example mini-case. SEO + targeted GTM. Build
-      from a single shared template config.
 - [ ] **`/donate` page** acknowledging the Free Law Project. We
       ride on RECAP entirely — this page recognises that, links to
       their donation form, and explains why our $49/mo customers

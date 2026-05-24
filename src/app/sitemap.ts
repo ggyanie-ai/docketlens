@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { POSTS } from "@/content/posts";
 import { PUBLIC_DOCS } from "@/content/public-docs";
+import { PERSONAS } from "@/content/personas";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
 
 const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
@@ -58,5 +59,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...staticRoutes, ...blogRoutes, ...demoRoutes, ...docRoutes];
+  const personaRoutes = PERSONAS.map((p) => ({
+    url: `${SITE}/use/${p.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.65,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...blogRoutes,
+    ...demoRoutes,
+    ...docRoutes,
+    ...personaRoutes,
+  ];
 }
