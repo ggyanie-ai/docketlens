@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/glossary",
     "/widget",
     "/docs/api-reference",
+    "/tools/verify-webhook",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

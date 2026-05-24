@@ -365,6 +365,18 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `/tools/verify-webhook` — client-side HMAC playground. Three
+      inputs (signing secret · raw request body · X-DocketLens-
+      Signature header), one "Verify" button that computes
+      HMAC-SHA256 via the Web Crypto API and constant-time compares
+      against the pasted signature. "Load sample" pre-fills with a
+      demo secret + payload and auto-generates a matching signature
+      so users can see the green path immediately. Result card
+      shows expected vs received side-by-side; on mismatch surfaces
+      the most common cause (body re-serialised before signing).
+      Privacy card on the page restates that the secret never leaves
+      the browser — no fetch, no logging, no analytics. Linked from
+      /settings (Webhook signing). Sitemap updated.
 - [x] `GET /api/widget-stats?id=dkt_…[&days=7]` — owner-side read
       interface to the privacy-preserving impression counters from
       /api/widget-ping. Returns `{ docket {id, case_name?, court?},
@@ -518,10 +530,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Webhook signature verifier playground** — small client-side
-      page at /tools/verify-webhook that pastes a payload + signature
-      header and tells the user whether the HMAC matches. Mirrors
-      the four-language examples on /settings.
 - [ ] **Saved-search RSS feeds** — `GET /api/v1/saved-searches/{id}/feed.xml`
       that re-runs the saved search and emits each match as an RSS
       item. Lets users add a saved search to their RSS reader of
