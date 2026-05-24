@@ -15,12 +15,12 @@ const cols = [
     title: "Resources",
     links: [
       { href: "/docs", label: "Documentation" },
-      { href: "/docs/api", label: "API reference" },
+      { href: "/docs/api-reference", label: "API reference" },
       { href: "/blog", label: "Blog" },
       { href: "/changelog", label: "Changelog" },
+      { href: "/feeds", label: "Feeds" },
       { href: "/comparison", label: "Comparisons" },
       { href: "/legal/data-sources", label: "Data sources" },
-      { href: "/press", label: "Press kit" },
     ],
   },
   {

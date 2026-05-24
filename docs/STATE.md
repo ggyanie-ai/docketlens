@@ -365,6 +365,12 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Site footer: "Feeds" link in Resources (one click to /feeds
+      from any marketing page). Also retargeted the "API reference"
+      link from /docs/api (the markdown doc) to /docs/api-reference
+      (the interactive renderer) since the interactive page is the
+      better default entry point. Removed the duplicate Press kit
+      that previously appeared in both Resources and Company.
 - [x] `/feeds.opml` — OPML 2.0 bundle of the public marketing feeds.
       Spec-compliant envelope (head/title/dateCreated/ownerName/
       ownerEmail/docs + body with two RSS outlines). Bundles only
@@ -639,9 +645,12 @@ of work, sized to fit one wakeup.
 - [ ] **Marketing CTA for the API reference** — small banner on
       /blog post pages pointing engineering-tagged readers to
       /docs/api-reference. Cheap, no new content needed.
-- [ ] **Site-footer link to /feeds** — single "Feeds" link in the
-      site footer next to the changelog link so the hub is one
-      click away from any marketing page.
+- [ ] **CHANGELOG.md entry for 0.1.2** — capture every wakeup
+      shipped this session (api/health, openapi.json, widget,
+      embed pixel, oembed, dashboard embeds card, ai-summaries
+      API, widget/json, widget-stats, verify-webhook, RSS/Atom/
+      JSON feeds, /feeds + /feeds.opml) into one release entry.
+      Auto-flows into /changelog + the three changelog feeds.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
