@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/status",
     "/jurisdictions",
     "/security",
+    "/shortcuts",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

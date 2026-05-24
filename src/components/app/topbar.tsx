@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import { CommandPalette } from "@/components/app/command-palette";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dropdown";
 
 export function Topbar({ title }: { title: string }) {
+  const router = useRouter();
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-[color:var(--color-border)] bg-[color:var(--color-bg)]/85 backdrop-blur-md px-4 sm:px-6">
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -53,14 +55,26 @@ export function Topbar({ title }: { title: string }) {
             ggyanie.ai@gmail.com
           </div>
           <DropdownSeparator />
-          <DropdownItem>Account settings</DropdownItem>
-          <DropdownItem>Billing</DropdownItem>
-          <DropdownItem>API keys</DropdownItem>
+          <DropdownItem onClick={() => router.push("/settings")}>
+            Account settings
+          </DropdownItem>
+          <DropdownItem onClick={() => router.push("/settings")}>
+            Billing
+          </DropdownItem>
+          <DropdownItem onClick={() => router.push("/api-keys")}>
+            API keys
+          </DropdownItem>
           <DropdownSeparator />
-          <DropdownItem>Documentation</DropdownItem>
-          <DropdownItem>Keyboard shortcuts</DropdownItem>
+          <DropdownItem onClick={() => router.push("/docs")}>
+            Documentation
+          </DropdownItem>
+          <DropdownItem onClick={() => router.push("/shortcuts")}>
+            Keyboard shortcuts
+          </DropdownItem>
           <DropdownSeparator />
-          <DropdownItem destructive>Sign out</DropdownItem>
+          <DropdownItem destructive onClick={() => router.push("/login")}>
+            Sign out
+          </DropdownItem>
         </Dropdown>
       </div>
     </header>

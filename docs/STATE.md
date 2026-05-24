@@ -272,6 +272,17 @@
       tags, latest AI one-liner, deep URL) of the currently-
       filtered docket set. Disabled when zero matches; sonner toast
       on success. Filename includes an ISO timestamp.
+- [x] `/shortcuts` keyboard reference: 7 grouped sections
+      (Global · Navigation · Search · Docket detail · Watchlists ·
+      Inbox · Alerts) with ~30 shortcuts total. `<KeyCombo>` helper
+      renders chord sequences with arrow separators (G → D), simple
+      combos with + separators (⌘ + K). "planned" badge for the
+      shortcuts that aren't wired yet so this page reads as a spec
+      we're building against. Account-menu dropdown items in the
+      topbar are now actually wired (Account settings → /settings,
+      API keys → /api-keys, Documentation → /docs, Keyboard
+      shortcuts → /shortcuts, Sign out → /login). Sitemap includes
+      /shortcuts.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -311,9 +322,7 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/shortcuts` page** — comprehensive keyboard reference
-      table. Already promised in the command-palette tip + the
-      account menu's "Keyboard shortcuts" item.
+- _(none currently queued — Features queue is now empty)_
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
