@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Rss, ArrowUpRight, Bookmark } from "lucide-react";
+import { Rss, ArrowUpRight, Bookmark, Download } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
@@ -201,6 +201,31 @@ export default function FeedsPage() {
               </p>
             </Card>
           </div>
+
+          <Card className="p-6">
+            <div className="flex items-start justify-between gap-6 flex-wrap">
+              <div className="min-w-0">
+                <p className="eyebrow mb-1">One-click import</p>
+                <h3 className="font-serif text-xl tracking-tight">
+                  OPML bundle.
+                </h3>
+                <p className="mt-2 text-sm text-[color:var(--color-fg-muted)] leading-relaxed max-w-xl">
+                  Most readers (NetNewsWire, Reeder, Inoreader, Feedbin,
+                  Vivaldi, Kagi) accept an OPML file as an &ldquo;import all
+                  these feeds&rdquo; bundle. Ours covers the blog +
+                  changelog.
+                </p>
+              </div>
+              <Link
+                href={"/feeds.opml" as never}
+                className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-2 text-xs font-mono uppercase tracking-wider text-[color:var(--color-fg)] hover:border-[color:var(--color-border-strong)] hover:text-[color:var(--color-accent)]"
+                download
+              >
+                <Download className="size-3" />
+                Download .opml
+              </Link>
+            </div>
+          </Card>
 
           <Card className="p-6 bg-gradient-to-br from-[color:var(--color-accent-soft)]/20 to-transparent">
             <h3 className="font-serif text-xl">Auto-discovery</h3>

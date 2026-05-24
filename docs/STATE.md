@@ -365,6 +365,17 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `/feeds.opml` — OPML 2.0 bundle of the public marketing feeds.
+      Spec-compliant envelope (head/title/dateCreated/ownerName/
+      ownerEmail/docs + body with two RSS outlines). Bundles only
+      the canonical RSS variants — readers dedupe by xmlUrl, so
+      listing all three formats of the same source would produce
+      phantom feeds. Saved-search feeds are intentionally excluded
+      (per-user URLs shouldn't go in a shared file). text/x-opml
+      content type, content-disposition inline with a filename so
+      readers prompt to save when downloaded. 3600s cache,
+      24h SWR. Linked from /feeds via a download button. Sitemap
+      updated.
 - [x] `/feeds` index page — single human-readable hub listing every
       feed DocketLens publishes. Three sections:
         1. Blog (Public badge) — 3-row table per format with
@@ -625,10 +636,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **OPML export for the marketing feeds** — `/feeds.opml`
-      bundles blog + changelog into a single import file. Most
-      RSS readers can import OPML in one click. Linked from
-      /feeds.
 - [ ] **Marketing CTA for the API reference** — small banner on
       /blog post pages pointing engineering-tagged readers to
       /docs/api-reference. Cheap, no new content needed.
