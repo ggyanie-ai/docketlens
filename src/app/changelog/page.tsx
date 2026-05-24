@@ -9,6 +9,11 @@ export const metadata = {
   title: "Changelog",
   description:
     "Every shipped change to DocketLens, by release. We track changes by ISO date (UTC).",
+  alternates: {
+    types: {
+      "application/rss+xml": "/changelog/feed.xml",
+    },
+  },
 };
 
 /** Number of milliseconds the file content cache is allowed to live. */

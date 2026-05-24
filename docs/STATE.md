@@ -303,6 +303,16 @@
       contribute on GitHub, evangelize). "Why this page exists" pull
       paragraph + closing CTA with not-affiliated disclaimer.
       Sitemap includes /donate.
+- [x] RSS 2.0 feeds: `src/lib/rss.ts` — hand-written RSS emitter
+      (no remark/feed dep), XML-escape + CDATA-wrap, atom:self
+      link, dc:creator + content:encoded namespaces. Two feeds:
+      `/blog/feed.xml` (iterates the typed POSTS array, category =
+      post tag) and `/changelog/feed.xml` (parses
+      docs/CHANGELOG.md heading-by-heading via a small regex,
+      emits one item per version with the body wrapped in a `<pre>`
+      content:encoded block). Both pages now carry
+      `metadata.alternates.types["application/rss+xml"]` so
+      browsers / readers auto-discover.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -342,9 +352,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **RSS feeds** for `/blog` and `/changelog`. Two route
-      handlers at `/blog/feed.xml` and `/changelog/feed.xml`
-      emitting valid RSS 2.0. Link them from the page headers.
 - [ ] **`/lookup` quick-lookup** — single search box that accepts
       a federal docket number and redirects to the cached case
       (or to /search?q=<number> if not in cache). Useful for the

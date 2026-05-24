@@ -3,7 +3,14 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { POSTS } from "@/content/posts";
 
-export const metadata = { title: "Blog" };
+export const metadata = {
+  title: "Blog",
+  alternates: {
+    types: {
+      "application/rss+xml": "/blog/feed.xml",
+    },
+  },
+};
 
 export default function BlogIndex() {
   return (
