@@ -188,6 +188,17 @@
       5-card "Where DocketLens wins", worked example computing
       monthly cost for a 5-case solo attorney ($73 vs $49),
       closing CTA. Added to sitemap.
+- [x] `/vs/lex-machina` comparison page: same template, respectful
+      positioning ("not a replacement — the affordable option for
+      the 95% who can't justify $25k/yr"). 3-cell pricing gist
+      ($25k/yr LM vs $199/mo Team vs $245k/yr savings at 10
+      attorneys), 15-row feature table that honestly cedes
+      predictive analytics + expert witness directory + enterprise
+      contracts. 3-card "Where Lex Machina actually wins" with
+      explicit "talk to them" copy, 5-card "Where DocketLens wins"
+      led by self-serve pricing and 10× lower TCO. Worked
+      example: 10-attorney boutique → $250k vs $4k. Trademark
+      disclaimer in the footer.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -224,9 +235,7 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Companion comparison: `/vs/lex-machina`** — same template
-      as /vs/pacer but vs the enterprise tool. Pricing wedge is
-      the headline ($25k+/yr seat vs $199/mo whole-firm).
+- _(none currently queued — Content queue is now empty)_
 
 ### Features
 - [ ] **Onboarding checklist on /dashboard for empty orgs** —
