@@ -365,6 +365,18 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] CHANGELOG.md 0.1.2 — 2026-05-24 (developer surface +
+      syndication). Captures every wakeup of this loop session:
+      api/health, openapi.json, /widget + /widget/json,
+      /api/oembed, /api/widget-ping + dashboard "your embeds"
+      card, /api/v1/dockets/{id}/ai-summaries, /api/widget-stats,
+      /tools/verify-webhook, saved-search RSS + Atom + JSON Feed
+      (+ format picker + content-negotiation), /blog + /changelog
+      Atom/JSON mirrors, site-wide feed `<link>` discovery, /feeds
+      hub, /feeds.opml, site-footer Feeds + retargeted API ref,
+      blog API-ref CTA. Auto-flowed into /changelog page and all
+      three changelog feeds (verified: feed.xml, feed.atom, and
+      feed.json all show '0.1.2 — 2026-05-24' as the newest item).
 - [x] Blog post CTA: Engineering-tagged posts now end with a card
       pitching `/docs/api-reference` (interactive renderer with
       copy-paste curl per endpoint). Conditional on `post.tag ===
@@ -650,12 +662,18 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **CHANGELOG.md entry for 0.1.2** — capture every wakeup
-      shipped this session (api/health, openapi.json, widget,
-      embed pixel, oembed, dashboard embeds card, ai-summaries
-      API, widget/json, widget-stats, verify-webhook, RSS/Atom/
-      JSON feeds, /feeds + /feeds.opml) into one release entry.
-      Auto-flows into /changelog + the three changelog feeds.
+- [ ] **Marketing page anchor links on /changelog headings** —
+      autogenerate `id="0-1-2"` on each `## …` so the changelog
+      feeds' `#0.1.2` permalinks actually scroll to the right
+      section. Currently the in-house Markdown renderer doesn't
+      emit heading ids.
+- [ ] **`/sitemap.xml` includes /widget and /docs/api-reference
+      lastModified bumps** — when the spec or the widget content
+      shape changes, the sitemap should reflect a fresh
+      lastModified so Google re-crawls. Static `now` is fine for
+      v0; future improvement.
+- [ ] **Site-wide noindex of /widget/[id]** — already set per-page
+      via metadata; double-check via robots.txt as well.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
