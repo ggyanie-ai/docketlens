@@ -319,10 +319,25 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- _(none currently queued — Content queue is now empty)_
+- [ ] **Three persona-specific landing pages**: `/use/journalists`,
+      `/use/investors`, `/use/lawyers`. Each leads with the
+      persona's job-to-be-done, names 3 relevant features, ships
+      with a worked-example mini-case. SEO + targeted GTM. Build
+      from a single shared template config.
+- [ ] **`/donate` page** acknowledging the Free Law Project. We
+      ride on RECAP entirely — this page recognises that, links to
+      their donation form, and explains why our $49/mo customers
+      should consider a $5/mo donation too. Brand-citizenship
+      signal + good karma.
 
 ### Features
-- _(none currently queued — Features queue is now empty)_
+- [ ] **RSS feeds** for `/blog` and `/changelog`. Two route
+      handlers at `/blog/feed.xml` and `/changelog/feed.xml`
+      emitting valid RSS 2.0. Link them from the page headers.
+- [ ] **`/lookup` quick-lookup** — single search box that accepts
+      a federal docket number and redirects to the cached case
+      (or to /search?q=<number> if not in cache). Useful for the
+      URL-bar power user / email-to-coworker workflow.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
