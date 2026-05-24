@@ -365,6 +365,25 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Site-wide feed auto-discovery + format mirrors for /blog and
+      /changelog. Six new sibling routes:
+        /blog/feed.atom       (Atom 1.0)
+        /blog/feed.json       (JSON Feed 1.1)
+        /changelog/feed.atom  (Atom 1.0)
+        /changelog/feed.json  (JSON Feed 1.1)
+      All four reuse the existing in-house atom + jsonfeed
+      emitters; same content/cache-control as the canonical RSS
+      versions (revalidate=3600).
+      Discovery tags emit as raw `<link rel="alternate">` elements
+      inside root <head> (NOT via metadata.alternates.types) because
+      per-page `alternates` (e.g. /demo/[id]'s oEmbed link)
+      replaces the entire alternates block rather than merging its
+      types map. Inline tags survive any per-page metadata.
+      Verified: all 6 routes return 200 with correct content types
+      (rss+xml, atom+xml, feed+json); /home ships 6 alternate links
+      (RSS×2, Atom×2, JSON×2); /demo/[id] ships those 6 PLUS its
+      per-docket json+oembed discovery. Sitemap lists all 6 feed
+      URLs.
 - [x] Format picker on the SavedSearchesPanel "Copy URL" action.
       The Rss row icon is now the trigger for a Dropdown menu with
       three options: RSS 2.0 (.xml), Atom 1.0 (.atom), JSON Feed
@@ -592,16 +611,16 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`<link rel="alternate">` feed-discovery for the global blog
-      + changelog** — emit `<link rel="alternate" type="application/rss+xml">`
-      tags from the marketing root layout for /blog/feed.xml and
-      /changelog/feed.xml so RSS readers' auto-detect-feed plugin
-      offers them anywhere on the site. (Saved-search feeds stay
-      per-user and shouldn't be in <head>.)
-- [ ] **Per-blog-post Atom + JSON Feed mirrors** — already have
-      /blog/feed.xml; mirror to /blog/feed.atom + /blog/feed.json
-      using the same emitters. Adds one route file each, very
-      cheap, and consistent with the saved-search story.
+- [ ] **`/feeds` index page** — single human-readable hub
+      listing every feed we publish (blog/changelog × RSS/Atom/JSON
+      + saved-search instructions). Mirrors how Pinboard,
+      jeremy.codes, etc. surface their feeds.
+- [ ] **OPML export for the marketing feeds** — `/feeds.opml`
+      bundles blog + changelog into a single import file. Most
+      RSS readers can import OPML in one click.
+- [ ] **Marketing CTA for the API reference** — small banner on
+      /blog post pages pointing engineering-tagged readers to
+      /docs/api-reference. Cheap, no new content needed.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

@@ -62,6 +62,25 @@ export const metadata: Metadata = {
   },
 };
 
+/* ============================================================================
+ *  Feed auto-discovery
+ *
+ *  Emitted as raw <link> tags inside root <head> rather than via
+ *  `metadata.alternates.types` because per-page `alternates` (e.g.
+ *  /demo/[id]'s oEmbed discovery) replaces the entire `alternates` block
+ *  rather than merging its `types` map. Inline tags survive any per-page
+ *  metadata.
+ * ==========================================================================*/
+
+const FEEDS = [
+  { type: "application/rss+xml", href: "/blog/feed.xml", title: "DocketLens blog (RSS)" },
+  { type: "application/rss+xml", href: "/changelog/feed.xml", title: "DocketLens changelog (RSS)" },
+  { type: "application/atom+xml", href: "/blog/feed.atom", title: "DocketLens blog (Atom)" },
+  { type: "application/atom+xml", href: "/changelog/feed.atom", title: "DocketLens changelog (Atom)" },
+  { type: "application/feed+json", href: "/blog/feed.json", title: "DocketLens blog (JSON Feed)" },
+  { type: "application/feed+json", href: "/changelog/feed.json", title: "DocketLens changelog (JSON Feed)" },
+] as const;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -71,6 +90,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
+      <head>
+        {FEEDS.map((f) => (
+          <link
+            key={f.href}
+            rel="alternate"
+            type={f.type}
+            href={f.href}
+            title={f.title}
+          />
+        ))}
+      </head>
       <body className="min-h-full flex flex-col bg-[color:var(--color-bg)] text-[color:var(--color-fg)]">
         <SkipToContent />
         <ThemeProvider
