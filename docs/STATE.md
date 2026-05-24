@@ -324,6 +324,15 @@
       reference card (district + civil / MDL / appeals / free text
       fallback), Chrome/Firefox setup links for the address-bar
       shortcut. Sitemap includes /lookup.
+- [x] `/glossary` legal-terminology page: 30 typed entries
+      (`src/content/glossary.ts`) across 6 categories — Data
+      sources, Case lifecycle, Pleadings & motions, Procedural,
+      Parties & roles, DocketLens-specific. Each entry has an
+      anchored id so we can deep-link (e.g. /glossary#12b6),
+      optional short/acronym form, plain-English body, and a
+      Related-terms strip linking back into the glossary. Page
+      has a category jump-nav up top and a "term missing?"
+      contact CTA. Sitemap includes /glossary.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -360,12 +369,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/glossary` legal-terminology page** — short, scannable
-      glossary of every term we use in the product (NOS code, MDL,
-      TRO, Rule 12(b)(6), Markman, voir dire, etc.). Anchored
-      headings so we can deep-link from any other page. SEO win
-      + accessibility for non-lawyer users (journalists,
-      investors).
 - [ ] **One more blog post** — "We don't predict outcomes — and
       here's the architecture that enforces it." Engineering
       deep-dive on prompt versioning, extractive-only contract,
