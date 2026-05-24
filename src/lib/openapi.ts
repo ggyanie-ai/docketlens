@@ -292,6 +292,44 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/saved-searches/{id}/feed.atom": {
+      get: {
+        tags: ["Search"],
+        summary: "Saved-search Atom feed",
+        description:
+          "Atom 1.0 sibling of `/feed.xml`. Same query params, same results — only the envelope differs. The canonical `/feed.xml` route also redirects (302) to this path when the client sends `Accept: application/atom+xml` or `?format=atom`.",
+        operationId: "savedSearchFeedAtom",
+        security: [],
+        parameters: [{ $ref: "#/components/parameters/SavedSearchId" }],
+        responses: {
+          "200": {
+            description: "Atom 1.0 XML",
+            content: {
+              "application/atom+xml": { schema: { type: "string", format: "xml" } },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/saved-searches/{id}/feed.json": {
+      get: {
+        tags: ["Search"],
+        summary: "Saved-search JSON Feed",
+        description:
+          "JSON Feed 1.1 (https://jsonfeed.org/version/1.1) sibling of `/feed.xml`. Same query params, same results — JSON envelope sidesteps XML escaping bugs. `/feed.xml` redirects to this path when the client sends `Accept: application/feed+json` or `?format=json`.",
+        operationId: "savedSearchFeedJson",
+        security: [],
+        parameters: [{ $ref: "#/components/parameters/SavedSearchId" }],
+        responses: {
+          "200": {
+            description: "JSON Feed 1.1",
+            content: {
+              "application/feed+json": { schema: { type: "object" } },
+            },
+          },
+        },
+      },
+    },
     "/api/v1/saved-searches/{id}/feed.xml": {
       get: {
         tags: ["Search"],
@@ -430,6 +468,14 @@ export const openapi = {
       },
     },
     parameters: {
+      SavedSearchId: {
+        name: "id",
+        in: "path",
+        required: true,
+        description: "Saved-search id (`srch_…`). Used as the feed guid prefix.",
+        schema: { type: "string" },
+        example: "srch_F3kQ9pR2Lm",
+      },
       Limit: {
         name: "limit",
         in: "query",

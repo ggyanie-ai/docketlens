@@ -40,12 +40,45 @@ function clampLimit(raw: string | null): number {
   return Math.max(1, Math.min(50, Math.floor(n)));
 }
 
+/**
+ * Lightweight Accept-header content negotiation. The .xml route is the
+ * canonical entry point — readers that send `Accept: application/atom+xml`
+ * or `Accept: application/feed+json` are 302-redirected to the sibling
+ * route. We don't bother with q-factor parsing; readers almost always send
+ * a single preferred type.
+ */
+function negotiated(accept: string | null, pathname: string): string | null {
+  if (!accept) return null;
+  const a = accept.toLowerCase();
+  if (a.includes("application/feed+json") || a.includes("application/json"))
+    return pathname.replace(/feed\.xml$/, "feed.json");
+  if (a.includes("application/atom+xml"))
+    return pathname.replace(/feed\.xml$/, "feed.atom");
+  return null;
+}
+
 export async function GET(
   req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
   const { id } = await ctx.params;
   const sp = req.nextUrl.searchParams;
+
+  // Honor explicit ?format= overrides as the highest-priority signal, then
+  // fall back to Accept-header negotiation.
+  const fmt = sp.get("format")?.toLowerCase();
+  const target =
+    fmt === "atom"
+      ? req.nextUrl.pathname.replace(/feed\.xml$/, "feed.atom")
+      : fmt === "json"
+      ? req.nextUrl.pathname.replace(/feed\.xml$/, "feed.json")
+      : negotiated(req.headers.get("accept"), req.nextUrl.pathname);
+  if (target && target !== req.nextUrl.pathname) {
+    const url = new URL(req.nextUrl);
+    url.pathname = target;
+    url.searchParams.delete("format");
+    return Response.redirect(url, 302);
+  }
 
   const query: SearchQuery = {
     q: sp.get("q"),

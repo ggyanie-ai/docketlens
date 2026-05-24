@@ -365,6 +365,30 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Atom 1.0 + JSON Feed 1.1 siblings of the saved-search RSS
+      feed. Three sibling routes:
+        /api/v1/saved-searches/{id}/feed.xml   → RSS 2.0
+        /api/v1/saved-searches/{id}/feed.atom  → Atom 1.0
+        /api/v1/saved-searches/{id}/feed.json  → JSON Feed 1.1
+      All three share the same query params + result set via
+      `runSearch()`. Two new in-house emitters:
+        - `src/lib/atom.ts` — Atom 1.0 (atom:link self/alternate,
+          per-entry `published` + `updated`, category terms,
+          structured `<author>`)
+        - `src/lib/jsonfeed.ts` — JSON Feed 1.1 (typed JsonFeed +
+          JsonFeedItem, top-level authors[], home_page_url, tags)
+      The canonical /feed.xml route also content-negotiates: a
+      reader sending `Accept: application/atom+xml`,
+      `Accept: application/feed+json`, or `?format=atom|json` gets a
+      302 to the sibling. OpenAPI spec adds both new paths +
+      reusable `SavedSearchId` parameter component. Discovery
+      payload lists all three. Verified end-to-end:
+        - feed.atom returns 6 entries with proper envelope;
+        - feed.json?scope=patent returns 2 items, version
+          'https://jsonfeed.org/version/1.1', tags array intact;
+        - Accept: atom → 302 to feed.atom;
+        - Accept: feed+json → 302 to feed.json;
+        - ?format=atom → 302 to feed.atom.
 - [x] "Copy RSS URL" button per saved-search row on /search. Sits
       next to Play/Delete with an Rss lucide-react icon. Click
       builds the absolute feed URL using `window.location.origin`,
@@ -557,14 +581,13 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Atom alternative for the saved-search feed** — accept
-      `Accept: application/atom+xml` or `?format=atom` and emit Atom
-      1.0 instead of RSS 2.0. Some readers (Inoreader categories,
-      Kagi labels) prefer Atom.
-- [ ] **JSON Feed alternative** — accept `Accept: application/feed+json`
-      and emit JSON Feed 1.1. The new generation of readers (Reeder
-      5, Inoreader, NetNewsWire) supports it natively and it sidesteps
-      XML escaping bugs.
+- [ ] **Format picker on /search saved-searches panel** — let users
+      pick RSS / Atom / JSON when copying the feed URL (radio +
+      label). Defaults to RSS for max-compat.
+- [ ] **`<link rel="alternate">` discovery on /search** — emit Atom
+      + JSON Feed + RSS discovery tags on /search so RSS readers'
+      auto-detect-feed plugin offers the saved-search feed as a
+      subscribe candidate when the user is on the /search page.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
