@@ -14,6 +14,7 @@ export async function GET() {
     endpoints: [
       { method: "GET",  path: "/api/v1/dockets",         desc: "List recent dockets" },
       { method: "GET",  path: "/api/v1/dockets/:id",     desc: "Get one docket with entries + parties" },
+      { method: "GET",  path: "/api/v1/dockets/:id/ai-summaries", desc: "Extractive AI summaries (tier-gated)" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
       { method: "POST", path: "/api/v1/watchlists",      desc: "Create a watchlist (Team plan)" },

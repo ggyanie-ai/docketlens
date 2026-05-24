@@ -365,6 +365,26 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `GET /api/v1/dockets/{id}/ai-summaries` — tier-gated extractive
+      summaries through the public REST API. Free-plan keys receive
+      `one_liner` only; Pro+ keys receive all three tiers
+      (one_liner, paragraph, exec). Each summary carries `content`,
+      `source` ("cache" from `ai_summaries` table or "demo" from the
+      seeded SAMPLE_DOCKETS), `prompt_version`, `model`, and `stale`
+      (true if the cached row is older than the current
+      PROMPT_VERSION — set after a prompt bump). Source resolution
+      order: DB `ai_summaries` rows (preferring current PROMPT_VERSION,
+      falling back to older rows with `stale: true`) → SAMPLE_DOCKETS
+      seeds for the canonical demos → null. Returns `meta` block with
+      `prompt_version_current`, `plan`, `tiers_returned`,
+      `extractive_only: true`. 401 unauth, 404 unknown docket.
+      Per-plan cache-control: public+SWR for free, private 60s for
+      paid. Discovery endpoint, OpenAPI spec, and `AiSummaries` +
+      `AiSummaryTier` schemas all updated. Verified end-to-end with
+      minted free + pro test keys (since cleaned up):
+        - free → tiers_returned = ['one_liner']
+        - pro  → tiers_returned = ['one_liner', 'paragraph', 'exec']
+        - paragraph source = "demo" for seeded entries
 - [x] Dashboard "your embeds" card — surfaces the privacy-preserving
       widget-impression rollups. Shows the top 5 embedded dockets by
       load count (last 7 days) with a horizontal bar chart per row
@@ -468,9 +488,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/api/v1/dockets/{id}/ai-summaries`** — expose the three
-      summary tiers (one_liner, paragraph, exec) through the public
-      REST API. Pro+ keys only for `paragraph` + `exec`.
 - [ ] **`/widget/[id]/json`** — JSON twin of the iframe widget for
       consumers that want the data, not the HTML. Same shape as
       what the widget already renders (case name, court, top
