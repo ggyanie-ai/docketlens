@@ -215,6 +215,15 @@
       and Reset onboarding checklist (clears localStorage flags +
       router.refresh). Right side carries a one-line explainer
       that this is sample data until Tuesday's DB wire-up.
+- [x] Webhook signing example: `<WebhookSigningCard>` under
+      Settings → Integrations. Documents the
+      X-DocketLens-Signature header (HMAC-SHA256 hex, sha256=
+      prefix), shows a sample request-headers block, and ships
+      copy-to-clipboard code samples in Node.js / Python / Go tabs.
+      Three explainer notes (constant-time compare · ack fast ·
+      replay protection via X-DocketLens-Delivery) plus a deep
+      link to /docs/api. Active sample's copy button switches to
+      success state on click.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -254,9 +263,7 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Webhook signing example** — Settings → Integrations gains
-      a small "verify our HMAC" code-sample card with Node + Python
-      tabs.
+- _(none currently queued — Features queue is now empty)_
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

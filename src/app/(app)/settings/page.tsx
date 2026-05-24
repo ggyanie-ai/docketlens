@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { WebhookSigningCard } from "@/components/app/webhook-signing-card";
 
 export default function SettingsPage() {
   return (
@@ -134,7 +135,7 @@ export default function SettingsPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="integrations">
+            <TabsContent value="integrations" className="flex flex-col gap-6">
               <Card className="p-6">
                 <h3 className="font-serif text-xl tracking-tight">Integrations</h3>
                 <p className="text-sm text-[color:var(--color-fg-muted)] mt-1 mb-6">
@@ -167,6 +168,8 @@ export default function SettingsPage() {
                   ))}
                 </div>
               </Card>
+
+              <WebhookSigningCard />
             </TabsContent>
 
             <TabsContent value="security">
