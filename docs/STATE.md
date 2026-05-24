@@ -313,6 +313,17 @@
       content:encoded block). Both pages now carry
       `metadata.alternates.types["application/rss+xml"]` so
       browsers / readers auto-discover.
+- [x] `/lookup` quick docket-number redirect: editorial hero with
+      one big monospace input. On submit: lenient regex check, then
+      exact-match the cached SAMPLE_DOCKETS by case number → push
+      to `/dockets/[id]`; otherwise push to `/search?q=<num>` with
+      a "not in cache" toast. `?q=<num>` URL param auto-resolves on
+      mount so the page works as a browser keyword-search target
+      (`dl 1:25-cv-04812` → /lookup?q=… → /dockets/[id]). Try-one
+      chips for the 5 sample case numbers, "what gets accepted"
+      reference card (district + civil / MDL / appeals / free text
+      fallback), Chrome/Firefox setup links for the address-bar
+      shortcut. Sitemap includes /lookup.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -352,10 +363,7 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/lookup` quick-lookup** — single search box that accepts
-      a federal docket number and redirects to the cached case
-      (or to /search?q=<number> if not in cache). Useful for the
-      URL-bar power user / email-to-coworker workflow.
+- _(none currently queued — Features queue is now empty)_
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
