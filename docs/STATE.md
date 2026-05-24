@@ -365,6 +365,20 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `/feeds` index page — single human-readable hub listing every
+      feed DocketLens publishes. Three sections:
+        1. Blog (Public badge) — 3-row table per format with
+           absolute URL + copy button.
+        2. Changelog (Public badge) — same shape.
+        3. Saved searches (Per-user badge) — URL template
+           (`/api/v1/saved-searches/{id}/feed.{xml|atom|json}` with
+           full query-param list), one fully-resolved example with
+           a copy button, and a restated "the URL is the secret"
+           warning.
+      Plus an "Auto-discovery" callout explaining the site-wide
+      `<link rel="alternate">` discovery story (browser RSS
+      plugins + Feedbin auto-detect). Linked from sitemap. Mirrors
+      how Pinboard, jeremy.codes, etc. surface their feeds.
 - [x] Site-wide feed auto-discovery + format mirrors for /blog and
       /changelog. Six new sibling routes:
         /blog/feed.atom       (Atom 1.0)
@@ -611,16 +625,16 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/feeds` index page** — single human-readable hub
-      listing every feed we publish (blog/changelog × RSS/Atom/JSON
-      + saved-search instructions). Mirrors how Pinboard,
-      jeremy.codes, etc. surface their feeds.
 - [ ] **OPML export for the marketing feeds** — `/feeds.opml`
       bundles blog + changelog into a single import file. Most
-      RSS readers can import OPML in one click.
+      RSS readers can import OPML in one click. Linked from
+      /feeds.
 - [ ] **Marketing CTA for the API reference** — small banner on
       /blog post pages pointing engineering-tagged readers to
       /docs/api-reference. Cheap, no new content needed.
+- [ ] **Site-footer link to /feeds** — single "Feeds" link in the
+      site footer next to the changelog link so the hub is one
+      click away from any marketing page.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

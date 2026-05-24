@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/widget",
     "/docs/api-reference",
     "/tools/verify-webhook",
+    "/feeds",
     "/blog/feed.xml",
     "/blog/feed.atom",
     "/blog/feed.json",
