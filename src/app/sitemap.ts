@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/changelog",
     "/docs",
     "/contact",
+    "/vs/pacer",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

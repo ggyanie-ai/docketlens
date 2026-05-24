@@ -179,6 +179,15 @@
       (mono code block) + HTML (600px sandboxed iframe). `noindex`
       metadata so it never lands in search. Sample → schema row
       adapters built so future DB swap-in is mechanical.
+- [x] `/vs/pacer` comparison page: editorial hero, 3-cell pricing
+      gist (PACER per-page · DocketLens Pro · break-even at 490
+      pages/mo), 14-row feature-by-feature table with per-row
+      trade-off notes + proper `<th scope>` semantics, "Where
+      PACER actually wins" 3-card section (we're honest about
+      sealed cases, specialty courts, authoritative source),
+      5-card "Where DocketLens wins", worked example computing
+      monthly cost for a 5-case solo attorney ($73 vs $49),
+      closing CTA. Added to sitemap.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -215,9 +224,9 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Comparison page `/vs/pacer`** — honest side-by-side: PACER
-      vs DocketLens (cost, UX, AI, alerts, search). Companion
-      `/vs/lex-machina` later.
+- [ ] **Companion comparison: `/vs/lex-machina`** — same template
+      as /vs/pacer but vs the enterprise tool. Pricing wedge is
+      the headline ($25k+/yr seat vs $199/mo whole-firm).
 
 ### Features
 - [ ] **Onboarding checklist on /dashboard for empty orgs** —
