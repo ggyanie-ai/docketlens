@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
     "/vs/pacer",
     "/vs/lex-machina",
+    "/status",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

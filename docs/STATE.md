@@ -224,6 +224,16 @@
       replay protection via X-DocketLens-Delivery) plus a deep
       link to /docs/api. Active sample's copy button switches to
       success state on click.
+- [x] `/status` public status dashboard: overall-status hero (color
+      adapts to worst-service status), 6-service grid (Web app /
+      REST API / Ingest worker / AI summarization / Email delivery
+      / Database) with per-service detail + 90-day uptime, 4-cell
+      pipeline-metrics grid (ingest last-run · CL daily quota · AI
+      cache hit · email failure rate), incidents list with severity
+      badges (empty-state when zero), transparency footer linking
+      to docs/ARCHITECTURE.md for the metric-source map. Synthetic
+      green-state data today; layout stays once real signals wire
+      Tuesday. Added to sitemap.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -260,10 +270,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/status` page** — public status dashboard. Uptime stat
-      tiles, ingest worker last run, CL API quota remaining,
-      Anthropic / Resend / Stripe service indicators. Honest
-      "we'll wire real signals Tuesday."
 - [ ] **`/jurisdictions` page** — beautiful index of every covered
       federal court (94 districts + 13 circuits + bankruptcy +
       Supreme Court) grouped by region, with per-court deep-links
