@@ -77,6 +77,29 @@ export default function DocsIndex() {
             );
           })}
 
+          <Card className="p-6 mt-2 bg-gradient-to-br from-[color:var(--color-accent-soft)]/40 to-transparent">
+            <div className="flex items-start justify-between gap-6 flex-wrap">
+              <div>
+                <p className="eyebrow mb-1">Interactive</p>
+                <h3 className="font-serif text-2xl tracking-tight">
+                  API reference, rendered from the spec.
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--color-fg-muted)] max-w-xl">
+                  Every endpoint, every schema — generated directly from{" "}
+                  <code className="font-mono">/api/v1/openapi.json</code>. No
+                  third-party JS bundle.
+                </p>
+              </div>
+              <Link
+                href={"/docs/api-reference" as never}
+                className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-fg)] inline-flex items-center gap-1 underline underline-offset-2 hover:text-[color:var(--color-accent)]"
+              >
+                Open reference
+                <ArrowUpRight className="size-3" />
+              </Link>
+            </div>
+          </Card>
+
           <Card className="p-6 mt-2 bg-gradient-to-br from-[color:var(--color-accent-soft)]/30 to-transparent">
             <p className="text-sm leading-relaxed text-[color:var(--color-fg-muted)]">
               Looking for the changelog? It lives at{" "}

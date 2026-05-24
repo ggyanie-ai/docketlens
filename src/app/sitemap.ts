@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/lookup",
     "/glossary",
     "/widget",
+    "/docs/api-reference",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

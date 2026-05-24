@@ -365,6 +365,18 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `/docs/api-reference` interactive API reference — renders the
+      OpenAPI 3.1 spec directly from the typed `openapi` object (no
+      Redoc, Scalar, or Stoplight JS bundle). Two-pane layout:
+      sticky left-rail nav grouped by tag, right pane with one card
+      per endpoint. Each card shows method · path · auth badge ·
+      summary · description · parameters table · request body schema
+      · per-status response schemas · auto-generated curl snippet
+      (with Copy button). Schema renderer resolves `$ref` pointers
+      inline (no "see Docket" hops) and merges `allOf` so
+      DocketDetail shows fully resolved. Tags follow the order
+      declared in `openapi.tags`. force-static. Sitemap updated.
+      `/docs` index now has a callout card linking to the renderer.
 - [x] `/widget/[id]` embeddable case widget — iframe-friendly card
       for journalists/bloggers. Renders court · case number · case
       name · filed date · judge · NOS · status · the three most
@@ -418,10 +430,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/docs/api-reference` page** — Scalar / Redoc-style
-      interactive renderer pointed at `/api/v1/openapi.json`. Can
-      be a static client component that fetches the spec on mount;
-      no third-party JS bundles in the marketing routes.
 - [ ] **`/oembed` endpoint** — minimal oEmbed JSON discovery for
       `/widget/[id]` so Notion / Wordpress / Ghost auto-unfurl the
       iframe when users paste a `docketlens.ai/demo/dkt_…` link.
