@@ -164,6 +164,14 @@
       into sitemap + footer Resources (Documentation + API reference
       links). generateStaticParams over the allowlist; unknown slugs
       ↪ 404 (verified with curl returning a real 404).
+- [x] `/contact` page: two-pane editorial layout — left form (name,
+      email, 7-topic Select primitive, body) with stubbed
+      Resend-shaped submit, post-submit success state, security-
+      topic warning callout (use security@docketlens.ai + PGP).
+      Right rail has email-direct card, four "fast lane" cards
+      (Docs / Press / Pricing / Bug), office-hours card. New
+      `<Select>` UI primitive matches Input styling. Wired into
+      sitemap + footer Company column (restored Contact link).
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -200,10 +208,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/contact` page** — simple form (name, email, body, topic
-      select), Resend-stubbed submit, "we reply within 24h" copy.
-      Replace the placeholder Contact link we removed from the
-      footer.
 - [ ] **`/email-preview` (internal dev tool)** — render the
       `renderDigestEmail()` output inline so the operator can
       review the daily digest template without sending it.

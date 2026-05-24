@@ -26,6 +26,7 @@ const cols = [
     title: "Company",
     links: [
       { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
       { href: "/press", label: "Press kit" },
       { href: "/legal/privacy", label: "Privacy" },
       { href: "/legal/terms", label: "Terms" },
