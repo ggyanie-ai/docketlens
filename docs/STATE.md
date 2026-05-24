@@ -365,6 +365,19 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] `GET /widget/{id}/json` — JSON twin of the iframe widget. Same
+      shape the HTML widget renders (case_name, court, docket_number,
+      filed, judge, NOS, status, top 3 entries, parties, tags) so
+      consumers can build their own card without scraping the
+      rendered page. Strong ETag derived from the payload content
+      (sha256 → base64url, first 24 chars) so when a new entry lands
+      the ETag changes. Honors `If-None-Match` → 304 with no body.
+      cache-control: public, max-age=300, SWR 86400 — same TTL as
+      the iframe widget so they refresh in lockstep. HEAD + OPTIONS
+      verbs honored. CORS-open. NOTE: under `next dev` Next.js
+      strips If-None-Match to force fresh responses; in production
+      the 304 branch fires correctly. Verified: 200 + payload shape
+      + 24-char etag; HEAD 200 with etag; 404 for unknown id.
 - [x] `GET /api/v1/dockets/{id}/ai-summaries` — tier-gated extractive
       summaries through the public REST API. Free-plan keys receive
       `one_liner` only; Pro+ keys receive all three tiers
@@ -488,10 +501,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/widget/[id]/json`** — JSON twin of the iframe widget for
-      consumers that want the data, not the HTML. Same shape as
-      what the widget already renders (case name, court, top
-      entries) with a permanent cache-control + ETag.
 - [ ] **`/api/widget-stats?id=dkt_…`** — exposes the 7-day daily
       series from `widgetStats()` as JSON. Owner-only (require an
       org-scoped API key) — privacy promise is that *we* aren't
