@@ -365,6 +365,14 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Blog post CTA: Engineering-tagged posts now end with a card
+      pitching `/docs/api-reference` (interactive renderer with
+      copy-paste curl per endpoint). Conditional on `post.tag ===
+      "Engineering"` — non-engineering posts (PACER essay, etc.)
+      stay clean. Sits between the article body and the feedback
+      line, styled with the same accent-soft gradient used on the
+      /docs callout. Verified: shows on the extractive-architecture
+      post; absent on the PACER post.
 - [x] Site footer: "Feeds" link in Resources (one click to /feeds
       from any marketing page). Also retargeted the "API reference"
       link from /docs/api (the markdown doc) to /docs/api-reference
@@ -642,9 +650,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Marketing CTA for the API reference** — small banner on
-      /blog post pages pointing engineering-tagged readers to
-      /docs/api-reference. Cheap, no new content needed.
 - [ ] **CHANGELOG.md entry for 0.1.2** — capture every wakeup
       shipped this session (api/health, openapi.json, widget,
       embed pixel, oembed, dashboard embeds card, ai-summaries

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Code2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { Card } from "@/components/ui/card";
 import { POSTS } from "@/content/posts";
 
 export async function generateMetadata({
@@ -91,6 +92,34 @@ export default async function BlogPost({
             return null;
           })}
         </div>
+
+        {post.tag === "Engineering" && (
+          <Card className="mt-16 p-6 bg-gradient-to-br from-[color:var(--color-accent-soft)]/30 to-transparent">
+            <div className="flex items-start gap-4">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-bg-subtle)] border border-[color:var(--color-border)]">
+                <Code2 className="size-4 text-[color:var(--color-fg-muted)]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow mb-1">For builders</p>
+                <h3 className="font-serif text-xl tracking-tight">
+                  Want to build on this?
+                </h3>
+                <p className="mt-2 text-sm text-[color:var(--color-fg-muted)] leading-relaxed">
+                  Every endpoint behind the engineering we just talked about
+                  is in the interactive API reference — parameters, response
+                  shapes, and copy-paste curl snippets included.
+                </p>
+                <Link
+                  href={"/docs/api-reference" as never}
+                  className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-fg)] underline underline-offset-2 hover:text-[color:var(--color-accent)]"
+                >
+                  Open the API reference
+                  <ArrowUpRight className="size-3" />
+                </Link>
+              </div>
+            </div>
+          </Card>
+        )}
 
         <hr className="my-16 border-t border-[color:var(--color-border)]" />
 
