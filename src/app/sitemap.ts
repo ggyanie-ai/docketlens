@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/comparison",
     "/status",
     "/jurisdictions",
+    "/security",
     "/legal/privacy",
     "/legal/terms",
     "/legal/data-sources",

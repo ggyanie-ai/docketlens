@@ -254,6 +254,15 @@
       codifies the lead-with-what-the-competitor-does-better policy.
       Footer Resources column gains a Comparisons link; sitemap
       includes /comparison.
+- [x] Security disclosure: `/.well-known/security.txt` route
+      handler emits a proper RFC 9116 document (Contact, Expires
+      auto-rolled to +1 year, Encryption, Acknowledgments,
+      Preferred-Languages, Canonical, Policy, Hiring) with
+      text/plain content-type. Human-readable `/security` page
+      mirrors it: contact card (email + PGP + 24h response), what
+      to include, in/out-of-scope side-by-side, safe-harbor block,
+      Hall of Fame placeholder, "no paid bounties yet" note.
+      Sitemap includes /security.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -290,9 +299,7 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/.well-known/security.txt`** route + a small
-      `/security` page describing PGP key, scope, response time,
-      and Hall of Fame placeholder.
+- _(none currently queued — Content queue is now empty)_
 
 ### Features
 - [ ] **CSV export on /search results** — small "Export 12
