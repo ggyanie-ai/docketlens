@@ -333,6 +333,17 @@
       Related-terms strip linking back into the glossary. Page
       has a category jump-nav up top and a "term missing?"
       contact CTA. Sitemap includes /glossary.
+- [x] Fourth blog post: "We don't predict outcomes — and here's
+      the architecture that enforces it" (Engineering, 9 min).
+      Engineering deep-dive on the six concrete constraints that
+      keep our extractive-only promise honest: system-prompt
+      contract; PROMPT_VERSION pinning + cache invalidation; tier
+      gating as enforcement not just UX; web app never talks to
+      the model directly (ingest worker only); what the model
+      never sees (no prior cases / no judge history / no
+      commenter context); three-layer test stack (linter-style
+      banned-token spot checks, round-trip diff for model drift,
+      source-tracing audits). Auto-included in sitemap + /blog/feed.xml.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -369,10 +380,7 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **One more blog post** — "We don't predict outcomes — and
-      here's the architecture that enforces it." Engineering
-      deep-dive on prompt versioning, extractive-only contract,
-      and how the AI tier-gating works.
+- _(none currently queued — Content queue is now empty)_
 
 ### Features
 - [ ] **`/api/health` route** — JSON `{ ok, version, ts, sha }` ping
