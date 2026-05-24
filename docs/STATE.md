@@ -365,6 +365,14 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] /robots.txt expanded with belt-and-suspenders Disallow for
+      /widget/dkt_ (per-docket iframe pages — already noindex via
+      metadata but reinforced here), /inbox, /audit-log,
+      /email-preview, /.well-known/. /widget *index* (snippet
+      generator) stays allowed. Expanded Allow list to match the
+      sitemap (changelog, docs, jurisdictions, glossary, feeds,
+      tools). Comment block at the top documents the two-layer
+      "bouncer vs belt-and-suspenders" policy.
 - [x] Markdown heading anchor ids in the in-house renderer.
       Every `## …` and `### …` now ships `id="kebab-slug"` so
       arbitrary headings are linkable; headings that start with a
@@ -675,13 +683,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/sitemap.xml` includes /widget and /docs/api-reference
-      lastModified bumps** — when the spec or the widget content
-      shape changes, the sitemap should reflect a fresh
-      lastModified so Google re-crawls. Static `now` is fine for
-      v0; future improvement.
-- [ ] **Site-wide noindex of /widget/[id]** — already set per-page
-      via metadata; double-check via robots.txt as well.
+- [ ] **`<link rel="canonical">` on /demo/[id]** — already set via
+      generateMetadata.alternates.canonical when oEmbed was added,
+      but spot-check that the canonical href stays correct after
+      the absolute-URL fix in metadataBase.
+- [ ] **Per-route sitemap priority tune-up** — current sitemap
+      treats every static route as priority 0.7. Bump /, /pricing,
+      /demo to 0.9; demote /legal/* and /feeds.opml to 0.3.
+      Marginal but signals what we actually care about.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
