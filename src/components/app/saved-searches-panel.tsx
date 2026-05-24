@@ -7,6 +7,7 @@ import {
   Trash2,
   Play,
   Sparkles,
+  Rss,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -73,6 +74,45 @@ export function SavedSearchesPanel({
     toast("Saved search removed", {
       description: `"${s.name}" is gone.`,
     });
+  }
+
+  /**
+   * Build an absolute RSS feed URL for one saved search.
+   *
+   * The {id} path segment is a stable guid prefix; the actual filters travel
+   * as query params, matching the v0 contract of
+   * /api/v1/saved-searches/[id]/feed.xml. When DB-backed saved searches land
+   * the params become optional.
+   */
+  function feedUrl(s: SavedSearch): string {
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://docketlens.ai";
+    const sp = new URLSearchParams();
+    if (s.query.q) sp.set("q", s.query.q);
+    if (s.query.court) sp.set("court", s.query.court);
+    if (s.query.nos) sp.set("nos", s.query.nos);
+    if (s.query.scope && s.query.scope !== "all") sp.set("scope", s.query.scope);
+    sp.set("name", s.name);
+    return `${origin}/api/v1/saved-searches/${encodeURIComponent(
+      s.id
+    )}/feed.xml?${sp.toString()}`;
+  }
+
+  async function copyFeed(s: SavedSearch) {
+    const url = feedUrl(s);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("RSS URL copied", {
+        description:
+          "Paste it into any RSS reader. Treat the URL like a secret — anyone with it can read this feed.",
+      });
+    } catch {
+      toast.error("Couldn't copy", {
+        description: "Clipboard blocked. Manually copy from the URL preview.",
+      });
+    }
   }
 
   return (
@@ -159,6 +199,15 @@ export function SavedSearchesPanel({
                     title="Load"
                   >
                     <Play className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyFeed(s)}
+                    aria-label={`Copy RSS feed URL for "${s.name}"`}
+                    className="inline-flex size-7 items-center justify-center rounded-[var(--radius-sm)] text-[color:var(--color-fg-subtle)] hover:bg-[color:var(--color-bg-subtle)] hover:text-[color:var(--color-accent)] transition-colors"
+                    title="Copy RSS URL"
+                  >
+                    <Rss className="size-3.5" />
                   </button>
                   <button
                     type="button"

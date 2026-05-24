@@ -365,6 +365,15 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] "Copy RSS URL" button per saved-search row on /search. Sits
+      next to Play/Delete with an Rss lucide-react icon. Click
+      builds the absolute feed URL using `window.location.origin`,
+      the saved-search id (as the {id} guid prefix), and the
+      search's filters as URL params (q, court, nos, scope, name),
+      then writes to clipboard with a sonner toast restating the
+      "treat the URL like a secret — anyone with it can read this
+      feed" warning. Graceful fallback if clipboard is blocked.
+      Empty `scope=all` is omitted from the URL to keep it short.
 - [x] Saved-search RSS feed — `GET /api/v1/saved-searches/{id}/feed.xml`
       with `?q=&court=&nos=&scope=&name=&limit=` query params. Renders
       RSS 2.0 via the in-house emitter; each item is one matching
@@ -548,14 +557,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Subscribe-to-feed button on the /search saved-searches panel** —
-      one-click "Copy RSS URL" per saved search using the new
-      /api/v1/saved-searches/{id}/feed.xml route. Builds the URL with
-      the saved search's current filters as query params.
 - [ ] **Atom alternative for the saved-search feed** — accept
       `Accept: application/atom+xml` or `?format=atom` and emit Atom
       1.0 instead of RSS 2.0. Some readers (Inoreader categories,
       Kagi labels) prefer Atom.
+- [ ] **JSON Feed alternative** — accept `Accept: application/feed+json`
+      and emit JSON Feed 1.1. The new generation of readers (Reeder
+      5, Inoreader, NetNewsWire) supports it natively and it sidesteps
+      XML escaping bugs.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
