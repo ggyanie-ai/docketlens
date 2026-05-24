@@ -22,6 +22,7 @@ import { ActivityChart } from "@/components/app/activity-chart";
 import { CourtHeatmap } from "@/components/app/court-heatmap";
 import { Leaderboard } from "@/components/app/leaderboard";
 import { OnboardingChecklist } from "@/components/app/onboarding-checklist";
+import { DashboardDemoTag } from "@/components/app/dashboard-demo-tag";
 
 const KPIS = [
   {
@@ -109,6 +110,9 @@ export default async function DashboardPage({
       <Topbar title="Dashboard" />
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
+          {/* Demo-data switcher */}
+          <DashboardDemoTag />
+
           {/* Onboarding (dismissible) */}
           <OnboardingChecklist variant="inline" />
 

@@ -208,6 +208,13 @@
       "reopen" affordance after dismissal. /dashboard accepts
       `?empty=1` to render only the hero variant for first-run +
       marketing screenshots.
+- [x] Dashboard demo-data tag: `<DashboardDemoTag>` — small pill in
+      the dashboard's top-left ("Demo data · local" with Beaker
+      icon + chevron) that opens a dropdown with three actions:
+      Empty-org preview (→ ?empty=1), Public guest tour (→ /demo),
+      and Reset onboarding checklist (clears localStorage flags +
+      router.refresh). Right side carries a one-line explainer
+      that this is sample data until Tuesday's DB wire-up.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -247,9 +254,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Demo data toggle** on /dashboard — small switch top-right
-      that lets a logged-out viewer browse with seeded data
-      (already shipped on /demo but link from /dashboard too).
 - [ ] **Webhook signing example** — Settings → Integrations gains
       a small "verify our HMAC" code-sample card with Node + Python
       tabs.
