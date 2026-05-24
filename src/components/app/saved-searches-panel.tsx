@@ -16,6 +16,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
+  Dropdown,
+  DropdownItem,
+  DropdownLabel,
+  DropdownSeparator,
+} from "@/components/ui/dropdown";
+import {
   newSavedSearch,
   summarizeQuery,
   suggestName,
@@ -77,14 +83,14 @@ export function SavedSearchesPanel({
   }
 
   /**
-   * Build an absolute RSS feed URL for one saved search.
+   * Build an absolute feed URL for one saved search in the chosen format.
    *
    * The {id} path segment is a stable guid prefix; the actual filters travel
    * as query params, matching the v0 contract of
-   * /api/v1/saved-searches/[id]/feed.xml. When DB-backed saved searches land
+   * /api/v1/saved-searches/[id]/feed.*. When DB-backed saved searches land
    * the params become optional.
    */
-  function feedUrl(s: SavedSearch): string {
+  function feedUrl(s: SavedSearch, ext: "xml" | "atom" | "json"): string {
     const origin =
       typeof window !== "undefined"
         ? window.location.origin
@@ -97,16 +103,22 @@ export function SavedSearchesPanel({
     sp.set("name", s.name);
     return `${origin}/api/v1/saved-searches/${encodeURIComponent(
       s.id
-    )}/feed.xml?${sp.toString()}`;
+    )}/feed.${ext}?${sp.toString()}`;
   }
 
-  async function copyFeed(s: SavedSearch) {
-    const url = feedUrl(s);
+  const FORMAT_LABEL: Record<"xml" | "atom" | "json", string> = {
+    xml: "RSS 2.0",
+    atom: "Atom 1.0",
+    json: "JSON Feed 1.1",
+  };
+
+  async function copyFeed(s: SavedSearch, ext: "xml" | "atom" | "json") {
+    const url = feedUrl(s, ext);
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("RSS URL copied", {
+      toast.success(`${FORMAT_LABEL[ext]} URL copied`, {
         description:
-          "Paste it into any RSS reader. Treat the URL like a secret — anyone with it can read this feed.",
+          "Paste it into any feed reader. Treat the URL like a secret — anyone with it can read this feed.",
       });
     } catch {
       toast.error("Couldn't copy", {
@@ -200,15 +212,47 @@ export function SavedSearchesPanel({
                   >
                     <Play className="size-3.5" />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => copyFeed(s)}
-                    aria-label={`Copy RSS feed URL for "${s.name}"`}
-                    className="inline-flex size-7 items-center justify-center rounded-[var(--radius-sm)] text-[color:var(--color-fg-subtle)] hover:bg-[color:var(--color-bg-subtle)] hover:text-[color:var(--color-accent)] transition-colors"
-                    title="Copy RSS URL"
+                  <Dropdown
+                    trigger={
+                      <button
+                        type="button"
+                        aria-label={`Copy feed URL for "${s.name}"`}
+                        title="Copy feed URL"
+                        className="inline-flex size-7 items-center justify-center rounded-[var(--radius-sm)] text-[color:var(--color-fg-subtle)] hover:bg-[color:var(--color-bg-subtle)] hover:text-[color:var(--color-accent)] transition-colors"
+                      >
+                        <Rss className="size-3.5" />
+                      </button>
+                    }
+                    align="end"
                   >
-                    <Rss className="size-3.5" />
-                  </button>
+                    <DropdownLabel>Copy feed URL</DropdownLabel>
+                    <DropdownItem onClick={() => copyFeed(s, "xml")}>
+                      <Rss className="size-3.5 text-[color:var(--color-accent)]" />
+                      <span className="flex-1">RSS 2.0</span>
+                      <span className="text-[10px] font-mono text-[color:var(--color-fg-subtle)]">
+                        .xml
+                      </span>
+                    </DropdownItem>
+                    <DropdownItem onClick={() => copyFeed(s, "atom")}>
+                      <Rss className="size-3.5 text-[color:var(--color-fg-muted)]" />
+                      <span className="flex-1">Atom 1.0</span>
+                      <span className="text-[10px] font-mono text-[color:var(--color-fg-subtle)]">
+                        .atom
+                      </span>
+                    </DropdownItem>
+                    <DropdownItem onClick={() => copyFeed(s, "json")}>
+                      <Rss className="size-3.5 text-[color:var(--color-fg-muted)]" />
+                      <span className="flex-1">JSON Feed 1.1</span>
+                      <span className="text-[10px] font-mono text-[color:var(--color-fg-subtle)]">
+                        .json
+                      </span>
+                    </DropdownItem>
+                    <DropdownSeparator />
+                    <div className="px-2.5 py-1 text-[11px] leading-snug text-[color:var(--color-fg-muted)]">
+                      RSS is the safe default. Use Atom for richer per-entry
+                      metadata, JSON Feed for modern readers.
+                    </div>
+                  </Dropdown>
                   <button
                     type="button"
                     onClick={() => deleteOne(s)}

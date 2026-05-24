@@ -365,6 +365,17 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Format picker on the SavedSearchesPanel "Copy URL" action.
+      The Rss row icon is now the trigger for a Dropdown menu with
+      three options: RSS 2.0 (.xml), Atom 1.0 (.atom), JSON Feed
+      1.1 (.json). Each option copies the absolute feed URL in
+      that format (built via `feedUrl(s, ext)` so query params
+      stay in sync). DropdownLabel + a small hint footer explain
+      "RSS is the safe default; Atom for richer per-entry metadata;
+      JSON Feed for modern readers." Toast description rephrased
+      to "Paste it into any feed reader" so the copy works for all
+      three formats. The Rss icon button retains its
+      aria-label/title.
 - [x] Atom 1.0 + JSON Feed 1.1 siblings of the saved-search RSS
       feed. Three sibling routes:
         /api/v1/saved-searches/{id}/feed.xml   → RSS 2.0
@@ -581,13 +592,16 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Format picker on /search saved-searches panel** — let users
-      pick RSS / Atom / JSON when copying the feed URL (radio +
-      label). Defaults to RSS for max-compat.
-- [ ] **`<link rel="alternate">` discovery on /search** — emit Atom
-      + JSON Feed + RSS discovery tags on /search so RSS readers'
-      auto-detect-feed plugin offers the saved-search feed as a
-      subscribe candidate when the user is on the /search page.
+- [ ] **`<link rel="alternate">` feed-discovery for the global blog
+      + changelog** — emit `<link rel="alternate" type="application/rss+xml">`
+      tags from the marketing root layout for /blog/feed.xml and
+      /changelog/feed.xml so RSS readers' auto-detect-feed plugin
+      offers them anywhere on the site. (Saved-search feeds stay
+      per-user and shouldn't be in <head>.)
+- [ ] **Per-blog-post Atom + JSON Feed mirrors** — already have
+      /blog/feed.xml; mirror to /blog/feed.atom + /blog/feed.json
+      using the same emitters. Adds one route file each, very
+      cheap, and consistent with the saved-search story.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
