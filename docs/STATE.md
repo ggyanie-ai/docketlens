@@ -263,6 +263,15 @@
       to include, in/out-of-scope side-by-side, safe-harbor block,
       Hall of Fame placeholder, "no paid bounties yet" note.
       Sitemap includes /security.
+- [x] CSV export on /search results: tiny `src/lib/csv.ts` writer
+      (Excel-compatible escaping, UTF-8 BOM) + `downloadCsv()`
+      blob/anchor helper. /search now has an "Export CSV" button
+      next to the results count that emits a 16-column CSV
+      (court, case_number, case_name, NOS, cause, jury_demand,
+      status, judge, dates, plaintiffs/defendants arrays joined,
+      tags, latest AI one-liner, deep URL) of the currently-
+      filtered docket set. Disabled when zero matches; sonner toast
+      on success. Filename includes an ISO timestamp.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -302,9 +311,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **CSV export on /search results** — small "Export 12
-      results · CSV" button that runs client-side csv-stringify
-      on the currently-filtered SAMPLE_DOCKETS slice.
 - [ ] **`/shortcuts` page** — comprehensive keyboard reference
       table. Already promised in the command-palette tip + the
       account menu's "Keyboard shortcuts" item.

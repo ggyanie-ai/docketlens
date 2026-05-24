@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Search as SearchIcon, Filter, BookmarkPlus } from "lucide-react";
+import { Search as SearchIcon, Filter, BookmarkPlus, Download } from "lucide-react";
+import { toast } from "sonner";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import {
   newSavedSearch,
   type SavedSearch,
 } from "@/lib/saved-searches";
+import { downloadCsv } from "@/lib/csv";
 
 const COURTS = [
   "S.D.N.Y.", "N.D. Cal.", "D. Del.", "E.D. Tex.", "D.D.C.", "C.D. Cal.", "N.D. Ill.",
@@ -208,7 +210,7 @@ export default function SearchPage() {
             onLoad={handleLoad}
           />
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
             <Tabs value={scope} onValueChange={setScope}>
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
@@ -217,9 +219,54 @@ export default function SearchPage() {
                 <TabsTrigger value="antitrust">Antitrust</TabsTrigger>
               </TabsList>
             </Tabs>
-            <p className="text-xs font-mono text-[color:var(--color-fg-subtle)] tabular">
-              {filtered.length} results · sorted by date filed
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-xs font-mono text-[color:var(--color-fg-subtle)] tabular">
+                {filtered.length} results · sorted by date filed
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={filtered.length === 0}
+                onClick={() => {
+                  const rows = filtered.map((d) => ({
+                    court: d.court,
+                    case_number: d.caseNumber,
+                    case_name: d.caseName,
+                    nature_of_suit: d.natureOfSuit,
+                    nos_code: d.natureOfSuitCode,
+                    cause: d.cause,
+                    jury_demand: d.juryDemand,
+                    status: d.status,
+                    judge: d.judge,
+                    filed: d.filed,
+                    last_filing:
+                      d.entries[d.entries.length - 1]?.dateFiled ?? d.filed,
+                    entry_count: d.entries.length,
+                    plaintiffs: d.parties
+                      .filter((p) => /plaintiff|petitioner/i.test(p.role))
+                      .map((p) => p.name),
+                    defendants: d.parties
+                      .filter((p) => /defendant|respondent/i.test(p.role))
+                      .map((p) => p.name),
+                    tags: d.tags,
+                    latest_ai_summary:
+                      d.entries[d.entries.length - 1]?.summaryOne ?? "",
+                    url: `https://docketlens.ai/dockets/${d.id}`,
+                  }));
+                  const stamp = new Date()
+                    .toISOString()
+                    .replace(/[:.]/g, "-")
+                    .slice(0, 19);
+                  downloadCsv(rows, `docketlens-search-${stamp}.csv`);
+                  toast.success("CSV ready", {
+                    description: `${rows.length} rows · ${Object.keys(rows[0] ?? {}).length} columns`,
+                  });
+                }}
+              >
+                <Download className="size-3.5" />
+                Export CSV
+              </Button>
+            </div>
           </div>
 
           {filtered.length === 0 ? (
