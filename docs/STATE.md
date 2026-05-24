@@ -365,6 +365,19 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Markdown heading anchor ids in the in-house renderer.
+      Every `## …` and `### …` now ships `id="kebab-slug"` so
+      arbitrary headings are linkable; headings that start with a
+      SemVer `X.Y.Z` prefix also ship a hidden `<a id="X.Y.Z">`
+      alias anchor (sibling element with `scroll-mt-24`-style
+      offset). Lets the changelog feed's `#0.1.2` permalinks
+      actually scroll to the right section without forcing the
+      slugger to know about version syntax. `scroll-mt-24`
+      utility on the heading itself accounts for the sticky
+      site-header height. Verified: /changelog renders ids
+      `0.1.0`, `0.1.1`, `0.1.2` plus their kebab-slug siblings
+      (e.g. `012-2026-05-24-developer-surface-syndication`); other
+      Markdown-rendered docs (/docs/architecture etc.) still 200.
 - [x] CHANGELOG.md 0.1.2 — 2026-05-24 (developer surface +
       syndication). Captures every wakeup of this loop session:
       api/health, openapi.json, /widget + /widget/json,
@@ -662,11 +675,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Marketing page anchor links on /changelog headings** —
-      autogenerate `id="0-1-2"` on each `## …` so the changelog
-      feeds' `#0.1.2` permalinks actually scroll to the right
-      section. Currently the in-house Markdown renderer doesn't
-      emit heading ids.
 - [ ] **`/sitemap.xml` includes /widget and /docs/api-reference
       lastModified bumps** — when the spec or the widget content
       shape changes, the sitemap should reflect a fresh

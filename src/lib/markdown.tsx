@@ -20,14 +20,42 @@ type Inline =
   | { type: "code"; text: string }
   | { type: "link"; text: string; href: string };
 
+type Heading = {
+  /** Anchor id derived from the heading's plain text. */
+  slug: string;
+  /** Extra alias id (e.g. just the SemVer prefix) when the heading
+   *  begins with a `X.Y.Z` version, so `#0.1.2` permalinks work
+   *  alongside the kebab-case slug. `null` otherwise. */
+  versionAlias: string | null;
+  spans: Inline[];
+};
+
 type Block =
-  | { type: "h1"; spans: Inline[] }
-  | { type: "h2"; spans: Inline[] }
-  | { type: "h3"; spans: Inline[] }
+  | ({ type: "h1" } & Heading)
+  | ({ type: "h2" } & Heading)
+  | ({ type: "h3" } & Heading)
   | { type: "p"; spans: Inline[] }
   | { type: "ul"; items: Inline[][] }
   | { type: "blockquote"; spans: Inline[] }
   | { type: "hr" };
+
+/**
+ * Kebab-case slug for in-page anchors. Mirrors the conventions of
+ * remark-slug / github-slugger so links pasted from outside (which often
+ * follow those conventions) stand a decent chance of working.
+ */
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "") // strip combining marks
+    .replace(/[^\w\s-]/g, "") // drop punctuation
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+const VERSION_PREFIX_RE = /^(\d+\.\d+\.\d+)\b/;
 
 /* ----------------------------- Inline parser ----------------------------- */
 
@@ -73,8 +101,15 @@ export function parseMarkdown(src: string): Block[] {
     const h = line.match(/^(#{1,3})\s+(.+?)\s*$/);
     if (h) {
       const level = h[1].length as 1 | 2 | 3;
-      const type = (level === 1 ? "h1" : level === 2 ? "h2" : "h3") as Block["type"];
-      blocks.push({ type, spans: parseInline(h[2]) } as Block);
+      const type = (level === 1 ? "h1" : level === 2 ? "h2" : "h3") as
+        | "h1"
+        | "h2"
+        | "h3";
+      const raw = h[2];
+      const slug = slugify(raw);
+      const vMatch = raw.match(VERSION_PREFIX_RE);
+      const versionAlias = vMatch ? vMatch[1] : null;
+      blocks.push({ type, slug, versionAlias, spans: parseInline(raw) });
       i++;
       continue;
     }
@@ -187,8 +222,16 @@ export function Markdown({ source }: { source: string }) {
             return (
               <h1
                 key={i}
-                className="font-serif text-3xl md:text-4xl tracking-tight text-[color:var(--color-fg)] mt-0 mb-4"
+                id={b.slug}
+                className="scroll-mt-24 font-serif text-3xl md:text-4xl tracking-tight text-[color:var(--color-fg)] mt-0 mb-4"
               >
+                {b.versionAlias && (
+                  <a
+                    id={b.versionAlias}
+                    aria-hidden
+                    className="block h-0 -mt-24 pt-24 invisible"
+                  />
+                )}
                 {renderInline(b.spans)}
               </h1>
             );
@@ -196,8 +239,16 @@ export function Markdown({ source }: { source: string }) {
             return (
               <h2
                 key={i}
-                className="font-serif text-2xl md:text-3xl tracking-tight text-[color:var(--color-fg)] mt-14 mb-3"
+                id={b.slug}
+                className="scroll-mt-24 font-serif text-2xl md:text-3xl tracking-tight text-[color:var(--color-fg)] mt-14 mb-3"
               >
+                {b.versionAlias && (
+                  <a
+                    id={b.versionAlias}
+                    aria-hidden
+                    className="block h-0 -mt-24 pt-24 invisible"
+                  />
+                )}
                 {renderInline(b.spans)}
               </h2>
             );
@@ -205,9 +256,17 @@ export function Markdown({ source }: { source: string }) {
             return (
               <h3
                 key={i}
-                className="font-medium text-base tracking-tight text-[color:var(--color-fg)] mt-8 mb-2 eyebrow"
+                id={b.slug}
+                className="scroll-mt-24 font-medium text-base tracking-tight text-[color:var(--color-fg)] mt-8 mb-2 eyebrow"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
+                {b.versionAlias && (
+                  <a
+                    id={b.versionAlias}
+                    aria-hidden
+                    className="block h-0 -mt-24 pt-24 invisible"
+                  />
+                )}
                 {renderInline(b.spans)}
               </h3>
             );
