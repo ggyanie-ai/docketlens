@@ -154,6 +154,16 @@
       timestamp. Failure rows highlighted in the danger color.
       Footer retention note (7-year + SOC2 + SIEM streaming on
       Enterprise). Sample data in src/lib/sample-audit.ts.
+- [x] Public docs site: `/docs` index + dynamic `/docs/[slug]`
+      reading whitelisted markdown files (`API.md`, `ARCHITECTURE.md`,
+      `A11Y.md`) through the in-house `<Markdown>` renderer.
+      `src/content/public-docs.ts` is the allowlist (internal docs
+      DEPLOY/RUNBOOK/STATE/MONETIZATION stay in the repo only). Index
+      grouped by Reference / Engineering / Operating with read-time
+      badges and "Keep reading" cross-links on each doc page. Wired
+      into sitemap + footer Resources (Documentation + API reference
+      links). generateStaticParams over the allowlist; unknown slugs
+      ↪ 404 (verified with curl returning a real 404).
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -190,10 +200,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **Public API reference page at `/docs/api`** — render the
-      existing docs/API.md through the `<Markdown>` renderer; the
-      footer Resources column links there. Add a stylish code-sample
-      block component.
 - [ ] **`/contact` page** — simple form (name, email, body, topic
       select), Resend-stubbed submit, "we reply within 24h" copy.
       Replace the placeholder Contact link we removed from the
