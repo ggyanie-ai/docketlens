@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search as SearchIcon, Filter, BookmarkPlus } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
@@ -21,6 +22,19 @@ import {
 const COURTS = [
   "S.D.N.Y.", "N.D. Cal.", "D. Del.", "E.D. Tex.", "D.D.C.", "C.D. Cal.", "N.D. Ill.",
 ];
+
+/* CourtListener slug → our short display name. Only the courts that appear
+ * in COURTS above are pre-fillable today; other slugs are accepted as-is so
+ * the URL param round-trips even when no chip lights up. */
+const SLUG_TO_SHORT: Record<string, string> = {
+  nysd: "S.D.N.Y.",
+  cand: "N.D. Cal.",
+  ded: "D. Del.",
+  txed: "E.D. Tex.",
+  dcd: "D.D.C.",
+  cacd: "C.D. Cal.",
+  ilnd: "N.D. Ill.",
+};
 const NOS = [
   { code: "830", label: "Patent" },
   { code: "840", label: "Trade Secret" },
@@ -41,6 +55,18 @@ export default function SearchPage() {
   useEffect(() => {
     setSaved(loadSavedSearches());
   }, []);
+
+  // Honor `/search?court=<slug>` deep-links from /jurisdictions.
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const courtParam = searchParams.get("court");
+    if (courtParam) {
+      const short = SLUG_TO_SHORT[courtParam] ?? courtParam;
+      setActiveCourt(short);
+    }
+    const qParam = searchParams.get("q");
+    if (qParam) setQ(qParam);
+  }, [searchParams]);
 
   const currentQuery = useMemo(
     () => ({ q, court: activeCourt, nos: activeNos, scope }),

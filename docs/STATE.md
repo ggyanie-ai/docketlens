@@ -234,6 +234,17 @@
       to docs/ARCHITECTURE.md for the metric-source map. Synthetic
       green-state data today; layout stays once real signals wire
       Tuesday. Added to sitemap.
+- [x] `/jurisdictions` court directory: typed dataset of every
+      federal court (`src/content/jurisdictions.ts`) — 13 Circuit
+      Courts of Appeals, 94 District Courts grouped by region
+      (Northeast / Mid-Atlantic / South / Midwest / West / Federal
+      seat / Specialty), SCOTUS + 5 specialty courts (USCIT, Tax,
+      Veterans, Fed. Cl., C.A.A.F.). Every entry deep-links to
+      `/search?court=<CL-slug>`. `/search` now reads `?court=` and
+      `?q=` on mount and pre-fills filters — wired via a small
+      SLUG_TO_SHORT mapping for the courts present in the chip row.
+      Page also has a 5-cell totals strip + a "what we don't cover"
+      footer pointing to /legal/data-sources.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -270,10 +281,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/jurisdictions` page** — beautiful index of every covered
-      federal court (94 districts + 13 circuits + bankruptcy +
-      Supreme Court) grouped by region, with per-court deep-links
-      into `/search?court=…`. SEO + completeness signal.
 - [ ] **`/comparison` index** — landing for the /vs/* pages with a
       framing paragraph and links to vs/pacer + vs/lex-machina.
 - [ ] **`/.well-known/security.txt`** route + a small
