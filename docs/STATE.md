@@ -365,6 +365,16 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Dashboard "your embeds" card — surfaces the privacy-preserving
+      widget-impression rollups. Shows the top 5 embedded dockets by
+      load count (last 7 days) with a horizontal bar chart per row
+      against the running max, plus a grand-total badge for the last
+      30 days. Real case names + courts joined in from
+      `SAMPLE_DOCKETS`. External-link icon opens the standalone
+      widget. Empty state: explains the embed widget and links to
+      `/widget`. New helper `widgetTopDockets(days, limit)` added to
+      `src/lib/widget-pings.ts`. Card renders right after the
+      Leaderboard section on /dashboard.
 - [x] Widget impression counter — privacy-preserving aggregate
       pings. `GET /api/widget-ping?id=dkt_…` increments a
       `widget_pings` table keyed by (docket_id, UTC day) and returns
@@ -458,13 +468,18 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Surface widget-impression rollups in the dashboard** —
-      add a small "your embeds" card to /dashboard showing the
-      top-pinged dockets last 7 days. Read-only; reuses
-      `widgetStats()` + `widgetTotal()` helpers.
-- [ ] **`/api/v1/docket/{id}/ai-summaries`** — expose the three
+- [ ] **`/api/v1/dockets/{id}/ai-summaries`** — expose the three
       summary tiers (one_liner, paragraph, exec) through the public
       REST API. Pro+ keys only for `paragraph` + `exec`.
+- [ ] **`/widget/[id]/json`** — JSON twin of the iframe widget for
+      consumers that want the data, not the HTML. Same shape as
+      what the widget already renders (case name, court, top
+      entries) with a permanent cache-control + ETag.
+- [ ] **`/api/widget-stats?id=dkt_…`** — exposes the 7-day daily
+      series from `widgetStats()` as JSON. Owner-only (require an
+      org-scoped API key) — privacy promise is that *we* aren't
+      surfacing who's reading, only the embedder is reading their
+      own embed counts.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

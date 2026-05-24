@@ -23,6 +23,7 @@ import { CourtHeatmap } from "@/components/app/court-heatmap";
 import { Leaderboard } from "@/components/app/leaderboard";
 import { OnboardingChecklist } from "@/components/app/onboarding-checklist";
 import { DashboardDemoTag } from "@/components/app/dashboard-demo-tag";
+import { WidgetImpressionsCard } from "@/components/app/widget-impressions-card";
 
 const KPIS = [
   {
@@ -228,6 +229,11 @@ export default async function DashboardPage({
           {/* Leaderboard */}
           <section>
             <Leaderboard />
+          </section>
+
+          {/* Embed impressions (privacy-preserving aggregate) */}
+          <section>
+            <WidgetImpressionsCard />
           </section>
 
           {/* Recent activity feed */}

@@ -74,6 +74,29 @@ export async function widgetStats(
   return rows;
 }
 
+/**
+ * Top N dockets by impressions in the last `days` days. Returns
+ * `[{ docketId, total }, …]` highest-first. Used by the dashboard
+ * "your embeds" card.
+ */
+export async function widgetTopDockets(
+  days = 7,
+  limit = 5
+): Promise<{ docketId: string; total: number }[]> {
+  await ensureTable();
+  const cutoff = new Date();
+  cutoff.setUTCDate(cutoff.getUTCDate() - (days - 1));
+  const cutoffDay = utcDay(cutoff);
+  const rows = await db.all<{ docket_id: string; total: number }>(sql`
+    SELECT docket_id, SUM(count) AS total FROM widget_pings
+    WHERE day >= ${cutoffDay}
+    GROUP BY docket_id
+    ORDER BY total DESC
+    LIMIT ${limit}
+  `);
+  return rows.map((r) => ({ docketId: r.docket_id, total: Number(r.total) }));
+}
+
 /** Grand total across all dockets in the window. Cheap aggregate for ops dashboards. */
 export async function widgetTotal(days = 30): Promise<number> {
   await ensureTable();
