@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -18,6 +19,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const d = SAMPLE_DOCKETS.find((x) => x.id === id);
+  if (!d) return { title: "Docket not found" };
+
+  // oEmbed 1.0 discovery — adds two <link rel="alternate"> tags so unfurlers
+  // (Notion, Slack, Ghost, WordPress) can find /api/oembed for this docket.
+  const docketUrl = `${SITE}/demo/${d.id}`;
+  const oembedHref = `${SITE}/api/oembed?url=${encodeURIComponent(docketUrl)}&format=json`;
+
+  return {
+    title: `${d.caseNameShort} — ${d.court}`,
+    description: `${d.caseName} — ${d.natureOfSuit}. Filed ${d.filed}.`,
+    alternates: {
+      canonical: `/demo/${d.id}`,
+      types: {
+        "application/json+oembed": oembedHref,
+      },
+    },
+  };
+}
 
 const ENTRY_ICON: Record<string, typeof FileText> = {
   Complaint: FileText,

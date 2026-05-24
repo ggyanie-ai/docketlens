@@ -365,6 +365,17 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] oEmbed 1.0 discovery — `GET /api/oembed?url=<docket-url>&format=json`
+      returns `{ version, type: "rich", title, author_name (court),
+      provider_name, provider_url, cache_age, html (the widget iframe
+      tag), width, height }`. Accepts `maxwidth` / `maxheight`
+      (clamped to widget's natural bounds, never up-scales).
+      Unknown docket → 404; missing url → 400; XML → 501; CORS-open
+      so client-side unfurlers (Notion, Ghost, WordPress, Slack)
+      work. `/demo/[id]` now ships an `<link rel="alternate"
+      type="application/json+oembed" …>` discovery tag via
+      `generateMetadata.alternates.types`, so consumers can find the
+      endpoint by parsing the docket page's `<head>`.
 - [x] `/docs/api-reference` interactive API reference — renders the
       OpenAPI 3.1 spec directly from the typed `openapi` object (no
       Redoc, Scalar, or Stoplight JS bundle). Two-pane layout:
@@ -430,10 +441,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`/oembed` endpoint** — minimal oEmbed JSON discovery for
-      `/widget/[id]` so Notion / Wordpress / Ghost auto-unfurl the
-      iframe when users paste a `docketlens.ai/demo/dkt_…` link.
-      Spec: https://oembed.com.
 - [ ] **Per-widget event ping (optional, privacy-preserving)** —
       add a `1x1` server-side `<img>` ping to each widget render
       so we can answer "is anyone embedding these" without setting
