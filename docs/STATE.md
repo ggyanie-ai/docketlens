@@ -365,6 +365,26 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Per-route sitemap priority + changeFrequency tune-up.
+      Replaced the flat `priority: 0.7, freq: weekly` default
+      with a per-route RouteSpec table. Resulting distribution:
+        1.0  home (daily)
+        0.9  /pricing, /demo (monthly, daily)
+        0.85 /docs/api-reference (monthly)
+        0.8  /blog, /docs, /vs/pacer, /vs/lex-machina,
+             /comparison, persona pages (/use/*)
+        0.7  blog posts, public docs, /changelog
+        0.6  /about, /contact, /glossary, /jurisdictions,
+             /lookup, /widget, demo dockets (daily)
+        0.5  /press, /security, /donate, /tools/verify-webhook,
+             /feeds
+        0.4  /status, /shortcuts, /signup, /legal/data-sources
+        0.3  feed routes (hourly), /login, /legal/{privacy,
+             terms}, /feeds.opml
+      changeFrequency tuned per surface: feeds hourly (so
+      aggregators re-crawl), /demo daily, /status hourly,
+      /legal/* yearly, etc. Comment block at the top documents
+      the weighting rationale.
 - [x] /robots.txt expanded with belt-and-suspenders Disallow for
       /widget/dkt_ (per-docket iframe pages — already noindex via
       metadata but reinforced here), /inbox, /audit-log,
@@ -683,14 +703,15 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **`<link rel="canonical">` on /demo/[id]** — already set via
-      generateMetadata.alternates.canonical when oEmbed was added,
-      but spot-check that the canonical href stays correct after
-      the absolute-URL fix in metadataBase.
-- [ ] **Per-route sitemap priority tune-up** — current sitemap
-      treats every static route as priority 0.7. Bump /, /pricing,
-      /demo to 0.9; demote /legal/* and /feeds.opml to 0.3.
-      Marginal but signals what we actually care about.
+- [ ] **Watchlist suggestions seed** — on a fresh /watchlists
+      empty state, suggest 5–8 prebuilt watchlists (e.g.
+      "Apple Inc.", "Hon. Alsup", "Kirkland & Ellis", "Securities
+      §10(b) — SDNY"). Reduces blank-page friction.
+- [ ] **Pricing FAQ inline below comparison table** — 6–8
+      pre-empts of the questions we expect ("Does Free really
+      include 1 watchlist?", "Can I BYO CourtListener token?",
+      "What happens at 50,000 API calls?"). Keeps people on the
+      page through the decision.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
