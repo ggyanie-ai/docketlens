@@ -9,12 +9,16 @@ export async function GET() {
     version: "v1",
     docs: "https://docketlens.ai/docs/api",
     auth: "Bearer dkl_live_…",
+    openapi: "/api/v1/openapi.json",
+    health: "/api/health",
     endpoints: [
       { method: "GET",  path: "/api/v1/dockets",         desc: "List recent dockets" },
       { method: "GET",  path: "/api/v1/dockets/:id",     desc: "Get one docket with entries + parties" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
       { method: "POST", path: "/api/v1/watchlists",      desc: "Create a watchlist (Team plan)" },
+      { method: "GET",  path: "/api/v1/openapi.json",    desc: "OpenAPI 3.1 spec for this API" },
+      { method: "GET",  path: "/api/health",             desc: "Liveness probe (no auth)" },
     ],
   });
 }
