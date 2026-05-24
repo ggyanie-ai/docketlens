@@ -245,6 +245,15 @@
       SLUG_TO_SHORT mapping for the courts present in the chip row.
       Page also has a 5-cell totals strip + a "what we don't cover"
       footer pointing to /legal/data-sources.
+- [x] `/comparison` index: editorial hero + 2 large shipped-
+      comparison cards (PACER, Lex Machina) each with category
+      badge, positioning paragraph, pricing-wedge mini-card, deep
+      link into /vs/[slug]. "Coming next" 4-tile grid (Bloomberg
+      Law / Docket Navigator / CourtListener / Westlaw Edge) with
+      Q3-Q4 ETA badges. "Our comparison house style" note that
+      codifies the lead-with-what-the-competitor-does-better policy.
+      Footer Resources column gains a Comparisons link; sitemap
+      includes /comparison.
 
 ### Engine
 - [x] CourtListener REST v4 client (typed, rate-limited)
@@ -281,8 +290,6 @@ of work, sized to fit one wakeup.
   content + features below)_
 
 ### Content
-- [ ] **`/comparison` index** — landing for the /vs/* pages with a
-      framing paragraph and links to vs/pacer + vs/lex-machina.
 - [ ] **`/.well-known/security.txt`** route + a small
       `/security` page describing PGP key, scope, response time,
       and Hall of Fame placeholder.
