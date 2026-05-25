@@ -76,7 +76,7 @@ export default function SettingsPage() {
   return (
     <>
       <Topbar title="Settings" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-5xl px-6 py-8">
           <Tabs defaultValue="profile">
             <TabsList className="mb-8">

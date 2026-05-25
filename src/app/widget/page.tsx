@@ -40,7 +40,7 @@ export default function WidgetIndexPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-4xl px-6 py-16">
           <Badge>Embeddable widget</Badge>
           <h1 className="font-serif text-5xl md:text-6xl tracking-tight mt-4">

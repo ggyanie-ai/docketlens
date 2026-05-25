@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl px-6 py-20 md:py-32 text-center">
+      <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-20 md:py-32 text-center">
         <p className="eyebrow mb-4">404</p>
         <h1 className="display-1">
           That docket is{" "}

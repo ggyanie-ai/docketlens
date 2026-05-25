@@ -13,7 +13,7 @@ export default function AppNotFound() {
   return (
     <>
       <Topbar title="Not found" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl px-6 py-20 text-center">
           <div className="mx-auto mb-6 inline-flex size-14 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-bg-subtle)]">
             <FileQuestion className="size-6 text-[color:var(--color-fg-muted)]" />

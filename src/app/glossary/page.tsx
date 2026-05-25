@@ -25,7 +25,7 @@ export default function GlossaryPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Hero */}
         <section className="mx-auto max-w-5xl px-6 pt-16 md:pt-20 pb-10">
           <div className="flex items-center gap-2 mb-4">

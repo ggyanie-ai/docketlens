@@ -127,7 +127,7 @@ export default async function EmailPreviewPage({
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-5xl px-6 pt-12 md:pt-16 pb-6">
           <Link
             href={"/" as never}

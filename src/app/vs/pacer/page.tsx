@@ -97,7 +97,7 @@ export default function VsPacerPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div aria-hidden className="absolute inset-0 -z-10 bg-grid mask-fade-y opacity-30" />

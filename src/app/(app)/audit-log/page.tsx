@@ -177,7 +177,7 @@ export default function AuditLogPage() {
   return (
     <>
       <Topbar title="Audit log" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-5xl px-6 py-8 flex flex-col gap-6">
           {/* Admin gate notice */}
           <Card className="p-5 flex items-start gap-4 bg-gradient-to-br from-[color:var(--color-accent-soft)]/30 to-transparent">

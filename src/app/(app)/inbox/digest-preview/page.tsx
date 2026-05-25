@@ -100,7 +100,7 @@ export default function DigestPreviewPage() {
   return (
     <>
       <Topbar title="Daily digest preview" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl px-6 py-8 flex flex-col gap-6">
           <div>
             <Link

@@ -100,7 +100,7 @@ export default async function WatchlistPreviewPage({
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-3xl px-6 pt-12 md:pt-16 pb-8">
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <Badge variant="outline" className="inline-flex items-center gap-1">

@@ -16,7 +16,7 @@ export default function DemoPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-7xl px-6 pt-16 md:pt-24 pb-12">
           <p className="eyebrow mb-4">Live demo</p>
           <h1 className="display-1">See the product without signing up.</h1>

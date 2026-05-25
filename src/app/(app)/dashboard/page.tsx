@@ -93,7 +93,7 @@ export default async function DashboardPage({
     return (
       <>
         <Topbar title="Dashboard" />
-        <main className="flex-1 overflow-y-auto">
+        <main id="main" className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-5xl px-6 py-12">
             <div className="mb-6 flex items-center gap-2 flex-wrap">
               <p className="eyebrow">Empty-org preview</p>
@@ -114,7 +114,7 @@ export default async function DashboardPage({
   return (
     <>
       <Topbar title="Dashboard" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         {focus && (
           <script
             dangerouslySetInnerHTML={{

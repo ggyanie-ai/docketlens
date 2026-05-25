@@ -6,7 +6,7 @@ export default function AlertsLoading() {
   return (
     <>
       <Topbar title="Alerts" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
           <section>
             <div className="flex items-end justify-between mb-4">

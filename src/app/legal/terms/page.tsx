@@ -8,7 +8,7 @@ export default function TermsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
+      <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Legal</p>
         <h1 className="display-2">Terms of Service</h1>
         <p className="mt-4 text-sm text-[color:var(--color-fg-subtle)] font-mono">

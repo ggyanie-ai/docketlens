@@ -46,7 +46,7 @@ export default function VerifyWebhookPage() {
         ]}
       />
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-3xl px-6 pt-16 pb-12">
           <p className="eyebrow mb-3">Tools</p>
           <h1 className="display-1">

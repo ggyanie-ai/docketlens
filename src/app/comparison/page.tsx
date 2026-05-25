@@ -72,7 +72,7 @@ export default function ComparisonIndexPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Hero */}
         <section className="mx-auto max-w-7xl px-6 pt-16 md:pt-24 pb-12">
           <p className="eyebrow mb-4">Comparisons</p>

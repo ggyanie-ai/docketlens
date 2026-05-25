@@ -73,7 +73,7 @@ export default function InboxPage() {
     return (
       <>
         <Topbar title="Inbox" />
-        <main className="flex-1 overflow-y-auto">
+        <main id="main" className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
             <div className="flex justify-center mb-5">
               <span className="relative inline-flex">
@@ -203,7 +203,7 @@ export default function InboxPage() {
   return (
     <>
       <Topbar title="Inbox" />
-      <main className="flex-1 overflow-hidden">
+      <main id="main" className="flex-1 overflow-hidden">
         <div className="mx-auto h-full max-w-7xl px-6 py-6 flex flex-col gap-4">
           {/* Toolbar */}
           <div className="flex items-center justify-between gap-4 flex-wrap">

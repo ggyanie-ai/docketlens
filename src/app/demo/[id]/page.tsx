@@ -78,7 +78,7 @@ export default async function DemoDocketPage({
         ]}
       />
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <Link
             href={"/demo" as never}

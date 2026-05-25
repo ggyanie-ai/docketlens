@@ -475,7 +475,7 @@ export default function ApiReferencePage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-6xl px-6 pt-16 pb-10">
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>

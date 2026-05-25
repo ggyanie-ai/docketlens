@@ -147,7 +147,7 @@ export default function ApiKeysPage() {
     return (
       <>
         <Topbar title="API keys" />
-        <main className="flex-1 overflow-y-auto">
+        <main id="main" className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
             <div className="flex justify-center mb-5">
               <span className="relative inline-flex">
@@ -265,7 +265,7 @@ export default function ApiKeysPage() {
   return (
     <>
       <Topbar title="API keys" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-5xl px-6 py-8 flex flex-col gap-6">
           <Card className="p-6 flex items-start gap-4 bg-gradient-to-br from-[color:var(--color-accent-soft)]/30 to-transparent">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-accent)]/15 text-[color:var(--color-accent)]">

@@ -19,7 +19,7 @@ export default function DataSourcesPage() {
         ]}
       />
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
+      <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Where this comes from</p>
         <h1 className="display-2">Data sources</h1>
 

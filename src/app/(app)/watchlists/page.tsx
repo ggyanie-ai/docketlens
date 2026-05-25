@@ -29,7 +29,7 @@ export default async function WatchlistsPage({
     return (
       <>
         <Topbar title="Watchlists" />
-        <main className="flex-1 overflow-y-auto">
+        <main id="main" className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="eyebrow">Empty-org preview</p>
@@ -67,7 +67,7 @@ export default async function WatchlistsPage({
   return (
     <>
       <Topbar title="Watchlists" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-6">
           <div className="flex items-end justify-between">
             <div>

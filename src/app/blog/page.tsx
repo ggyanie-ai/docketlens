@@ -16,7 +16,7 @@ export default function BlogIndex() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
+      <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Notes from the workbench</p>
         <h1 className="display-1">Blog</h1>
         <p className="mt-6 text-lg text-[color:var(--color-fg-muted)] leading-relaxed max-w-2xl">

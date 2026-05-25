@@ -6,7 +6,7 @@ export default function DocketLoading() {
   return (
     <>
       <Topbar title="Case" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-6xl px-6 py-8">
           <Skeleton className="h-3 w-32 mb-6" />
 

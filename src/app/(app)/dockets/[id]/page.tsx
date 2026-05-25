@@ -51,7 +51,7 @@ export default async function DocketDetailPage({
     <>
       <TimelineKeyboardNav />
       <Topbar title="Case" />
-      <main className="flex-1 overflow-y-auto">
+      <main id="main" className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-6xl px-6 py-8">
           <div className="mb-6">
             <Link

@@ -152,7 +152,7 @@ export default function StatusPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         {/* Overall banner */}
         <section className="mx-auto max-w-5xl px-6 pt-16 md:pt-20 pb-8">
           <p className="eyebrow mb-4">Status</p>

@@ -100,7 +100,7 @@ export default function FeedsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-4xl px-6 pt-16 pb-10">
           <p className="eyebrow mb-3">Feeds</p>
           <h1 className="display-1">

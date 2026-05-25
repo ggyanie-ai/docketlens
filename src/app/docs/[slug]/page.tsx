@@ -61,7 +61,7 @@ export default async function DocPage({
         ]}
       />
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <div className="mx-auto max-w-4xl px-6 pt-12 md:pt-16 pb-6">
           <Link
             href={"/docs" as never}
