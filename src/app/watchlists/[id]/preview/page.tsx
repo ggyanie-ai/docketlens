@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SAMPLE_WATCHLISTS, SAMPLE_DOCKETS } from "@/lib/sample-data";
 import { timeAgo } from "@/lib/utils";
+import { CopyLinkButton } from "@/components/app/copy-link-button";
 
 /* ============================================================================
  *  /watchlists/[id]/preview — public read-only share page
@@ -110,6 +111,10 @@ export default async function WatchlistPreviewPage({
             <span className="font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]">
               Read-only · no auth
             </span>
+            <CopyLinkButton
+              url={`${SITE}/watchlists/${w.id}/preview`}
+              title={`${w.name} — DocketLens watchlist`}
+            />
           </div>
 
           <p className="eyebrow mb-3 inline-flex items-center gap-2">

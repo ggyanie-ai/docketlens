@@ -99,6 +99,65 @@ export default function SearchPage() {
     setSaving(false);
   }
 
+  // Hoist the CSV export so both the button onClick and the ⌘E shortcut
+  // share one code path. Reads the latest `filtered` via closure.
+  const exportCsv = () => {
+    if (filtered.length === 0) {
+      toast("Nothing to export", { description: "Broaden the filters first." });
+      return;
+    }
+    const rows = filtered.map((d) => ({
+      court: d.court,
+      case_number: d.caseNumber,
+      case_name: d.caseName,
+      nature_of_suit: d.natureOfSuit,
+      nos_code: d.natureOfSuitCode,
+      cause: d.cause,
+      jury_demand: d.juryDemand,
+      status: d.status,
+      judge: d.judge,
+      filed: d.filed,
+      last_filing:
+        d.entries[d.entries.length - 1]?.dateFiled ?? d.filed,
+      entry_count: d.entries.length,
+      plaintiffs: d.parties
+        .filter((p) => /plaintiff|petitioner/i.test(p.role))
+        .map((p) => p.name),
+      defendants: d.parties
+        .filter((p) => /defendant|respondent/i.test(p.role))
+        .map((p) => p.name),
+      tags: d.tags,
+      latest_ai_summary:
+        d.entries[d.entries.length - 1]?.summaryOne ?? "",
+      url: `https://docketlens.ai/dockets/${d.id}`,
+    }));
+    const stamp = new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")
+      .slice(0, 19);
+    downloadCsv(rows, `docketlens-search-${stamp}.csv`);
+    toast.success("CSV ready", {
+      description: `${rows.length} rows · ${Object.keys(rows[0] ?? {}).length} columns`,
+    });
+  };
+
+  // ⌘E / Ctrl+E → export current results. Skip when a contenteditable is
+  // focused (the browser's "open bookmark bar" Ctrl+E is rare; we'd rather
+  // not fight the user inside form inputs).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "e") return;
+      const tag = (document.activeElement?.tagName ?? "").toLowerCase();
+      if (tag === "input" || tag === "textarea") return;
+      e.preventDefault();
+      exportCsv();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // exportCsv captures the latest `filtered` via closure on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
   const filtered = useMemo(() => {
     return SAMPLE_DOCKETS.filter((d) => {
       if (q) {
@@ -234,44 +293,17 @@ export default function SearchPage() {
                 variant="outline"
                 size="sm"
                 disabled={filtered.length === 0}
-                onClick={() => {
-                  const rows = filtered.map((d) => ({
-                    court: d.court,
-                    case_number: d.caseNumber,
-                    case_name: d.caseName,
-                    nature_of_suit: d.natureOfSuit,
-                    nos_code: d.natureOfSuitCode,
-                    cause: d.cause,
-                    jury_demand: d.juryDemand,
-                    status: d.status,
-                    judge: d.judge,
-                    filed: d.filed,
-                    last_filing:
-                      d.entries[d.entries.length - 1]?.dateFiled ?? d.filed,
-                    entry_count: d.entries.length,
-                    plaintiffs: d.parties
-                      .filter((p) => /plaintiff|petitioner/i.test(p.role))
-                      .map((p) => p.name),
-                    defendants: d.parties
-                      .filter((p) => /defendant|respondent/i.test(p.role))
-                      .map((p) => p.name),
-                    tags: d.tags,
-                    latest_ai_summary:
-                      d.entries[d.entries.length - 1]?.summaryOne ?? "",
-                    url: `https://docketlens.ai/dockets/${d.id}`,
-                  }));
-                  const stamp = new Date()
-                    .toISOString()
-                    .replace(/[:.]/g, "-")
-                    .slice(0, 19);
-                  downloadCsv(rows, `docketlens-search-${stamp}.csv`);
-                  toast.success("CSV ready", {
-                    description: `${rows.length} rows · ${Object.keys(rows[0] ?? {}).length} columns`,
-                  });
-                }}
+                onClick={exportCsv}
+                title="Export current results as CSV (⌘E / Ctrl+E)"
               >
                 <Download className="size-3.5" />
                 Export CSV
+                <span
+                  aria-hidden
+                  className="ml-1 hidden md:inline-flex items-center rounded-md border border-[color:var(--color-border)] px-1 py-0 font-mono text-[9.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]"
+                >
+                  ⌘E
+                </span>
               </Button>
             </div>
           </div>

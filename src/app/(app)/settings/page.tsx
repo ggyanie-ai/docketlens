@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowUpRight, ScrollText } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
@@ -8,6 +10,67 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { WebhookSigningCard } from "@/components/app/webhook-signing-card";
+import { SAMPLE_AUDIT_EVENTS } from "@/lib/sample-audit";
+import { timeAgo } from "@/lib/utils";
+
+function SettingsAuditPreview() {
+  const recent = [...SAMPLE_AUDIT_EVENTS]
+    .sort(
+      (a, b) =>
+        new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
+    )
+    .slice(0, 10);
+  return (
+    <div className="mt-2">
+      <div className="flex items-end justify-between gap-3 mb-2">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+            Recent audit events
+          </p>
+          <p className="text-xs text-[color:var(--color-fg-muted)] mt-0.5">
+            Last 10 across the org — full timeline + CSV export at /audit-log.
+          </p>
+        </div>
+        <Button asChild variant="ghost" size="sm">
+          <Link href={"/audit-log" as never}>
+            <ScrollText className="size-3.5" />
+            Open audit log
+            <ArrowUpRight className="size-3" />
+          </Link>
+        </Button>
+      </div>
+      <div className="rounded-[var(--radius-md)] border border-[color:var(--color-border)] overflow-hidden">
+        <ul className="divide-y divide-[color:var(--color-border)]">
+          {recent.map((e) => (
+            <li
+              key={e.id}
+              className="px-3 py-2 flex items-center gap-3 text-[12px]"
+            >
+              <code className="font-mono text-[11px] text-[color:var(--color-fg)] truncate max-w-[200px]">
+                {e.action}
+              </code>
+              <span className="text-[color:var(--color-fg-muted)] truncate min-w-0 flex-1">
+                {e.actor.name}
+                {e.target ? (
+                  <>
+                    {" "}
+                    <span className="text-[color:var(--color-fg-subtle)]">
+                      →
+                    </span>{" "}
+                    {e.target}
+                  </>
+                ) : null}
+              </span>
+              <span className="font-mono text-[10.5px] text-[color:var(--color-fg-subtle)] shrink-0">
+                {timeAgo(e.occurredAt)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
   return (
@@ -198,6 +261,7 @@ export default function SettingsPage() {
                       <Badge variant="success">Current</Badge>
                     </div>
                   </Field>
+                  <SettingsAuditPreview />
                 </div>
               </Card>
             </TabsContent>
