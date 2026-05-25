@@ -854,50 +854,43 @@ of work, sized to fit one wakeup.
       ui/skeleton.tsx could be `motion-safe:` for clarity.
 
 ### Content
-- [ ] **Ninth blog post** — "What the OpenAPI 3.1 spec lets
-      consumers do that 3.0 didn't." Engineering tag. Short.
-- [ ] **Tenth blog post** — "The court records we don't have
-      yet, and why." Industry tag. Covers state courts, sealed
-      docs, magistrate-only matters.
-- [ ] **Two more glossary terms** — "in camera review" and
-      "PSLRA pleading standard." Both come up in security-class +
-      product-liability work.
+- [ ] **Eleventh blog post** — "The pricing question we hear most
+      often: 'what counts as a watchlist?'" Industry tag.
+      ~5 min. Definitional but useful for evaluators.
+- [ ] **Two more glossary terms** — "scheduling conference"
+      (procedural) and "Brady material" (criminal-adjacent,
+      occasionally pops up in civil-rights dockets).
 
 ### Features
-- [ ] **OpenAPI spec for /api/v1/usage** — endpoint shipped in
-      723aad0; needs a path + Usage schema in `src/lib/openapi.ts`.
-- [ ] **`/api/v1/dockets` rate-limit response headers** — emit
-      `x-ratelimit-limit`, `x-ratelimit-remaining`,
-      `x-ratelimit-reset` so clients can self-pace before the
-      live meter ships.
-- [ ] **`/inbox/digest-preview`** — render exactly what
-      tomorrow's daily-digest email would look like, using the
-      current watchlist matches. Pairs with the daily-digest
-      template in the alert engine.
-- [ ] **404 telemetry** — small `/api/log-404?path=` endpoint
-      the DidYouMean island optionally POSTs to so we know which
-      typos to redirect. Disabled by default (DO_NOT_TRACK style
-      flag on root settings).
-- [ ] **/api/v1/saved-searches CRUD** — currently only the feed
-      siblings exist. Add GET/POST/PATCH/DELETE so API consumers
-      can manage saved searches programmatically.
-- [ ] **Search-result row keyboard navigate** — `↑` / `↓` moves
-      focus through the rows on /search; `enter` opens the
-      docket.
-- [ ] **`prefers-color-scheme` indicator in topbar** — small
-      sun/moon glyph on the topbar showing which mode is
-      active. Already in command palette; bring to the topbar
-      for hover discoverability.
-- [ ] **`/widget/[id]` ?hide=footer toggle** — embedders can opt
-      out of the attribution footer at the cost of paying a higher
-      tier. Today the footer is mandatory; this introduces the
-      mechanism (just the flag; the gating logic lands later).
+- [ ] **OpenAPI spec for /api/v1/saved-searches CRUD** —
+      endpoints shipped this tick (9cc6919); needs path + schema
+      entries in `src/lib/openapi.ts` for SavedSearch + create/
+      update bodies. Mirror what /api/v1/watchlists already
+      does.
+- [ ] **`/api/v1/dockets/{id}/ai-summaries` triggers an on-demand
+      summarization** — today returns null when no cache + no
+      sample seed exists. Add a `POST /api/v1/dockets/{id}/
+      ai-summaries/refresh` (Pro+) that queues a background
+      regen.
+- [ ] **CL pool header on /api/v1/* responses** — emit
+      `x-docketlens-cl-pool-remaining` so ingest-aware clients
+      can back off when we're saturated. Read from
+      `courtListenerPoolSnapshot()`.
+- [ ] **/api/v1/dockets/{id} ETag** — strong ETag derived from
+      max(updatedAt across entries + parties + the docket row
+      itself). 304 on If-None-Match. Adds nothing to the payload
+      and saves significant client bandwidth on poll loops.
 - [ ] **Watchlist `priority` field** — Pro+ feature, ranks
-      matches in delivery order. Schema-only for v0; UI lands
-      in 0.2.0.
-- [ ] **`/api/v1/health` mirror** — many consumers expect
-      `/v1/health` rather than `/api/health`. Cheap alias with
-      a 301 to the canonical.
+      matches in delivery order. Drizzle column + migration
+      pending until Tuesday's auth wire-up coordinates the
+      database push.
+- [ ] **`/dashboard?focus=embeds`** — deep-link anchor that
+      scroll-snaps to the "Your embeds" card. Tiny but lets us
+      link to specific dashboard sections from the marketing
+      site.
+- [ ] **`x-robots-tag: noindex`** on every /widget/* response
+      from the HTTP layer (already in metadata; reinforces via
+      next.config headers).
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
