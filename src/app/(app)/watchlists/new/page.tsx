@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Building2, User, Gavel, Briefcase, BookOpen, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowLeft, Building2, User, Gavel, Briefcase, BookOpen, Search, Sparkles } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
 import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
@@ -34,12 +35,41 @@ const CADENCE = [
   { key: "daily", label: "Daily", note: "Free + Pro" },
 ] as const;
 
+type TypeKey = (typeof TYPES)[number]["key"];
+
+const VALID_TYPES = new Set<TypeKey>([
+  "party",
+  "attorney",
+  "judge",
+  "lawfirm",
+  "case",
+  "term",
+]);
+
+function csv(raw: string | null): string[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 export default function NewWatchlistPage() {
-  const [type, setType] = useState<(typeof TYPES)[number]["key"]>("party");
-  const [name, setName] = useState("");
-  const [match, setMatch] = useState("");
-  const [courts, setCourts] = useState<string[]>([]);
-  const [nos, setNos] = useState<string[]>([]);
+  // Prefill from a watchlist-template deep-link. Falls back to empty when no
+  // query params are present, so the form behaves identically for both the
+  // template flow and the "start from scratch" flow.
+  const params = useSearchParams();
+  const templateId = params.get("template");
+  const initialType: TypeKey = (() => {
+    const t = params.get("type") as TypeKey | null;
+    return t && VALID_TYPES.has(t) ? t : "party";
+  })();
+
+  const [type, setType] = useState<TypeKey>(initialType);
+  const [name, setName] = useState(params.get("name") ?? "");
+  const [match, setMatch] = useState(params.get("match") ?? "");
+  const [courts, setCourts] = useState<string[]>(csv(params.get("courts")));
+  const [nos, setNos] = useState<string[]>(csv(params.get("nos")));
   const [cadence, setCadence] = useState<(typeof CADENCE)[number]["key"]>("daily");
   const [description, setDescription] = useState("");
 
@@ -62,9 +92,25 @@ export default function NewWatchlistPage() {
           </div>
 
           <h1 className="display-2 mb-3">Watch something new.</h1>
-          <p className="text-base text-[color:var(--color-fg-muted)] mb-10 max-w-2xl leading-relaxed">
+          <p className="text-base text-[color:var(--color-fg-muted)] mb-6 max-w-2xl leading-relaxed">
             We&apos;ll resolve aliases automatically. Apple Inc. matches Apple, Inc., APPLE INC., and Apple Computer Inc. Filters tighten the matches you&apos;re alerted on.
           </p>
+
+          {templateId && (
+            <div className="mb-10 inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-accent)]/30 bg-[color:var(--color-accent-soft)]/30 px-3 py-1.5 text-xs">
+              <Sparkles className="size-3 text-[color:var(--color-accent)]" />
+              <span className="text-[color:var(--color-fg)]">
+                Pre-filled from template{" "}
+                <code className="font-mono">{templateId}</code>
+              </span>
+              <Link
+                href={"/watchlists?empty=1" as never}
+                className="ml-2 text-[color:var(--color-fg-muted)] underline underline-offset-2 hover:text-[color:var(--color-fg)]"
+              >
+                pick different
+              </Link>
+            </div>
+          )}
 
           <div className="flex flex-col gap-10">
             <section>

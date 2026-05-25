@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Empty } from "@/components/ui/empty";
 import { SAMPLE_WATCHLISTS } from "@/lib/sample-data";
+import { WatchlistSuggestions } from "@/components/app/watchlist-suggestions";
 
 const TYPE_LABEL: Record<string, string> = {
   party: "Party",
@@ -16,7 +17,53 @@ const TYPE_LABEL: Record<string, string> = {
   term: "Term search",
 };
 
-export default function WatchlistsPage() {
+export default async function WatchlistsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ empty?: string }>;
+}) {
+  const sp = await searchParams;
+  const isEmpty = sp.empty === "1";
+
+  if (isEmpty) {
+    return (
+      <>
+        <Topbar title="Watchlists" />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="eyebrow">Empty-org preview</p>
+              <Link
+                href={"/watchlists" as never}
+                className="text-xs font-mono text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] underline underline-offset-2"
+              >
+                ← back to populated view
+              </Link>
+            </div>
+
+            <div className="flex items-end justify-between gap-4 flex-wrap">
+              <div>
+                <h1 className="display-2">No watchlists yet.</h1>
+                <p className="mt-2 text-base text-[color:var(--color-fg-muted)] max-w-xl leading-relaxed">
+                  Pick a starter below — it&apos;ll open the new-watchlist
+                  form pre-filled — or build one from scratch.
+                </p>
+              </div>
+              <Button asChild variant="outline">
+                <Link href={"/watchlists/new" as never}>
+                  <PlusCircle className="size-4" />
+                  Start from scratch
+                </Link>
+              </Button>
+            </div>
+
+            <WatchlistSuggestions />
+          </div>
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <Topbar title="Watchlists" />

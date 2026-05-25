@@ -365,6 +365,21 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Watchlist starter templates on the empty /watchlists state.
+      Six prebuilt suggestions spanning every entity type we
+      support: Apple Inc. (party), Hon. Alsup (judge),
+      Kirkland & Ellis (lawfirm), Securities §10(b) — SDNY,
+      Patent suits — E.D. Tex., Antitrust — D.D.C. (all term
+      searches with NOS + court filters). Each card is a deep-link
+      to /watchlists/new with `?template=&type=&name=&match=&courts=&nos=`
+      params; the new-watchlist form now reads them via
+      `useSearchParams()` in its useState initialisers and shows a
+      "Pre-filled from template tpl_xxx" hint badge with a "pick
+      different" backlink to `/watchlists?empty=1`. New files:
+      `src/lib/watchlist-templates.ts` (typed templates +
+      templateHref builder) and `src/components/app/watchlist-suggestions.tsx`
+      (icon-per-card grid). /watchlists now accepts `?empty=1` to
+      preview the empty state (matches the dashboard convention).
 - [x] Per-route sitemap priority + changeFrequency tune-up.
       Replaced the flat `priority: 0.7, freq: weekly` default
       with a per-route RouteSpec table. Resulting distribution:
@@ -703,15 +718,15 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Watchlist suggestions seed** — on a fresh /watchlists
-      empty state, suggest 5–8 prebuilt watchlists (e.g.
-      "Apple Inc.", "Hon. Alsup", "Kirkland & Ellis", "Securities
-      §10(b) — SDNY"). Reduces blank-page friction.
 - [ ] **Pricing FAQ inline below comparison table** — 6–8
       pre-empts of the questions we expect ("Does Free really
       include 1 watchlist?", "Can I BYO CourtListener token?",
       "What happens at 50,000 API calls?"). Keeps people on the
       page through the decision.
+- [ ] **OnboardingChecklist "create a watchlist" step links to
+      `?empty=1`** — currently the checklist links to /watchlists/new;
+      routing through the empty-state surfaces our new templates
+      one click earlier.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
