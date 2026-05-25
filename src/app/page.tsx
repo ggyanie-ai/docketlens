@@ -9,6 +9,7 @@ import { UseCases } from "@/components/marketing/use-cases";
 import { PricingPreview } from "@/components/marketing/pricing-preview";
 import { Faq } from "@/components/marketing/faq";
 import { FinalCta } from "@/components/marketing/final-cta";
+import { WebSiteJsonLd } from "@/lib/structured-data";
 
 const SITE = "https://docketlens.ai";
 
@@ -100,6 +101,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SOFTWARE_LD) }}
       />
+      <WebSiteJsonLd />
       <SiteHeader />
       <main className="flex-1">
         <Hero />

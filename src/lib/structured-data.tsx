@@ -124,6 +124,45 @@ export function ArticleJsonLd({ meta }: { meta: ArticleMeta }): ReactElement {
 }
 
 /**
+ * WebSite JSON-LD with a SearchAction. Mounting on `/` makes the site
+ * eligible for Google's sitelinks search box treatment — a small search
+ * input rendered directly under the site's SERP entry that submits to
+ * `/search?q=…`.
+ *
+ * The required-input `{search_term_string}` placeholder must remain
+ * literal in the URL template; Google substitutes it at search time. The
+ * `query-input` value is the required structured-data assertion.
+ */
+export function WebSiteJsonLd(): ReactElement {
+  const payload = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}/#website`,
+    name: "DocketLens",
+    alternateName: "DocketLens — AI court docket intelligence",
+    url: SITE,
+    description:
+      "AI-summarized federal court dockets. Watch any party, judge, or law firm.",
+    inLanguage: "en-US",
+    publisher: { "@type": "Organization", name: "DocketLens", url: SITE },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE}/search?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
+  );
+}
+
+/**
  * Render a JSON-LD `<script>` for an Organization. Pairs with the
  * SoftwareApplication entity on `/` — Google resolves them through the
  * shared `publisher` field. Mount on `/about` so the entity has a stable
