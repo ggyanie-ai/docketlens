@@ -365,6 +365,20 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Dataset JSON-LD on /legal/data-sources. New
+      `<DatasetJsonLd />` helper. Payload deliberately models
+      lineage correctly: `creator: Free Law Project` (the
+      RECAP/CourtListener originator) + `publisher: DocketLens`
+      (we re-publish + augment). License = CC0 (matches public-
+      records status). Includes 8 keywords aimed at Google
+      Dataset Search ("federal court dockets", "PACER
+      alternative", etc.), spatialCoverage (United States),
+      temporalCoverage `1996-01-01/..` (PACER launch), and a
+      `distribution[]` with two DataDownload entries (our REST
+      API + the saved-search RSS template). sameAs[] points to
+      CourtListener + free.law/recap. Mounted on
+      /legal/data-sources alongside a Breadcrumb. Verified
+      payload + both scripts ship on the page.
 - [x] WebSite + SearchAction JSON-LD on /. New
       `<WebSiteJsonLd />` helper in
       `src/lib/structured-data.tsx` emits `@type: WebSite` with a
@@ -819,10 +833,11 @@ of work, sized to fit one wakeup.
       emit `@type: Person` with sameAs/url when an individual
       authored the post. Pulls from a new `authorUrl` field on
       Post.
-- [ ] **Dataset JSON-LD on /legal/data-sources** — `@type: Dataset`
-      describing the RECAP-derived corpus we index (license,
-      provider = Free Law Project, sameAs[]). Helps Google Dataset
-      Search surface us for "federal court docket dataset" queries.
+- [ ] **HowTo JSON-LD on /tools/verify-webhook** — the page is
+      literally a step-by-step. Emitting `@type: HowTo` with the
+      three steps (paste secret · paste body · paste signature)
+      could earn a rich-result card for "verify webhook
+      signature" SERPs.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

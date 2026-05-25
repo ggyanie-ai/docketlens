@@ -54,6 +54,79 @@ export function BreadcrumbJsonLd({
   );
 }
 
+/**
+ * Dataset JSON-LD describing the public-records corpus we surface. Aimed at
+ * Google Dataset Search (datasetsearch.research.google.com), which can
+ * route researchers + journalists to /legal/data-sources for queries like
+ * "federal court docket dataset."
+ *
+ * We are NOT the dataset's creator — that's the Free Law Project (RECAP +
+ * CourtListener). We re-publish it under the same public-domain license
+ * that the source data carries; this entity asserts that lineage so we
+ * don't accidentally claim authorship of public records.
+ */
+export function DatasetJsonLd(): ReactElement {
+  const payload = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: "U.S. federal court dockets (DocketLens index)",
+    description:
+      "DocketLens's working index of U.S. federal court dockets — district, circuit, bankruptcy, and Supreme Court — sourced from the RECAP archive maintained by the Free Law Project. The underlying records are public; we add AI-summarized one-line + paragraph + executive summaries, deterministic watchlist matching, and webhook + RSS + email delivery.",
+    url: `${SITE}/legal/data-sources`,
+    keywords: [
+      "federal court dockets",
+      "PACER alternative",
+      "RECAP archive",
+      "litigation intelligence",
+      "court filings",
+      "patent litigation",
+      "securities litigation",
+      "antitrust enforcement",
+    ],
+    isAccessibleForFree: true,
+    license: "https://creativecommons.org/publicdomain/zero/1.0/",
+    creator: {
+      "@type": "Organization",
+      name: "Free Law Project",
+      url: "https://free.law/",
+      sameAs: ["https://github.com/freelawproject"],
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "DocketLens",
+      url: SITE,
+      logo: { "@type": "ImageObject", url: `${SITE}/icon.png` },
+    },
+    spatialCoverage: { "@type": "Place", name: "United States" },
+    temporalCoverage: "1996-01-01/..",
+    inLanguage: "en-US",
+    distribution: [
+      {
+        "@type": "DataDownload",
+        encodingFormat: "application/json",
+        contentUrl: `${SITE}/api/v1`,
+        name: "DocketLens REST API v1",
+      },
+      {
+        "@type": "DataDownload",
+        encodingFormat: "application/rss+xml",
+        contentUrl: `${SITE}/api/v1/saved-searches/{id}/feed.xml`,
+        name: "Saved-search RSS feed",
+      },
+    ],
+    sameAs: [
+      "https://www.courtlistener.com",
+      "https://free.law/recap/",
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
+  );
+}
+
 export interface ArticleMeta {
   /** Headline shown in News + Discover cards. */
   headline: string;

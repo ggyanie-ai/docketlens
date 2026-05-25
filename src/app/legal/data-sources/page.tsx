@@ -3,12 +3,21 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { DatasetJsonLd, BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = { title: "Data sources" };
 
 export default function DataSourcesPage() {
   return (
     <>
+      <DatasetJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Legal", url: "/legal/privacy" },
+          { name: "Data sources", url: "/legal/data-sources" },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Where this comes from</p>
