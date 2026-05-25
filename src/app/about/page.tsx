@@ -3,12 +3,23 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  BreadcrumbJsonLd,
+  OrganizationJsonLd,
+} from "@/lib/structured-data";
 
 export const metadata = { title: "About" };
 
 export default function AboutPage() {
   return (
     <>
+      <OrganizationJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "About", url: "/about" },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-3xl px-6 pt-16 md:pt-24 pb-12">

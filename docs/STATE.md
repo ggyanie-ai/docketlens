@@ -365,6 +365,16 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Organization JSON-LD on /about. Companion to the
+      SoftwareApplication entity on / (Google resolves them via
+      the shared `publisher` field). New helper
+      `OrganizationJsonLd` in `src/lib/structured-data.tsx`
+      emits: `@type: Organization`, name, logo (`/icon.png`),
+      url, description, foundingDate (2026), email,
+      `contactPoint[]` (customer support), and `sameAs[]`
+      (GitHub + X). Mounted at the top of /about alongside a
+      BreadcrumbJsonLd (Home → About) so the page contributes
+      both entities. Verified both payloads emit on /about.
 - [x] BreadcrumbList JSON-LD on deep pages. New shared helper
       `src/lib/structured-data.tsx` exposes
       `<BreadcrumbJsonLd items={[…]} />` that emits a clean
@@ -779,13 +789,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Organization JSON-LD on /about** — `@type: Organization`
-      with founder, logo, sameAs[]. Pairs with the
-      SoftwareApplication entity on /.
-- [ ] **NewsArticle JSON-LD on /blog/[slug]** — already have the
-      blog post metadata; add `@type: NewsArticle` (or
-      `TechArticle` for the engineering posts) so Google News +
-      Discover can pick them up.
+- [ ] **NewsArticle/TechArticle JSON-LD on /blog/[slug]** —
+      `TechArticle` for Engineering-tagged posts, `NewsArticle`
+      for the rest. headline, datePublished, author, publisher,
+      mainEntityOfPage. Helps Google News + Discover surface the
+      posts.
+- [ ] **WebSite JSON-LD with SearchAction on /** — `@type: WebSite`
+      + `potentialAction: SearchAction` so Google can show a
+      sitelinks search box in our SERP entry.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

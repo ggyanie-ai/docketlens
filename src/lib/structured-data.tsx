@@ -53,3 +53,41 @@ export function BreadcrumbJsonLd({
     />
   );
 }
+
+/**
+ * Render a JSON-LD `<script>` for an Organization. Pairs with the
+ * SoftwareApplication entity on `/` — Google resolves them through the
+ * shared `publisher` field. Mount on `/about` so the entity has a stable
+ * canonical home.
+ */
+export function OrganizationJsonLd(): ReactElement {
+  const payload = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "DocketLens",
+    url: SITE,
+    logo: `${SITE}/icon.png`,
+    description:
+      "AI-summarized federal court dockets. Watch any party, judge, or law firm — get a digest the next morning. The PACER alternative.",
+    foundingDate: "2026",
+    email: "support@docketlens.ai",
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: "support@docketlens.ai",
+        availableLanguage: ["English"],
+      },
+    ],
+    sameAs: [
+      "https://github.com/donnowyu/docketlens",
+      "https://x.com/docketlens",
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
+  );
+}
