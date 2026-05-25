@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { Suspense, useMemo, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
@@ -101,6 +101,14 @@ function parseRange(raw: string | null): DateRange {
 }
 
 export default function AuditLogPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuditLogPageInner />
+    </Suspense>
+  );
+}
+
+function AuditLogPageInner() {
   const router = useRouter();
   const params = useSearchParams();
 

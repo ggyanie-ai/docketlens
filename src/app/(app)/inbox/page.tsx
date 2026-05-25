@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -58,6 +58,14 @@ const COLOR_DOT: Record<string, string> = {
 type Filter = "all" | "unread" | "read" | "archived";
 
 export default function InboxPage() {
+  return (
+    <Suspense fallback={null}>
+      <InboxPageInner />
+    </Suspense>
+  );
+}
+
+function InboxPageInner() {
   const searchParams = useSearchParams();
   const isEmpty = searchParams.get("empty") === "1";
   const initial = isEmpty ? [] : SAMPLE_INBOX;

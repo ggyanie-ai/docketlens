@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -48,6 +48,18 @@ function findInCache(num: string) {
 }
 
 export default function LookupPage() {
+  // useSearchParams() requires a Suspense boundary at build time so static
+  // generation can opt the subtree out of pre-render. Splitting the inner
+  // body out lets the page export stay a plain default and keeps the
+  // search-param read on the client.
+  return (
+    <Suspense fallback={null}>
+      <LookupPageInner />
+    </Suspense>
+  );
+}
+
+function LookupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [q, setQ] = useState("");

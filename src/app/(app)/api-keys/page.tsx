@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -115,6 +115,14 @@ function persistUserKeys(rows: KeyRow[]): void {
 }
 
 export default function ApiKeysPage() {
+  return (
+    <Suspense fallback={null}>
+      <ApiKeysPageInner />
+    </Suspense>
+  );
+}
+
+function ApiKeysPageInner() {
   const searchParams = useSearchParams();
   const isEmpty = searchParams.get("empty") === "1";
 

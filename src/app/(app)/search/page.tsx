@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search as SearchIcon, Filter, BookmarkPlus, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -46,6 +46,14 @@ const NOS = [
 ];
 
 export default function SearchPage() {
+  return (
+    <Suspense fallback={null}>
+      <SearchPageInner />
+    </Suspense>
+  );
+}
+
+function SearchPageInner() {
   const [q, setQ] = useState("");
   const [activeCourt, setActiveCourt] = useState<string | null>(null);
   const [activeNos, setActiveNos] = useState<string | null>(null);

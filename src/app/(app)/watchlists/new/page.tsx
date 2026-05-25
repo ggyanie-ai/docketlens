@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Building2, User, Gavel, Briefcase, BookOpen, Search, Sparkles } from "lucide-react";
 import { Topbar } from "@/components/app/topbar";
@@ -55,6 +55,14 @@ function csv(raw: string | null): string[] {
 }
 
 export default function NewWatchlistPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewWatchlistPageInner />
+    </Suspense>
+  );
+}
+
+function NewWatchlistPageInner() {
   // Prefill from a watchlist-template deep-link. Falls back to empty when no
   // query params are present, so the form behaves identically for both the
   // template flow and the "start from scratch" flow.
