@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { VerifyWebhookForm } from "@/components/app/verify-webhook-form";
+import { HowToJsonLd, BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Verify webhook signature",
@@ -14,6 +15,36 @@ export const metadata = {
 export default function VerifyWebhookPage() {
   return (
     <>
+      <HowToJsonLd
+        name="Verify a DocketLens webhook signature"
+        description="Three-step in-browser HMAC-SHA256 verifier. Confirms that an incoming webhook's X-DocketLens-Signature header matches the signing secret. No server round-trip."
+        pageUrl="/tools/verify-webhook"
+        totalTimeISO="PT45S"
+        steps={[
+          {
+            name: "Paste your signing secret",
+            text: "Copy your webhook signing secret (starts with whsec_) from Settings → Webhook signing and paste it into the Signing secret field. The secret never leaves the browser.",
+            url: "#vw-secret",
+          },
+          {
+            name: "Paste the raw request body",
+            text: "Copy the exact bytes your endpoint received — even a single trailing newline difference breaks the signature. Paste them into the Raw request body field.",
+            url: "#vw-payload",
+          },
+          {
+            name: "Paste the X-DocketLens-Signature header",
+            text: "Paste the full sha256=… header value. Click Verify signature — the page will compute the expected HMAC-SHA256 and constant-time compare. Green means match.",
+            url: "#vw-sig",
+          },
+        ]}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Tools", url: "/tools/verify-webhook" },
+          { name: "Verify webhook signature", url: "/tools/verify-webhook" },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-3xl px-6 pt-16 pb-12">

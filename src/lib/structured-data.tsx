@@ -54,6 +54,62 @@ export function BreadcrumbJsonLd({
   );
 }
 
+export interface HowToStep {
+  /** Imperative-mood step title (e.g. "Paste your signing secret"). */
+  name: string;
+  /** One- to two-sentence detail body. */
+  text: string;
+  /** Optional anchor target inside the same page (e.g. "#vw-secret"). */
+  url?: string;
+}
+
+/**
+ * HowTo JSON-LD. Used on /tools/verify-webhook to make the page eligible
+ * for the "step-by-step" rich result that Google sometimes renders for
+ * tutorial queries like "verify webhook signature."
+ */
+export function HowToJsonLd({
+  name,
+  description,
+  pageUrl,
+  totalTimeISO,
+  steps,
+}: {
+  name: string;
+  description: string;
+  pageUrl: string;
+  /** ISO 8601 duration. Use "PT30S" for 30 seconds, "PT2M" for 2 minutes. */
+  totalTimeISO?: string;
+  steps: HowToStep[];
+}): ReactElement {
+  const fullUrl = pageUrl.startsWith("http") ? pageUrl : `${SITE}${pageUrl}`;
+  const payload = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    inLanguage: "en-US",
+    totalTime: totalTimeISO,
+    step: steps.map((s, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      url: s.url
+        ? s.url.startsWith("http")
+          ? s.url
+          : `${fullUrl}${s.url}`
+        : undefined,
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
+  );
+}
+
 /**
  * Dataset JSON-LD describing the public-records corpus we surface. Aimed at
  * Google Dataset Search (datasetsearch.research.google.com), which can

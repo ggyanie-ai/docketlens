@@ -365,6 +365,18 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] HowTo JSON-LD on /tools/verify-webhook. New
+      `<HowToJsonLd>` helper accepts `name`, `description`,
+      `pageUrl`, `totalTimeISO` (ISO 8601 duration), and a
+      `steps[]` of `{ name, text, url? }`. Each step's url is
+      joined to pageUrl if it starts with `#` so anchor links
+      stay correct after canonicalisation. Wired on
+      /tools/verify-webhook with three steps that mirror the form
+      labels exactly (paste secret → #vw-secret, paste body →
+      #vw-payload, paste signature → #vw-sig), totalTime PT45S.
+      Page now also ships a Breadcrumb (Home → Tools → Verify
+      webhook signature). Verified payload, three positioned
+      HowToStep entries, and absolute step URLs.
 - [x] Dataset JSON-LD on /legal/data-sources. New
       `<DatasetJsonLd />` helper. Payload deliberately models
       lineage correctly: `creator: Free Law Project` (the
@@ -828,16 +840,13 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Author entity for blog posts** — instead of
-      `author: { @type: Organization, name: "The DocketLens team" }`,
-      emit `@type: Person` with sameAs/url when an individual
-      authored the post. Pulls from a new `authorUrl` field on
-      Post.
-- [ ] **HowTo JSON-LD on /tools/verify-webhook** — the page is
-      literally a step-by-step. Emitting `@type: HowTo` with the
-      three steps (paste secret · paste body · paste signature)
-      could earn a rich-result card for "verify webhook
-      signature" SERPs.
+- [ ] **structured-data unit test** — a tiny tsx test that asserts
+      each helper emits a parseable script and the expected @type.
+      Cheap regression cover; protects the SEO investment as the
+      site grows.
+- [ ] **/docs/structured-data.md internal doc** — single page
+      listing every JSON-LD entity we ship and where, so future
+      maintainers don't accidentally duplicate or contradict them.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
