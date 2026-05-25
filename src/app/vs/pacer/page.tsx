@@ -13,6 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "DocketLens vs PACER",
@@ -96,6 +97,24 @@ const DOCKETLENS_WINS = [
 export default function VsPacerPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Comparisons", url: "/comparison" },
+          { name: "vs PACER", url: "/vs/pacer" },
+        ]}
+      />
+      <ArticleJsonLd
+        meta={{
+          headline: "DocketLens vs PACER",
+          description:
+            "Honest comparison: PACER's per-page paywall and 1995 UX versus DocketLens's flat pricing, AI summaries, watchlists, and alerts.",
+          url: "/vs/pacer",
+          datePublished: "2026-05-25",
+          authorName: "DocketLens",
+          section: "Comparison",
+        }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

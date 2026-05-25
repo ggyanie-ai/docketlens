@@ -5,6 +5,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
 export const metadata = {
   title: "Comparisons",
@@ -69,8 +72,52 @@ const PLANNED: { target: string; category: string; eta: string }[] = [
 ];
 
 export default function ComparisonIndexPage() {
+  const collectionLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "DocketLens comparisons",
+    description:
+      "How DocketLens compares to PACER, Lex Machina, and the rest of the federal court-data tooling landscape.",
+    url: `${SITE}/comparison`,
+    inLanguage: "en-US",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "DocketLens",
+      url: SITE,
+    },
+    hasPart: COMPARISONS.map((c) => ({
+      "@type": "Article",
+      headline: `DocketLens vs. ${c.target}`,
+      url: `${SITE}${c.href}`,
+      about: c.target,
+      articleSection: c.category,
+      description: c.positioning,
+    })),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      numberOfItems: COMPARISONS.length,
+      itemListElement: COMPARISONS.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: `DocketLens vs. ${c.target}`,
+        url: `${SITE}${c.href}`,
+      })),
+    },
+  };
+
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Comparisons", url: "/comparison" },
+        ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

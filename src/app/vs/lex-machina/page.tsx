@@ -13,6 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "DocketLens vs Lex Machina",
@@ -97,6 +98,24 @@ const DL_WINS = [
 export default function VsLexMachinaPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Comparisons", url: "/comparison" },
+          { name: "vs Lex Machina", url: "/vs/lex-machina" },
+        ]}
+      />
+      <ArticleJsonLd
+        meta={{
+          headline: "DocketLens vs Lex Machina",
+          description:
+            "Honest comparison: Lex Machina is the gold standard for enterprise litigation analytics at enterprise pricing. DocketLens is the affordable option for the 80% who can't justify a $25k/yr seat.",
+          url: "/vs/lex-machina",
+          datePublished: "2026-05-25",
+          authorName: "DocketLens",
+          section: "Comparison",
+        }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}
