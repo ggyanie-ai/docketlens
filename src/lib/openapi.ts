@@ -244,6 +244,106 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/audit": {
+      get: {
+        tags: ["Discovery"],
+        summary: "Org audit log (Team+)",
+        description:
+          "Newest-first audit event stream scoped to the calling org. Cursor-paginated via `?before_id=<id>`; in-memory `?action=<prefix>` filter. Sensitive columns (ip_address, user_agent) included by default — gate is at the route, not the schema.",
+        operationId: "listAudit",
+        parameters: [
+          { name: "limit", in: "query", schema: { type: "integer", minimum: 1, maximum: 200, default: 50 } },
+          { name: "action", in: "query", description: "Prefix filter, e.g. `watchlist.`", schema: { type: "string" } },
+          { name: "before_id", in: "query", description: "Pagination cursor — return events strictly older than this id.", schema: { type: "string" } },
+        ],
+        responses: {
+          "200": {
+            description: "Page of events",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/AuditPage" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required (Team+)",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
+    "/api/v1/webhooks": {
+      get: {
+        tags: ["Discovery"],
+        summary: "Webhook channels + 24h success rate",
+        operationId: "listWebhooks",
+        responses: {
+          "200": {
+            description: "Webhook channels",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/WebhookList" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/widget-pings/aggregate": {
+      get: {
+        tags: ["System"],
+        summary: "Top-N widget impressions",
+        description:
+          "REST exposure of the dashboard \"your embeds\" rollup. Privacy: aggregate counts only — no IP, UA, referrer, cookie per request.",
+        operationId: "widgetPingsAggregate",
+        parameters: [
+          { name: "days", in: "query", schema: { type: "integer", minimum: 1, maximum: 90, default: 30 } },
+          { name: "limit", in: "query", schema: { type: "integer", minimum: 1, maximum: 50, default: 10 } },
+        ],
+        responses: {
+          "200": {
+            description: "Aggregate",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/WidgetPingsAggregate" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/events": {
+      get: {
+        tags: ["System"],
+        summary: "SSE stream of match.created events",
+        description:
+          "Server-Sent Events. Phase-1 stub: `ready` on connect, `heartbeat` every 25s, `match.created` events arrive once the ingest worker publishes them. 30-minute connection cap.",
+        operationId: "events",
+        responses: {
+          "200": {
+            description: "text/event-stream",
+            content: { "text/event-stream": { schema: { type: "string" } } },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/dockets/{id}/notes/render": {
+      get: {
+        tags: ["Dockets"],
+        summary: "Render docket note as HTML",
+        description:
+          "Server-renders the calling org's docket note using the in-house Markdown parser. Empty 200 when no note exists.",
+        operationId: "renderDocketNote",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        responses: {
+          "200": {
+            description: "Rendered HTML",
+            content: { "text/html": { schema: { type: "string", format: "html" } } },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
     "/api/v1/courts": {
       get: {
         tags: ["Dockets"],
@@ -1056,6 +1156,57 @@ export const openapi = {
           },
         },
       },
+      delete: {
+        tags: ["Watchlists"],
+        summary: "Bulk soft-delete watchlists",
+        description:
+          "Idempotent. Accepts up to 100 ids in one shot. Soft-deletes only the rows owned by the calling org; returns the set of ids actually affected. Requires Team plan.",
+        operationId: "bulkDeleteWatchlists",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["ids"],
+                properties: {
+                  ids: {
+                    type: "array",
+                    items: { type: "string" },
+                    minItems: 1,
+                    maxItems: 100,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Bulk delete summary",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["deleted"],
+                  properties: {
+                    deleted: { type: "array", items: { type: "string" } },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required (Team)",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "422": {
+            description: "Validation failed",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
     },
   },
   components: {
@@ -1200,6 +1351,84 @@ export const openapi = {
           body: { type: "string", maxLength: 20000 },
           exists: { type: "boolean" },
           updated_at: { type: ["string", "null"], format: "date-time" },
+        },
+      },
+      AuditEvent: {
+        type: "object",
+        required: ["id", "action", "occurred_at"],
+        properties: {
+          id: { type: "string", example: "aud_F3kQ9pR2Lm" },
+          action: { type: "string", example: "watchlist.create" },
+          actor_user_id: { type: ["string", "null"] },
+          target: { type: ["string", "null"] },
+          metadata: { type: "object", additionalProperties: true },
+          ip_address: { type: ["string", "null"] },
+          user_agent: { type: ["string", "null"] },
+          occurred_at: { type: ["string", "null"], format: "date-time" },
+        },
+      },
+      AuditPage: {
+        type: "object",
+        required: ["count", "has_more", "events"],
+        properties: {
+          count: { type: "integer", minimum: 0 },
+          has_more: { type: "boolean" },
+          next_before_id: { type: ["string", "null"] },
+          events: { type: "array", items: { $ref: "#/components/schemas/AuditEvent" } },
+        },
+      },
+      WebhookSummary: {
+        type: "object",
+        required: ["rule_id", "watchlist_id", "target", "digest_cadence", "is_active", "last_24h"],
+        properties: {
+          rule_id: { type: "string" },
+          watchlist_id: { type: "string" },
+          target: { type: "string", description: "HTTPS endpoint URL" },
+          digest_cadence: { type: "string", enum: ["instant", "hourly", "daily"] },
+          is_active: { type: "boolean" },
+          last_24h: {
+            type: "object",
+            required: ["total", "sent", "failed", "queued", "skipped", "success_rate"],
+            properties: {
+              total: { type: "integer", minimum: 0 },
+              sent: { type: "integer", minimum: 0 },
+              failed: { type: "integer", minimum: 0 },
+              queued: { type: "integer", minimum: 0 },
+              skipped: { type: "integer", minimum: 0 },
+              success_rate: { type: "number", minimum: 0, maximum: 1 },
+            },
+          },
+        },
+      },
+      WebhookList: {
+        type: "object",
+        required: ["count", "webhooks"],
+        properties: {
+          count: { type: "integer", minimum: 0 },
+          webhooks: { type: "array", items: { $ref: "#/components/schemas/WebhookSummary" } },
+        },
+      },
+      WidgetPingsAggregate: {
+        type: "object",
+        required: ["window", "grand_total", "top_dockets"],
+        properties: {
+          window: {
+            type: "object",
+            properties: { days: { type: "integer" } },
+          },
+          grand_total: { type: "integer", minimum: 0 },
+          top_dockets: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["docket_id", "count"],
+              properties: {
+                docket_id: { type: "string" },
+                count: { type: "integer", minimum: 0 },
+              },
+            },
+          },
+          note: { type: "string" },
         },
       },
       DigestPreview: {
