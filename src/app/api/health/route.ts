@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { sql } from "drizzle-orm";
-import { db } from "@/lib/db";
 import { PROMPT_VERSION } from "@/lib/ai/prompts";
 import { courtListenerPoolSnapshot } from "@/lib/courtlistener/client";
+
+// `drizzle-orm` and `@/lib/db` are imported dynamically inside pingDb
+// so module load doesn't fail when libSQL can't open the configured
+// DATABASE_URL (e.g. on Vercel where the default file:./docketlens.db
+// resolves to a read-only path). With static imports, the module init
+// throw bypasses every catch and Next.js emits its generic 500 page.
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,10 +36,10 @@ const VERSION = "0.1.1";
 async function pingDb(): Promise<{ ok: boolean; latencyMs: number; error?: string }> {
   const t0 = performance.now();
   try {
-    // Wrap the db.run() in an async IIFE so any synchronous throw (e.g.
-    // libSQL failing to open a missing file in serverless env) becomes a
-    // rejected promise that Promise.race can observe — otherwise the throw
-    // bypasses the catch and bubbles up as a 500.
+    const [{ sql }, { db }] = await Promise.all([
+      import("drizzle-orm"),
+      import("@/lib/db"),
+    ]);
     await Promise.race([
       (async () => db.run(sql`select 1`))(),
       new Promise((_, reject) =>

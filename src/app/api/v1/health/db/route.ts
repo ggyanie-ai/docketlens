@@ -1,6 +1,3 @@
-import { sql } from "drizzle-orm";
-import { db } from "@/lib/db";
-
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -13,13 +10,23 @@ export const dynamic = "force-dynamic";
  *
  *  Hard 1-second timeout (vs. /api/health's 2-second) so a stalled
  *  DB fails the check faster on this surface. No auth — public probe.
+ *
+ *  DB module is dynamically imported inside the handler — when
+ *  DATABASE_URL points at a path libSQL can't open (e.g. serverless
+ *  read-only filesystem), the throw is during import, not query.
+ *  Static imports would crash module init and Next.js would emit a
+ *  500 HTML page instead of our 503.
  * ==========================================================================*/
 
 export async function GET() {
   const timeoutMs = 1_000;
   try {
+    const [{ sql }, { db }] = await Promise.all([
+      import("drizzle-orm"),
+      import("@/lib/db"),
+    ]);
     await Promise.race([
-      db.run(sql`select 1`),
+      (async () => db.run(sql`select 1`))(),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("db ping timeout")), timeoutMs)
       ),
