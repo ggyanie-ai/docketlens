@@ -365,6 +365,20 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] SoftwareApplication JSON-LD on the marketing root (/).
+      Companion to the FAQPage block on /pricing. Payload:
+      `@type: SoftwareApplication`, `BusinessApplication` /
+      `Legal Research`, three `Offer` blocks (Free $0, Pro $29,
+      Team $149, each with priceSpecification + InStock
+      availability), six `featureList` entries (extractive AI,
+      watchlist coverage, alert channels, REST API + OpenAPI,
+      widget + oEmbed, RSS/Atom/JSON Feed), and `sameAs`
+      cross-links to the GitHub repo + X account. Skipping
+      `aggregateRating` until we have real public reviews —
+      Google de-ranks fabricated rating counts. Comment block at
+      the top notes the price coupling to the pricing-preview
+      component so future price changes get updated in both
+      places.
 - [x] Pricing FAQs ship schema.org FAQPage JSON-LD for SERP rich
       results. Added a `plain` (HTML-free) twin field per FAQ on
       /pricing alongside the existing JSX answer; injected
@@ -751,14 +765,16 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Product/SoftwareApplication JSON-LD on /** — single
-      `@type: SoftwareApplication` block on the marketing root
-      with name, applicationCategory, offers (Free + Pro + Team
-      prices), aggregateRating (skip if no real reviews yet).
-      Companion to the FAQPage rich result.
 - [ ] **BreadcrumbList JSON-LD on deep pages** — /blog/[slug],
       /docs/[slug], /demo/[id]. Small JSON-LD island per page.
       Helps Google understand the IA.
+- [ ] **Organization JSON-LD on /about** — `@type: Organization`
+      with founder, logo, sameAs[]. Pairs with the
+      SoftwareApplication entity on /.
+- [ ] **NewsArticle JSON-LD on /blog/[slug]** — already have the
+      blog post metadata; add `@type: NewsArticle` (or
+      `TechArticle` for the engineering posts) so Google News +
+      Discover can pick them up.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
