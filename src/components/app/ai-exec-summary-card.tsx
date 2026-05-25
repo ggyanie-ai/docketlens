@@ -5,6 +5,7 @@ import { Sparkles, Check, Loader2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PROMPT_VERSION } from "@/lib/ai/prompts";
 
 /* ============================================================================
  *  AiExecSummaryCard
@@ -173,6 +174,13 @@ export function AiExecSummaryCard(props: AiExecSummaryCardProps) {
               <span>{meta.tokensOut} out</span>
               <span>·</span>
               <span>{(meta.latencyMs / 1000).toFixed(1)}s</span>
+              <span>·</span>
+              <span
+                title="Prompt version this brief was generated under"
+                className="text-[color:var(--color-fg-muted)]"
+              >
+                prompt {PROMPT_VERSION}
+              </span>
             </p>
           )}
         </div>

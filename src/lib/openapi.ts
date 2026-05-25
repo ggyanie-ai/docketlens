@@ -115,6 +115,117 @@ export const openapi = {
         responses: { "200": { description: "Healthy" }, "503": { description: "Degraded" } },
       },
     },
+    "/api/v1/usage": {
+      get: {
+        tags: ["Discovery"],
+        summary: "Caller call-volume",
+        description:
+          "Pairs with /api/v1/me — that endpoint tells you the ceiling, this one tells you how close you are. `used.*` fields are null until the live token-bucket meter ships; `remaining` mirrors `limit` in the meantime. Forward-compatible shape so clients don't need to be re-deployed when counters go live.",
+        operationId: "usage",
+        responses: {
+          "200": {
+            description: "Usage payload",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/Usage" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/health": {
+      get: {
+        tags: ["System"],
+        summary: "Liveness probe (alias)",
+        description:
+          "301 redirect to `/api/health`. Exists because many uptime-monitor configs assume the health endpoint lives under the API version prefix.",
+        operationId: "healthAlias",
+        security: [],
+        responses: {
+          "301": {
+            description: "Redirect to /api/health",
+          },
+        },
+      },
+    },
+    "/api/v1/watchlists/{id}": {
+      get: {
+        tags: ["Watchlists"],
+        summary: "Get one watchlist",
+        operationId: "getWatchlist",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        responses: {
+          "200": {
+            description: "Watchlist",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Watchlist" },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+      patch: {
+        tags: ["Watchlists"],
+        summary: "Update a watchlist",
+        description:
+          "Sparse update — only the fields you send are changed. Renormalises `matchValue` when changed. Requires Pro or higher.",
+        operationId: "updateWatchlist",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateWatchlist" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Updated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Watchlist" },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "404": { $ref: "#/components/responses/NotFound" },
+          "422": {
+            description: "Validation failed",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+      delete: {
+        tags: ["Watchlists"],
+        summary: "Soft-delete a watchlist",
+        description:
+          "Sets `deleted_at`. Idempotent — calling twice yields the same 204. Requires Pro or higher.",
+        operationId: "deleteWatchlist",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        responses: {
+          "204": { description: "Deleted (or already deleted)" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
     "/api/v1/me": {
       get: {
         tags: ["Discovery"],
@@ -798,6 +909,73 @@ export const openapi = {
           refresh_cadence: { type: "string", enum: ["realtime", "hourly", "daily"] },
           is_active: { type: "boolean" },
           match_count: { type: "integer", minimum: 0 },
+          filters: {
+            type: "object",
+            properties: {
+              courts: { type: "array", items: { type: "string" } },
+              natureOfSuitCodes: { type: "array", items: { type: "string" } },
+            },
+          },
+        },
+      },
+      Usage: {
+        type: "object",
+        required: ["key", "window_started_at", "window_ends_at", "used", "limit", "remaining"],
+        properties: {
+          key: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              plan: {
+                type: "string",
+                enum: ["free", "pro", "team", "enterprise"],
+              },
+            },
+          },
+          window_started_at: { type: "string", format: "date-time" },
+          window_ends_at: { type: "string", format: "date-time" },
+          used: {
+            type: "object",
+            properties: {
+              per_minute: { type: ["integer", "null"] },
+              per_hour: { type: ["integer", "null"] },
+              per_day: { type: ["integer", "null"] },
+            },
+          },
+          limit: {
+            type: "object",
+            required: ["per_minute", "per_hour", "per_day"],
+            properties: {
+              per_minute: { type: "integer" },
+              per_hour: { type: "integer" },
+              per_day: { type: "integer" },
+            },
+          },
+          remaining: {
+            type: "object",
+            required: ["per_minute", "per_hour", "per_day"],
+            properties: {
+              per_minute: { type: "integer" },
+              per_hour: { type: "integer" },
+              per_day: { type: "integer" },
+            },
+          },
+          org_keys_active_24h: { type: "integer", minimum: 0 },
+          note: { type: "string" },
+          docs: { type: "string", format: "uri" },
+        },
+      },
+      UpdateWatchlist: {
+        type: "object",
+        description: "Sparse update — supply only the fields you want to change. At least one is required.",
+        properties: {
+          name: { type: "string", minLength: 1 },
+          match_value: { type: "string", minLength: 1 },
+          refresh_cadence: {
+            type: "string",
+            enum: ["realtime", "hourly", "daily"],
+          },
+          is_active: { type: "boolean" },
           filters: {
             type: "object",
             properties: {

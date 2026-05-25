@@ -14,7 +14,11 @@ export function Skeleton({ className, ...props }: ComponentProps<"div">) {
         "rounded-[var(--radius-sm)] bg-[color:var(--color-bg-subtle)] relative overflow-hidden",
         "before:absolute before:inset-0 before:-translate-x-full",
         "before:bg-gradient-to-r before:from-transparent before:via-[color:var(--color-bg-elevated)]/70 before:to-transparent",
-        "before:animate-[dl-shimmer-once_1.4s_infinite]",
+        // Shimmer is the eye-catching part — gate it on motion-safe so
+        // prefers-reduced-motion users see a flat placeholder, not a
+        // sweeping gradient. (The global @media in globals.css already
+        // collapses it; this is belt-and-suspenders.)
+        "motion-safe:before:animate-[dl-shimmer-once_1.4s_infinite]",
         className
       )}
       {...props}
