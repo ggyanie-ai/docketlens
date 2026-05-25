@@ -2,6 +2,156 @@
 
 We track changes by ISO date (UTC). Stable shipping starts at 1.0.0.
 
+## 0.1.3 — 2026-05-25 (operations + shareability)
+
+The continuous-loop pass. Smaller than 0.1.2 in surface area,
+deeper in operational + observability work. No breaking changes.
+
+### Added — API
+
+- **`/api/v1/me`** — caller identity. Returns the calling key's
+  id, prefix, scopes, last-used timestamp; the org's id, name,
+  slug, plan; and per-plan rate-limit ceilings.
+- **`/api/v1/usage`** — call-volume vs. ceiling. Forward-compatible
+  shape: `used.{per_minute,per_hour,per_day}` is null today and
+  goes int when the token-bucket meter ships, no client rework.
+- **`/api/v1/courts`** — every CourtListener-mirrored court we
+  cache, with `?in_use=` and `?jurisdiction=` filters.
+- **`/api/v1/dockets/{id}/parties`** and **`/entries`** — narrow
+  siblings of the combined endpoint for consumers that only
+  need one shape. `/entries` supports `?since=` and `?limit=`.
+- **`/api/health` now reports CourtListener pool** — `checks.cl_pool`
+  carries the pool's limits + remaining counts. Informational
+  (saturation slows ingest, not the web app, so `ok` stays
+  gated on `db`).
+- **`/api/og?theme=light|dark`** — theme-able Open Graph image
+  variant for embedders whose host page is light-mode.
+
+### Added — surfaces
+
+- **`/p/{id}`** short-URL redirect (`wl_` → preview, `dkt_` →
+  demo). Cleaner pastes for tweets / Slack / SMS.
+- **`/watchlists/{id}/preview`** public read-only share page.
+  No-auth, OpenGraph unfurl, latest 5 matches with one-line
+  summaries. Per-page noindex. Linked from the watchlist
+  detail view via a "Public preview" button and from the
+  page itself via a navigator.share-aware `<CopyLinkButton>`.
+- **`/404` "Did you mean?" fuzzy-match block** —
+  Damerau-Levenshtein over a curated public-route pool.
+- **`/audit-log` URL-driven filters** — q, category, range now
+  live in `?q=&category=&range=`. Shareable + back-button
+  navigable, 250ms debounced. Date-range chips (Last 24h / 7d /
+  30d / All time). CSV export wired to `src/lib/csv.ts`.
+- **Webhook deliveries table on `/alerts`** — last 30 days with
+  HTTP code, latency, attempts, retry button, and "Send a
+  test webhook" + "Verify a signature" actions.
+- **`/inbox?empty=1`** empty-org preview with motion-safe pulse
+  and "Send your first alert" CTA into the watchlist templates.
+- **Watchlist starter templates on `/watchlists?empty=1`** —
+  six prebuilt suggestions deep-linking to `/watchlists/new`
+  with the form pre-filled. OnboardingChecklist routes
+  through this surface so users see templates one click earlier.
+- **Pricing FAQs** — eight pricing-specific FAQs above the
+  global product FAQ, with `FAQPage` JSON-LD for SERP rich
+  results.
+- **Settings → Security audit preview** — last 10 audit events
+  inline with a link to the full timeline.
+- **`/feeds.opml`** OPML 2.0 bundle so OPML-aware readers can
+  import the blog + changelog feeds in one click.
+- **`/feeds` hub** — single human-readable index of every public
+  feed.
+- **Atom + JSON Feed siblings** for `/blog/feed.xml`,
+  `/changelog/feed.xml`, and `/api/v1/saved-searches/{id}/feed.xml`,
+  with content negotiation on the canonical `.xml` route.
+- **Site-wide feed auto-discovery** — `<link rel="alternate">`
+  tags for all three formats × blog + changelog emitted from
+  root `<head>` (not metadata) so per-page `alternates` don't
+  clobber them.
+- **`/widget/{id}?theme=light|dark|auto`** — explicit theme
+  override on embedded case widgets.
+- **`/tools/verify-webhook`** — client-side HMAC signature
+  playground. Web Crypto only; secret never leaves the page.
+  HowTo JSON-LD makes the page eligible for tutorial rich
+  cards.
+
+### Added — UI
+
+- **Dashboard "your embeds" card** — top 5 dockets by widget
+  impressions + 30-day grand total.
+- **Saved-search match count badge** + RSS/Atom/JSON format
+  picker on the /search saved-searches panel.
+- **`/search` `⌘E` / Ctrl+E** keyboard shortcut for CSV export
+  with a discoverable chip in the Export button.
+- **`/audit-log` date-range chips** (Last 24h / 7d / 30d /
+  All time).
+- **Footer wordmark link to `/`** with an accent-underline-grow
+  hover, plus a new "Feeds" entry in the Resources column and
+  the "API reference" link retargeted to the interactive
+  renderer at `/docs/api-reference`.
+- **`/search` input `⌘K` chip** for command-palette discovery.
+
+### Added — schema.org structured data
+
+A coordinated entity graph across the marketing surface, paired
+with the new `/docs/structured-data.md` inventory:
+
+- `/` ships **`SoftwareApplication`** + **`WebSite`** +
+  **`SearchAction`** (sitelinks search box).
+- `/about` ships **`Organization`** (logo, foundingDate,
+  contactPoint, sameAs).
+- `/pricing` ships **`FAQPage`** with 8 Q/A pairs.
+- `/blog/[slug]` picks **`TechArticle`** (Engineering tag) or
+  **`NewsArticle`** otherwise.
+- `/legal/data-sources` ships **`Dataset`** with proper
+  lineage (creator: Free Law Project, publisher: DocketLens,
+  license: CC0).
+- `/tools/verify-webhook` ships **`HowTo`** with 3 steps.
+- `/blog/[slug]`, `/docs/[slug]`, `/demo/[id]`,
+  `/legal/data-sources`, `/about`, `/tools/verify-webhook` all
+  ship `BreadcrumbList`.
+
+### Added — content + a11y
+
+- Five new glossary terms: scheduling order, Daubert motion,
+  JPML, MDL transferee judge, Section 1782 discovery.
+- Two new blog posts: "What we learned the first time we
+  tried to summarize a 400-page Markman ruling" (Engineering)
+  and "We built on Free Law Project. So we donate back."
+  (Industry).
+- Engineering-tagged blog posts now end with an API-reference
+  CTA card.
+- Live `/status` health-poll dot polling `/api/health` every
+  60s, motion-safe.
+- Markdown headings now emit `id="kebab-slug"` plus a SemVer
+  alias `<a id="X.Y.Z">` so the changelog feed's `#0.1.3`
+  permalinks scroll correctly.
+
+### Changed
+
+- **matcher.ts**: the tier-3 substring fallback was unreachable
+  dead code — proven by the 134-test vitest suite shipped on a
+  sibling branch — and is deleted. Behaviour unchanged.
+- **Sitemap**: per-route priorities + changeFrequency tuned
+  (1.0 home → 0.3 legal/auth, hourly for feeds, yearly for
+  legal/login). 1 entry at 1.0, 2 at 0.9, sensible bell across
+  the rest.
+- **robots.txt**: expanded disallow (per-docket widget pages,
+  inbox, audit-log, email-preview, `.well-known/`).
+- **hreflang**: `x-default` + `en` `<link>` tags on root.
+- **Root `<head>`**: inline `<link rel="alternate">` tags for
+  all 6 marketing feeds; survives per-page `alternates`
+  overrides.
+
+### Parallel branches (NOT merged on main — user supervises)
+
+- **`worktree-agent-a15024f436e5cce40`** — vitest infra + 134
+  tests across `filter` (41), `matcher` (45), `structured-data`
+  (29), `widget-pings` (19). CI extended with `pnpm test`.
+  `docs/TESTING.md` added.
+- **`worktree-agent-afbd4f9582cd409c9`** — /comparison page
+  refresh (3 new competitors + at-a-glance matrix) and
+  ARCHITECTURE.md / API.md / RUNBOOK.md refreshes.
+
 ## 0.1.2 — 2026-05-24 (developer surface + syndication)
 
 A second polish pass focused on what surrounds the product: an
