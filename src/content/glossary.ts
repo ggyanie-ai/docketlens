@@ -163,6 +163,21 @@ export const GLOSSARY: GlossaryTerm[] = [
     related: ["discovery", "removal"],
   },
   {
+    slug: "in-camera",
+    term: "In camera review",
+    category: "procedural",
+    body: "A judicial review conducted privately — literally \"in chambers.\" The judge inspects documents, hears testimony, or watches evidence without the opposing party present. Common when a privilege claim is contested: the court reads the disputed material itself to decide whether attorney-client or work-product protections apply. From the Latin for \"chamber.\"",
+    related: ["discovery", "motion"],
+  },
+  {
+    slug: "pslra",
+    term: "PSLRA pleading standard",
+    short: "Private Securities Litigation Reform Act",
+    category: "pleadings",
+    body: "The 1995 Private Securities Litigation Reform Act raised the bar for surviving a motion to dismiss in §10(b) class actions. Plaintiffs must plead with particularity both the false statement and a \"strong inference\" of scienter (intent to deceive). The standard is why so many securities cases die at the 12(b)(6) stage — and why a denied 12(b)(6) order in a putative class action is itself a major watchlist signal.",
+    related: ["12b6", "class-action", "motion"],
+  },
+  {
     slug: "voir-dire",
     term: "Voir dire",
     category: "lifecycle",
