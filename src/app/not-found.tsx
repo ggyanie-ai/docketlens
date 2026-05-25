@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import { DidYouMean } from "@/components/app/did-you-mean";
 
 export default function NotFound() {
   return (
@@ -27,6 +28,10 @@ export default function NotFound() {
             <Link href={"/search" as never}>Search dockets</Link>
           </Button>
         </div>
+
+        {/* Client island: ranks the requested path against the curated
+            public-route pool and surfaces up to 3 close matches. */}
+        <DidYouMean />
       </main>
       <SiteFooter />
     </>

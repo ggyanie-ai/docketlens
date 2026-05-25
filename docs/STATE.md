@@ -833,6 +833,12 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
+- [ ] **Fix matcher.ts tier-3 dead code** — agent's test pass
+      flagged that the substring fallback never fires because
+      tier-2 token-subset already eats every case it'd handle.
+      Tighten tier-2 to require word boundaries on each token, or
+      delete tier-3 outright and document the simpler model.
+      Either way, the existing tests will guard the decision.
 - [ ] **404 page redesign** — current /404 is generic. Add a
       "Did you mean?" block that fuzzy-matches the typed path
       against the sitemap and surfaces the 3 closest matches.
@@ -914,12 +920,22 @@ of work, sized to fit one wakeup.
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
       Google OAuth gated on env. Schema is already ready.
 
-### Tests (in progress — background agent)
-- [ ] vitest setup + matcher/filter/structured-data/widget-pings
-      tests are being built on a separate worktree branch by a
-      background agent (spawned 2026-05-25). Don't duplicate this
-      work in main; once the agent's branch lands the user will
-      merge it.
+### Tests (shipped 2026-05-25 on a parallel branch)
+- [x] 134 vitest tests landed on
+      `worktree-agent-a15024f436e5cce40` (NOT merged to main —
+      user supervises merges). Coverage:
+        filter           41 tests
+        matcher          45 tests + 1 documented skip
+        structured-data  29 tests
+        widget-pings     19 tests
+      .github/workflows/ci.yml extended to run `pnpm test` after
+      typecheck. docs/TESTING.md added.
+      **Dead-code finding worth fixing**: `matcher.ts` tier-3
+      substring fallback is unreachable — any single-token
+      needle hits tier-2 first; multi-token needles whose literal
+      appears as substring also satisfy tokens-in-order. To make
+      tier-3 reachable, tighten tier-2 to a word-boundary token
+      check.
 
 ### Operating cadence (refresh 2026-05-25)
 - Wakeups now fire every ~270s (cache-friendly) instead of 1800s.
