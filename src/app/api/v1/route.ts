@@ -32,6 +32,8 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/watchlists/:id",  desc: "Get one watchlist" },
       { method: "PATCH", path: "/api/v1/watchlists/:id", desc: "Update a watchlist (Team plan)" },
       { method: "DELETE", path: "/api/v1/watchlists/:id", desc: "Soft-delete a watchlist (Team plan)" },
+      { method: "GET",  path: "/api/v1/audit",           desc: "Org audit log, newest-first, cursor-paginated (Team+)" },
+      { method: "GET",  path: "/api/v1/webhooks",        desc: "Webhook channels + last-24h success-rate summary" },
       { method: "GET",  path: "/api/v1/openapi.json",    desc: "OpenAPI 3.1 spec for this API" },
       { method: "GET",  path: "/api/health",             desc: "Liveness probe (no auth)" },
       { method: "GET",  path: "/api/widget-stats?id=",   desc: "Widget impression daily series (aggregate, auth required)" },

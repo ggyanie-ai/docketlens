@@ -192,6 +192,28 @@ export const GLOSSARY: GlossaryTerm[] = [
     related: ["motion", "discovery"],
   },
   {
+    slug: "vacatur",
+    term: "Vacatur",
+    category: "procedural",
+    body: "A court order setting aside a previous judgment, ruling, or decision. Sometimes the vacating court issues vacatur on its own motion; more often a party moves for it (Rule 60(b)). Common context on civil dockets: an appellate court vacates a district-court ruling and remands. Pronounced 'vay-KAY-ter.'",
+    related: ["motion"],
+  },
+  {
+    slug: "lanham-43a",
+    term: "Lanham Act §43(a)",
+    short: "15 U.S.C. § 1125(a)",
+    category: "pleadings",
+    body: "The federal-court hook for unfair-competition and false-advertising claims. §43(a)(1)(A) covers false designation of origin (passing off / reverse passing off / trade-dress); §43(a)(1)(B) covers commercial advertising or promotion that misrepresents a product. Pleaded constantly in tech + consumer-goods cases; watchlist signal when paired with NOS 840 or 410.",
+    related: ["motion"],
+  },
+  {
+    slug: "treble-damages",
+    term: "Treble damages",
+    category: "pleadings",
+    body: "An award equal to three times the actual damages found. Authorized by specific statutes — Clayton Act (antitrust), DTSA (trade secrets), Lanham Act (in some cases), and patent §284 (willful infringement). The trebling decision usually happens after the underlying verdict, so a willfulness or wantonness finding in the docket is the watchlist signal that trebling is now on the table.",
+    related: ["motion", "lanham-43a"],
+  },
+  {
     slug: "voir-dire",
     term: "Voir dire",
     category: "lifecycle",
