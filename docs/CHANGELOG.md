@@ -2,6 +2,119 @@
 
 We track changes by ISO date (UTC). Stable shipping starts at 1.0.0.
 
+## 0.1.5 — 2026-05-25 (SEO, build hygiene, accessibility)
+
+A late-day pass focused on three things: making every public page
+discoverable on its own merit (structured data + per-page social-share
+metadata), unblocking the production build, and chasing down a handful
+of small bugs found during a link/lint/build sweep. No breaking changes
+to the API or UI.
+
+### Added — structured data
+
+- **`DefinedTermSetJsonLd` helper + /glossary mount** — emits ~40
+  glossary terms as `DefinedTerm` entries (with fragment URLs)
+  alongside the BreadcrumbList. Eligible for Google's definition rich
+  result.
+- **`CollectionPage` + `ItemList` on /comparison** — index now
+  declares its `hasPart` Articles for crawlers.
+- **`Article` + `BreadcrumbList` on /vs/pacer, /vs/lex-machina,
+  /docs/api-reference, /use/[slug], /demo/[id]** — each emits a
+  page-specific `Article` (TechArticle for engineering, NewsArticle
+  for case demos).
+- **`BreadcrumbList` everywhere else** — /press, /contact, /donate,
+  /security, /status, /jurisdictions, /changelog, /feeds,
+  /legal/{privacy,terms,data-sources}, /docs/[slug], /demo, /docs,
+  /blog. Every public page now serves at least one ld+json block;
+  the major hubs serve two.
+- **`Blog` schema on /blog** with one `BlogPosting` entry per post.
+- **`ItemList` on /demo (sample dockets), /docs (public docs),
+  /changelog (recent releases — parsed from CHANGELOG.md)**.
+
+### Added — social share metadata
+
+- **Per-page `openGraph` on every public surface** — `/blog/[slug]`,
+  `/vs/*`, `/comparison`, `/docs/api-reference`, `/use/[slug]`,
+  `/about`, `/docs`, `/docs/[slug]`, `/jurisdictions`, `/press`,
+  `/security`, `/status`, `/donate`, `/changelog`, `/feeds`,
+  `/tools/verify-webhook`, `/glossary`, `/legal/*`, `/pricing`,
+  `/demo`, `/demo/[id]`. Before this pass, every share card showed
+  the homepage title regardless of which page was linked.
+- **Twitter cards inherit per-page OG** — root layout's `twitter`
+  block dropped `title` + `description` so Next.js derives them from
+  page-level `openGraph`. Card type stays `summary_large_image`.
+
+### Added — features
+
+- **Watchlist "Copy share link"** — `/watchlists/[id]` header now has
+  a button that writes the short `/p/{id}` URL to the clipboard.
+- **/alerts test-webhook button → real signed round-trip** — the
+  previously-stub CTA now POSTs to `/api/demo/test-webhook`, which
+  HMAC-signs a sample payload and fires it at a loopback echo
+  handler that HMAC-verifies. Toast reports latency + verification.
+- **/search "Popular last 7 days" empty-state strip** — when no
+  query and no filters, surfaces the top 6 courts by case count as
+  one-click filter chips.
+- **/dockets/[id] one-liner cache stamp** — per-entry AI one-liners
+  now carry the same `prompt vX.Y.Z` badge that the exec-summary
+  card already had.
+- **In-app 404 page** — `(app)/not-found.tsx` so unknown
+  dockets/watchlists render inside the sidebar+topbar shell.
+- **/watchlists/[id] loading skeleton** — fitted to the page
+  structure (back link, status dot + entity-type eyebrow, name +
+  reason, KPI grid, entry list).
+
+### Fixed — build
+
+- **`useSearchParams` Suspense boundaries** — wrapped `/lookup`,
+  `/(app)/inbox`, `/(app)/audit-log`, `/(app)/api-keys`,
+  `/(app)/search`, `/(app)/watchlists/new` in `<Suspense>` so
+  `pnpm build` no longer fails at static generation. 93/93 pages
+  now build clean.
+
+### Fixed — accessibility + UX bugs
+
+- **Skip-to-content target** — `<SkipToContent>` pointed at `#main`
+  but no `<main>` carried `id="main"`; keyboard users hitting the
+  skip-link landed nowhere. Added `id="main"` to all 53 `<main>`
+  tags (WCAG 2.4.1 bypass-block).
+- **`rel="noopener"` on `target="_blank"` links** — five JSX `<Link>`
+  sites were missing the attribute.
+- **Dead `/security/pgp.asc` link** — replaced with a "publication
+  pending" note on /security and dropped the `Encryption:` field
+  from /.well-known/security.txt (RFC 9116 makes it optional).
+- **`/(app)/inbox` rules-of-hooks** — empty-org preview was
+  returning before `useMemo` + `useEffect` ran. Hoisted both above
+  the early return so hook order is stable across renders.
+- **`Date.now()` impurity in render** — `(app)/audit-log` and
+  `live-health-dot` were calling `Date.now()` inside `useMemo`
+  callbacks / JSX, which React 19's purity rule flagged. Both now
+  hold the wall-clock value in state.
+
+### Fixed — API ↔ spec drift
+
+- **OpenAPI spec catch-up** — added the 4 endpoints that had landed
+  in the `/api/v1` discovery payload but not in `openapi.json`:
+  `GET /health/db`, `GET /orgs/me`, `GET /dockets/{id}/related`,
+  `POST /webhooks/{id}/test`.
+- **API.md callout** — top-of-page note routes readers to the full
+  /docs/api-reference + raw OpenAPI JSON + discovery payload, since
+  API.md only walks through ~6 endpoints by hand.
+
+### Changed — ops
+
+- **`eslint.config.mjs`**: added `.claude/**` to globalIgnores so
+  parallel-agent worktrees stop doubling every lint warning.
+- **Dropped dead `format:check` script** — prettier wasn't an
+  installed dependency.
+
+### Known gaps (unchanged from 0.1.4)
+
+- Better-Auth runtime adapter is stubbed; schema is ready.
+- Stripe checkout + webhook endpoint TODO.
+- Cache Components (`'use cache'`) not enabled yet.
+- No live deploy — code-only per the green-light scope.
+
 ## 0.1.4 — 2026-05-25 (CRUD completion + observability)
 
 The continuous-loop pass continued — 20 commits between 0.1.3 and
