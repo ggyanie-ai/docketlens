@@ -32,8 +32,12 @@ const VERSION = "0.1.1";
 async function pingDb(): Promise<{ ok: boolean; latencyMs: number; error?: string }> {
   const t0 = performance.now();
   try {
+    // Wrap the db.run() in an async IIFE so any synchronous throw (e.g.
+    // libSQL failing to open a missing file in serverless env) becomes a
+    // rejected promise that Promise.race can observe — otherwise the throw
+    // bypasses the catch and bubbles up as a 500.
     await Promise.race([
-      db.run(sql`select 1`),
+      (async () => db.run(sql`select 1`))(),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("db ping timeout")), 2000)
       ),
@@ -49,6 +53,26 @@ async function pingDb(): Promise<{ ok: boolean; latencyMs: number; error?: strin
 }
 
 export async function GET() {
+  try {
+    return await healthBody();
+  } catch (err) {
+    // Belt + braces: if anything in the body throws unexpectedly (e.g. a
+    // dependency module fails to construct in serverless env), still return
+    // a parseable 503 instead of letting Next.js emit a generic 500.
+    return NextResponse.json(
+      {
+        ok: false,
+        status: "error",
+        service: SERVICE,
+        version: VERSION,
+        error: err instanceof Error ? err.message : String(err),
+      },
+      { status: 503, headers: { "cache-control": "no-store, max-age=0" } }
+    );
+  }
+}
+
+async function healthBody() {
   const ts = new Date().toISOString();
   const db = await pingDb();
 
