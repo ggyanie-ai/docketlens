@@ -148,6 +148,161 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/health/db": {
+      get: {
+        tags: ["System"],
+        summary: "Bare DB liveness probe",
+        description:
+          "200 if `select 1` succeeds within 1 s, 503 otherwise. No JSON envelope, no body — uptime monitors that only inspect the status code use this.",
+        operationId: "healthDb",
+        security: [],
+        responses: {
+          "200": { description: "Database responded within 1 s" },
+          "503": { description: "Database did not respond within 1 s" },
+        },
+      },
+    },
+    "/api/v1/orgs/me": {
+      get: {
+        tags: ["Auth"],
+        summary: "Get the calling org",
+        description:
+          "Thin alias for the org subset of `/api/v1/me`. Returns just `id`, `name`, `slug`, `plan`, `stripe_customer_id` (Team+ only), and `created_at` so callers that already have the key info don't deserialize the verbose `/me` envelope.",
+        operationId: "getOrgMe",
+        responses: {
+          "200": {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["id", "name", "slug", "plan", "created_at"],
+                  properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    slug: { type: "string" },
+                    plan: {
+                      type: "string",
+                      enum: ["free", "pro", "team", "enterprise"],
+                    },
+                    stripe_customer_id: {
+                      type: ["string", "null"],
+                      description:
+                        "Only populated on Team+ plans; null otherwise.",
+                    },
+                    created_at: { type: ["string", "null"], format: "date-time" },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/dockets/{id}/related": {
+      get: {
+        tags: ["Dockets"],
+        summary: "Related dockets",
+        description:
+          "Returns up to N dockets sharing a party / judge / counsel / lawfirm / tag with the input docket. Each result has a score (party=3, judge=2, counsel/lawfirm=2, tag=1) so callers can rank.",
+        operationId: "relatedDockets",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "by",
+            in: "query",
+            description:
+              "Comma-separated subset of dimensions to score against. Defaults to all.",
+            schema: { type: "string" },
+            example: "party,judge,lawfirm",
+          },
+          {
+            name: "limit",
+            in: "query",
+            description: "Clamped to 1..25 (default 5).",
+            schema: { type: "integer", minimum: 1, maximum: 25, default: 5 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["id", "results"],
+                  properties: {
+                    id: { type: "string" },
+                    results: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        required: ["docket_id", "score", "reasons"],
+                        properties: {
+                          docket_id: { type: "string" },
+                          score: { type: "integer" },
+                          reasons: { type: "array", items: { type: "string" } },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+    },
+    "/api/v1/webhooks/{id}/test": {
+      post: {
+        tags: ["Webhooks"],
+        summary: "Fire a signed test delivery",
+        description:
+          "Sends a sample payload to the configured webhook destination signed with HMAC-SHA256 (`X-DocketLens-Signature: sha256=<hex>`). Hard 5 s timeout. Pro+ only.",
+        operationId: "testWebhook",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        responses: {
+          "200": {
+            description: "Delivery attempted (see `ok` for success).",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: [
+                    "delivery_id",
+                    "rule_id",
+                    "target",
+                    "status",
+                    "latency_ms",
+                    "ok",
+                  ],
+                  properties: {
+                    delivery_id: { type: "string" },
+                    rule_id: { type: "string" },
+                    target: { type: "string", format: "uri" },
+                    status: { type: "integer" },
+                    latency_ms: { type: "integer" },
+                    ok: { type: "boolean" },
+                    response_excerpt: { type: "string" },
+                    error: { type: ["string", "null"] },
+                    signature_header: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+          "400": { description: "Rule's channel isn't webhook" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": { description: "Upgrade required (Pro+)" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+    },
     "/api/v1/watchlists/{id}": {
       get: {
         tags: ["Watchlists"],
