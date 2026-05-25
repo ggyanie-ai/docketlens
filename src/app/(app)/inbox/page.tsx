@@ -7,10 +7,8 @@ import {
   Inbox,
   Sparkles,
   Archive,
-  Bookmark,
   CheckCheck,
   ExternalLink,
-  Mail,
   MailOpen,
   Bell,
   FileText,
@@ -68,46 +66,6 @@ export default function InboxPage() {
   const [selectedId, setSelectedId] = useState<string | null>(
     initial[0]?.id ?? null
   );
-
-  if (isEmpty && messages.length === 0) {
-    return (
-      <>
-        <Topbar title="Inbox" />
-        <main id="main" className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
-            <div className="flex justify-center mb-5">
-              <span className="relative inline-flex">
-                <span
-                  aria-hidden
-                  className="motion-safe:animate-ping motion-reduce:hidden absolute inset-0 inline-flex rounded-full bg-[color:var(--color-accent)] opacity-40"
-                />
-                <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] shadow-soft">
-                  <Inbox className="size-6" />
-                </span>
-              </span>
-            </div>
-            <p className="eyebrow mb-2">Inbox · empty-org preview</p>
-            <h1 className="display-2">No alerts yet.</h1>
-            <p className="mt-5 text-base text-[color:var(--color-fg-muted)] leading-relaxed max-w-xl mx-auto">
-              Once you have an active watchlist with a matching filing, the
-              first alert lands here within seconds.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <Button asChild variant="accent" size="lg">
-                <Link href={"/watchlists?empty=1" as never}>
-                  Send your first alert
-                  <ArrowUpRight className="size-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href={"/inbox" as never}>Back to populated view</Link>
-              </Button>
-            </div>
-          </div>
-        </main>
-      </>
-    );
-  }
 
   const filtered = useMemo(() => {
     if (filter === "all") {
@@ -199,6 +157,48 @@ export default function InboxPage() {
     // selectMessage + setStatus capture state via closure each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
+
+  // Empty-org preview: render after all hooks have registered so the
+  // hooks order is stable across renders (rules-of-hooks).
+  if (isEmpty && messages.length === 0) {
+    return (
+      <>
+        <Topbar title="Inbox" />
+        <main id="main" className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
+            <div className="flex justify-center mb-5">
+              <span className="relative inline-flex">
+                <span
+                  aria-hidden
+                  className="motion-safe:animate-ping motion-reduce:hidden absolute inset-0 inline-flex rounded-full bg-[color:var(--color-accent)] opacity-40"
+                />
+                <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] shadow-soft">
+                  <Inbox className="size-6" />
+                </span>
+              </span>
+            </div>
+            <p className="eyebrow mb-2">Inbox · empty-org preview</p>
+            <h1 className="display-2">No alerts yet.</h1>
+            <p className="mt-5 text-base text-[color:var(--color-fg-muted)] leading-relaxed max-w-xl mx-auto">
+              Once you have an active watchlist with a matching filing, the
+              first alert lands here within seconds.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Button asChild variant="accent" size="lg">
+                <Link href={"/watchlists?empty=1" as never}>
+                  Send your first alert
+                  <ArrowUpRight className="size-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href={"/inbox" as never}>Back to populated view</Link>
+              </Button>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
