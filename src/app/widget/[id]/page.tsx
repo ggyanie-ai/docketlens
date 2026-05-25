@@ -12,6 +12,11 @@ function pickTheme(raw: string | string[] | undefined): Theme {
   return v === "light" || v === "dark" ? v : "auto";
 }
 
+function asBool(raw: string | string[] | undefined): boolean {
+  const v = Array.isArray(raw) ? raw[0] : raw;
+  return v === "1" || v === "true";
+}
+
 const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
 export async function generateMetadata({
@@ -59,11 +64,16 @@ export default async function WidgetCasePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ theme?: string }>;
+  searchParams: Promise<{ theme?: string; hide?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
   const theme = pickTheme(sp.theme);
+  // `?hide=footer` strips the "Powered by DocketLens" attribution. Today the
+  // flag is honored for everyone (we want the gating mechanism in place
+  // before we wire the plan check); paid-tier gating lands with the auth
+  // wire-up Tuesday.
+  const hideFooter = sp.hide === "footer" || asBool(sp.hide);
   const d = SAMPLE_DOCKETS.find((x) => x.id === id);
 
   if (!d) {
@@ -126,19 +136,21 @@ export default async function WidgetCasePage({
         ))}
       </ul>
 
-      <div className="dlw-footer">
-        <span>
-          <a href={href} target="_blank" rel="noopener">
-            Open on DocketLens →
-          </a>
-        </span>
-        <span>
-          Powered by{" "}
-          <a href={SITE} target="_blank" rel="noopener">
-            DocketLens
-          </a>
-        </span>
-      </div>
+      {!hideFooter && (
+        <div className="dlw-footer">
+          <span>
+            <a href={href} target="_blank" rel="noopener">
+              Open on DocketLens →
+            </a>
+          </span>
+          <span>
+            Powered by{" "}
+            <a href={SITE} target="_blank" rel="noopener">
+              DocketLens
+            </a>
+          </span>
+        </div>
+      )}
 
       {/* Privacy-preserving impression pixel — counts only docket_id + day.
           No IP, UA, referrer, cookies. See src/lib/widget-pings.ts. */}

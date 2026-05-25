@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AiExecSummaryCard } from "@/components/app/ai-exec-summary-card";
+import { TimelineKeyboardNav } from "@/components/app/timeline-keyboard-nav";
 import { SAMPLE_DOCKETS, type SampleDocket } from "@/lib/sample-data";
 
 const ENTRY_ICON: Record<string, typeof FileText> = {
@@ -46,6 +47,7 @@ export default async function DocketDetailPage({
 
   return (
     <>
+      <TimelineKeyboardNav />
       <Topbar title="Case" />
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-6xl px-6 py-8">
