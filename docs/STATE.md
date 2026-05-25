@@ -833,58 +833,34 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **/dockets/[id] AI-summary cache stamp** — render the
-      cached `prompt_version` next to the per-entry one-liners
-      (already in the exec-summary meta strip).
-- [ ] **Tabs ARIA spot-check** — verify TabsTrigger sets
-      `aria-selected` correctly on /settings's 6-tab panel.
-- [ ] **/alerts test-webhook button → real ping** — currently
-      the "Send a test webhook" CTA is a stub; fire an actual
-      sample payload to the configured endpoint with the
-      existing HMAC signing pipeline. Returns the response
-      status inline.
-- [ ] **Skeleton on /watchlists/[id]** — already has a
-      loading.tsx if any; tune to mimic the actual page shape.
-- [ ] **/inbox archived-message indicator** — currently
-      archived rows just disappear; add a small "Archived"
-      bucket count in the topbar so users can find them
-      again.
+- [x] **/dockets/[id] AI-summary cache stamp** — shipped 51fa3b6.
+- [x] **Tabs ARIA spot-check** — verified /settings 6-tab panel
+      (each TabsTrigger emits role/aria-controls/aria-selected).
+- [x] **/alerts test-webhook button → real ping** — shipped 48b57de
+      (signed loopback round-trip via /api/demo/test-webhook).
+- [x] **Skeleton on /watchlists/[id]** — shipped 0b8aabe
+      (fitted loading.tsx mirroring page header + KPIs + entries).
+- [x] **/inbox archived-message indicator** — shipped 50542ec
+      (Archived TabsTrigger now carries a count chip).
 
 ### Content
-- [ ] **Fifteenth blog post** — "Where the AI summaries come
-      from: a tour of /docs/api-reference and the prompt
-      pinning model." Engineering tag, 5 min. Plays up the
-      stale-flag mechanism in the summaries API.
-- [ ] **Two more glossary terms** — "interlocutory appeal" and
-      "ad damnum clause."
+- [x] **Fifteenth blog post** — shipped (prompt-pinning-stale-flag).
+- [x] **Two more glossary terms** — shipped d0d05f3 (interlocutory
+      appeal + ad damnum).
 
 ### Features
-- [ ] **`/api/v1/orgs/me` rename suggestion** — `/api/v1/me`
-      returns key+org+limits but the field structure is verbose.
-      Add a thin alias `/api/v1/orgs/me` that returns just the
-      org subset for callers that already have the key info.
-- [ ] **`/api/v1/dockets/{id}/related`** — given a docket, return
-      up to N "related" dockets sharing a party, judge, or
-      law firm. Reuses the watchlist-matcher under the hood
-      with the calling docket as the input entity.
-- [ ] **`/api/v1/webhooks/{id}/test` POST** — fire a sample
-      payload at one specific webhook with the standard HMAC
-      signing. Returns `{ status, latency_ms, response_excerpt }`.
+- [x] **`/api/v1/orgs/me`** — shipped d0d05f3.
+- [x] **`/api/v1/dockets/{id}/related`** — shipped ea86be7.
+- [x] **`/api/v1/webhooks/{id}/test` POST** — shipped d0d05f3.
 - [ ] **Watchlist sharing via /p/{id}** — `/p/{id}` already
       handles `wl_` → /preview; add a "Copy share link" action
       on the in-app /watchlists/[id] header that copies the
       short URL instead of the canonical preview URL.
-- [ ] **`/dashboard` activity-chart range picker** — current
-      30-day fixed window; add 7d / 30d / 90d toggle in the
-      card header. Recomputes the bars from the same source.
-- [ ] **Empty-state polish for /search** — add a recent-courts
-      strip when the search box is empty + no filters applied.
-      Default "popular last 7 days" surface.
-- [ ] **`/api/v1/health/db` ping-only** — `/api/health` does a
-      DB ping under `checks.db`. Some monitors want the bare
-      DB check without parsing the envelope. Cheap alias that
-      returns 200 if `select 1` succeeds, 503 otherwise. No
-      body.
+- [x] **`/dashboard` activity-chart range picker** — shipped 50542ec
+      (7d / 30d / 90d radiogroup w/ deterministic jitter).
+- [x] **Empty-state polish for /search** — shipped 34b3223
+      ("Popular last 7 days" courts strip).
+- [x] **`/api/v1/health/db` ping-only** — shipped ea86be7.
 
 ### Refresh next loop (operational)
 
