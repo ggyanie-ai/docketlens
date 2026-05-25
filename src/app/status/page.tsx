@@ -16,6 +16,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { LiveHealthDot } from "@/components/app/live-health-dot";
 
 export const metadata = {
   title: "Status",
@@ -191,7 +192,10 @@ export default function StatusPage() {
                   .
                 </p>
               </div>
-              <Badge variant={overallMeta.variant}>{overallMeta.label}</Badge>
+              <div className="flex flex-col items-end gap-2">
+                <Badge variant={overallMeta.variant}>{overallMeta.label}</Badge>
+                <LiveHealthDot />
+              </div>
             </div>
           </Card>
         </section>

@@ -115,6 +115,64 @@ export const openapi = {
         responses: { "200": { description: "Healthy" }, "503": { description: "Degraded" } },
       },
     },
+    "/api/v1/me": {
+      get: {
+        tags: ["Discovery"],
+        summary: "Caller identity",
+        description:
+          "Returns metadata about the API key in the Authorization header — key id, name, prefix, scopes, last-used timestamp; the calling org's id, name, slug, plan; and the per-plan rate-limit ceilings. Useful for any client that wants to confirm 'yes this token works + here's its plan' before doing real work.",
+        operationId: "me",
+        responses: {
+          "200": {
+            description: "Caller identity payload",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/Me" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
+    "/api/v1/courts": {
+      get: {
+        tags: ["Dockets"],
+        summary: "List courts",
+        description:
+          "Returns every CourtListener-mirrored court in the local cache. Use to populate filter dropdowns without scraping `/jurisdictions`.",
+        operationId: "listCourts",
+        parameters: [
+          {
+            name: "in_use",
+            in: "query",
+            description: "Filter by whether the court is currently active.",
+            schema: { type: "boolean" },
+          },
+          {
+            name: "jurisdiction",
+            in: "query",
+            description: "Filter by CL jurisdiction code (F, FB, FS, FD).",
+            schema: { type: "string", enum: ["F", "FB", "FS", "FD"] },
+          },
+          {
+            name: "limit",
+            in: "query",
+            description: "Max rows. Clamped to 1–500.",
+            schema: { type: "integer", minimum: 1, maximum: 500, default: 200 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Court list",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/CourtList" },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+    },
     "/api/v1/dockets": {
       get: {
         tags: ["Dockets"],
@@ -646,6 +704,75 @@ export const openapi = {
               natureOfSuitCodes: { type: "array", items: { type: "string" } },
             },
           },
+        },
+      },
+      Me: {
+        type: "object",
+        required: ["key", "org", "limits"],
+        properties: {
+          key: {
+            type: "object",
+            required: ["id", "scopes"],
+            properties: {
+              id: { type: "string", example: "apikey_F3kQ9pR2Lm" },
+              name: { type: ["string", "null"] },
+              token_prefix: { type: ["string", "null"], example: "dkl_live_w7Q" },
+              scopes: { type: "array", items: { type: "string" } },
+              last_used_at: { type: ["string", "null"], format: "date-time" },
+              created_at: { type: ["string", "null"], format: "date-time" },
+            },
+          },
+          org: {
+            type: "object",
+            required: ["id", "plan"],
+            properties: {
+              id: { type: "string" },
+              name: { type: ["string", "null"] },
+              slug: { type: ["string", "null"] },
+              plan: {
+                type: "string",
+                enum: ["free", "pro", "team", "enterprise"],
+              },
+            },
+          },
+          limits: {
+            type: "object",
+            required: ["per_second", "per_hour", "per_day"],
+            properties: {
+              per_second: { type: "integer" },
+              per_hour: { type: "integer" },
+              per_day: { type: "integer" },
+              note: { type: "string" },
+            },
+          },
+          docs: { type: "string", format: "uri" },
+        },
+      },
+      Court: {
+        type: "object",
+        required: ["id", "full_name", "short_name", "jurisdiction", "in_use"],
+        properties: {
+          id: { type: "string", example: "nysd" },
+          full_name: {
+            type: "string",
+            example: "United States District Court for the Southern District of New York",
+          },
+          short_name: { type: "string", example: "S.D.N.Y." },
+          jurisdiction: {
+            type: "string",
+            enum: ["F", "FB", "FS", "FD"],
+          },
+          citation_string: { type: ["string", "null"] },
+          in_use: { type: "boolean" },
+        },
+      },
+      CourtList: {
+        type: "object",
+        required: ["courts", "count", "meta"],
+        properties: {
+          courts: { type: "array", items: { $ref: "#/components/schemas/Court" } },
+          count: { type: "integer", minimum: 0 },
+          meta: { type: "object", additionalProperties: true },
         },
       },
       WidgetStats: {

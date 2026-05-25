@@ -146,6 +146,20 @@ export const GLOSSARY: GlossaryTerm[] = [
     body: "Jury selection — the questioning of potential jurors before trial. From the French 'to see, to say.' Pronounced approximately 'vwah-DEER.'",
     related: [],
   },
+  {
+    slug: "scheduling-order",
+    term: "Scheduling order",
+    category: "lifecycle",
+    body: "The court's case-management plan: dates for discovery cutoff, expert disclosures, dispositive motions, pretrial conference, and trial. Usually filed within the first few months of a case under Rule 16(b). Once entered, you can only modify it for good cause — so a watchlist hit on a scheduling order tells you the case is real and the deadlines are now firm.",
+    related: ["docket", "discovery"],
+  },
+  {
+    slug: "daubert",
+    term: "Daubert motion",
+    category: "pleadings",
+    body: "A pretrial motion asking the court to exclude an opposing expert's testimony as unreliable under Federal Rule of Evidence 702. Named after Daubert v. Merrell Dow Pharmaceuticals (1993). Common in patent, antitrust, products-liability, and securities cases — a granted Daubert can functionally end the case before trial.",
+    related: ["motion", "summary-judgment"],
+  },
 
   // Pleadings & motions
   {
