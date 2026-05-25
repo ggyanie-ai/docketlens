@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/app/copy-button";
 import { openapi } from "@/lib/openapi";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-static";
 
@@ -474,6 +475,25 @@ export default function ApiReferencePage() {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Docs", url: "/docs" },
+          { name: "API reference", url: "/docs/api-reference" },
+        ]}
+      />
+      <ArticleJsonLd
+        meta={{
+          headline: "DocketLens REST API reference",
+          description:
+            "Interactive reference for the DocketLens REST API — every endpoint, every schema, generated from the OpenAPI 3.1 spec.",
+          url: "/docs/api-reference",
+          datePublished: "2026-05-23",
+          dateModified: "2026-05-25",
+          authorName: "DocketLens",
+          section: "Engineering",
+        }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-6xl px-6 pt-16 pb-10">

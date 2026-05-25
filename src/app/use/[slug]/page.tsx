@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PERSONAS, getPersona } from "@/content/personas";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata({
   params,
@@ -35,6 +36,23 @@ export default async function UseCasePage({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Use cases", url: "/use" },
+          { name: `${p.hero.title} ${p.hero.titleAccent}`.trim(), url: `/use/${p.slug}` },
+        ]}
+      />
+      <ArticleJsonLd
+        meta={{
+          headline: `${p.hero.title} ${p.hero.titleAccent}`.trim(),
+          description: p.hero.subtitle,
+          url: `/use/${p.slug}`,
+          datePublished: "2026-05-23",
+          authorName: "DocketLens",
+          section: "Use case",
+        }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

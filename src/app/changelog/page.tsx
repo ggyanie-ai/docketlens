@@ -4,6 +4,23 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Markdown } from "@/lib/markdown";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
+
+/**
+ * Walk the CHANGELOG body extracting `## <version> — <iso-date>` headings.
+ * Returns up to N most recent entries for ItemList JSON-LD.
+ */
+function extractReleases(body: string, limit = 20) {
+  const releases: { version: string; date: string }[] = [];
+  const re = /^##\s+([0-9]+\.[0-9]+\.[0-9]+(?:[-+][^\s]+)?)\s+[—–-]\s+(\d{4}-\d{2}-\d{2})/gm;
+  let m;
+  while ((m = re.exec(body)) !== null && releases.length < limit) {
+    releases.push({ version: m[1], date: m[2] });
+  }
+  return releases;
+}
 
 export const metadata = {
   title: "Changelog",
@@ -34,8 +51,40 @@ export default async function ChangelogPage() {
   // Strip the leading `# Changelog` heading — we render our own page title.
   const body = raw.replace(/^#\s+Changelog\s*\n+/, "");
 
+  const releases = extractReleases(body);
+  const itemListLd =
+    releases.length === 0
+      ? null
+      : {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "DocketLens releases",
+          description:
+            "Versioned changelog entries for DocketLens, newest first.",
+          itemListOrder: "https://schema.org/ItemListOrderDescending",
+          numberOfItems: releases.length,
+          itemListElement: releases.map((r, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: `${r.version} — ${r.date}`,
+            url: `${SITE}/changelog#${r.version.replace(/\./g, "-")}`,
+          })),
+        };
+
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Changelog", url: "/changelog" },
+        ]}
+      />
+      {itemListLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+        />
+      )}
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-3xl px-6 pt-16 md:pt-24 pb-8">
