@@ -177,7 +177,7 @@ export const openapi = {
       get: {
         tags: ["Dockets"],
         summary: "List recent dockets",
-        description: "Returns the most recently filed dockets the calling org has access to, newest first.",
+        description: "Returns the most recently filed dockets the calling org has access to, newest first. Filterable by court, NOS prefix, and a filing-date window.",
         operationId: "listDockets",
         parameters: [
           { $ref: "#/components/parameters/Limit" },
@@ -194,6 +194,25 @@ export const openapi = {
             description: "Case-name substring match (use `/api/v1/search` for full search).",
             schema: { type: "string" },
             example: "Acme",
+          },
+          {
+            name: "nos",
+            in: "query",
+            description: "Nature-of-Suit code prefix (e.g. `830` for patent). Matches the NOS field with a `prefix%` LIKE.",
+            schema: { type: "string" },
+            example: "850",
+          },
+          {
+            name: "date_from",
+            in: "query",
+            description: "ISO YYYY-MM-DD — only dockets with `date_filed ≥` this day.",
+            schema: { type: "string", format: "date" },
+          },
+          {
+            name: "date_to",
+            in: "query",
+            description: "ISO YYYY-MM-DD — only dockets with `date_filed ≤` this day.",
+            schema: { type: "string", format: "date" },
           },
         ],
         responses: {

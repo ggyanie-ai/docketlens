@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { dockets } from "@/lib/db/schema";
 import { authenticateApiRequest } from "@/lib/api/keys";
 import { err, ok, preflight } from "@/lib/api/respond";
-import { desc, like, and, eq } from "drizzle-orm";
+import { desc, like, and, eq, gte, lte } from "drizzle-orm";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,13 +17,28 @@ export async function GET(req: NextRequest) {
   if (!auth) return err("unauthorized — provide Bearer dkl_live_…", 401);
 
   const sp = req.nextUrl.searchParams;
-  const limit = Math.min(Number(sp.get("limit") ?? "20"), 100);
+  const limit = Math.min(
+    Math.max(Number(sp.get("limit") ?? "20") || 20, 1),
+    100
+  );
   const court = sp.get("court");
   const q = sp.get("q");
+  const nos = sp.get("nos");        // Nature-of-Suit code prefix (e.g. "830")
+  const dateFrom = sp.get("date_from"); // ISO YYYY-MM-DD
+  const dateTo = sp.get("date_to");     // ISO YYYY-MM-DD
 
   const conds = [];
   if (court) conds.push(eq(dockets.court, court));
   if (q) conds.push(like(dockets.caseName, `%${q}%`));
+  if (nos) conds.push(like(dockets.natureOfSuit, `${nos}%`));
+  if (dateFrom) {
+    const t = new Date(`${dateFrom}T00:00:00Z`);
+    if (!Number.isNaN(t.getTime())) conds.push(gte(dockets.dateFiled, t));
+  }
+  if (dateTo) {
+    const t = new Date(`${dateTo}T23:59:59Z`);
+    if (!Number.isNaN(t.getTime())) conds.push(lte(dockets.dateFiled, t));
+  }
 
   const rows = await db
     .select()

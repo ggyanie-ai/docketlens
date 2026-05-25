@@ -833,77 +833,71 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Fix matcher.ts tier-3 dead code** — agent's test pass
-      flagged that the substring fallback never fires because
-      tier-2 token-subset already eats every case it'd handle.
-      Tighten tier-2 to require word boundaries on each token, or
-      delete tier-3 outright and document the simpler model.
-      Either way, the existing tests will guard the decision.
-- [ ] **404 page redesign** — current /404 is generic. Add a
-      "Did you mean?" block that fuzzy-matches the typed path
-      against the sitemap and surfaces the 3 closest matches.
-- [ ] **/status page real-meter wiring** — currently static. Wire
-      the four indicator dots to actual `/api/health` polling on
-      the client (1-min cadence) so it reflects reality.
-- [ ] **Topbar command palette keyboard hint** — add a small
-      `⌘K` chip inside the search input on /search and
-      /dashboard so users discover the palette.
-- [ ] **Empty-state for /alerts inbox** — currently shipped; tune
-      the illustration (decorative SVG with reduced-motion guard)
-      and add a "Send a test webhook" CTA.
-- [ ] **Footer wordmark hover** — add a subtle 200ms accent
-      underline-grow on the SiteFooter wordmark to match the
-      header treatment.
-- [ ] **Dockets/[id] entry anchors** — emit `id="entry-{n}"` on
-      each timeline row so the `/dockets/{id}#entry-12` deep
-      links from the dashboard "recent filings" feed actually
-      scroll.
+- [ ] **Watchlists DELETE / PATCH** — REST verbs on
+      `/api/v1/watchlists/{id}`. Already have GET-list + POST;
+      finish the CRUD quad.
+- [ ] **/dockets/[id] keyboard nav** — `j` / `k` moves between
+      timeline entries; `/` focuses the entry filter. Matches
+      Vim conventions readers expect.
+- [ ] **Search filter persistence** — restore last `q`, `court`,
+      `nos`, `scope` from localStorage on revisit. Already saved
+      via SavedSearches; this is the "last unsaved query" path.
+- [ ] **Tabs ARIA: review TabsTrigger active state** —
+      `data-state="active"` should map to `aria-selected="true"`
+      already, but the role wiring on /settings has six tabs and
+      deserves a spot-check.
+- [ ] **/dockets/[id] AI-summary cache stamp** — render the
+      cached `prompt_version` next to the summary so power users
+      can see what generation it came from.
+- [ ] **`Skeleton` shimmer respects prefers-reduced-motion** —
+      already paused via global CSS, but the bg-pos animation in
+      ui/skeleton.tsx could be `motion-safe:` for clarity.
 
 ### Content
-- [ ] **Seventh blog post** — "What we learned the first time we
-      tried to summarize a 400-page Markman ruling." Engineering
-      tag. Covers the chunking strategy + the safety rails.
-- [ ] **Eighth blog post** — "We picked Free Law Project as our
-      data source. Here's how we donate back." Industry tag.
-      Recap of the /donate page in essay form.
-- [ ] **Three more glossary terms** — "MDL transferee judge",
-      "JPML", "Section 1782 discovery." Common in international
-      patent + securities crossover cases.
+- [ ] **Ninth blog post** — "What the OpenAPI 3.1 spec lets
+      consumers do that 3.0 didn't." Engineering tag. Short.
+- [ ] **Tenth blog post** — "The court records we don't have
+      yet, and why." Industry tag. Covers state courts, sealed
+      docs, magistrate-only matters.
+- [ ] **Two more glossary terms** — "in camera review" and
+      "PSLRA pleading standard." Both come up in security-class +
+      product-liability work.
 
 ### Features
-- [ ] **Audit-log URL state** — current /audit-log filters (q,
-      category, range) live in useState. Promote them to
-      `useSearchParams` so URLs are shareable + back-button works.
-- [ ] **Watchlist preview share button + copy URL** —
-      /watchlists/[id]/preview ships; add a Copy URL button to
-      the preview banner so users can share it from the page
-      itself, not just from the owner's app view.
-- [ ] **Inbox empty-state** — /inbox currently always shows
-      sample messages. Add `?empty=1` empty-state with a "Send
-      your first alert" CTA that links to /watchlists?empty=1.
-- [ ] **/lookup form keyboard hint** — the docket-lookup field
-      could use the same `⌘K` chip treatment as /search.
-- [ ] **Settings audit-log preview** — small "Last 10 events in
-      this org" card on /settings's General tab linking to
-      /audit-log.
-- [ ] **/api/v1/usage** — counter endpoint reporting calls/day
-      against the per-plan ceiling. Pairs with /api/v1/me to give
-      a complete picture.
-- [ ] **/api/v1/dockets/{id}/parties + /entries split** — split
-      the existing combined response into two endpoints for
-      consumers that only need one shape. Keep the combined
-      endpoint as the convenience default.
-- [ ] **CSV export for /audit-log** — button already in the UI
-      but stubbed. Wire it to the existing CSV writer in
-      `src/lib/csv.ts` and emit the visible filtered rows.
-- [ ] **Search results CSV export keyboard shortcut** — `⌘E` on
-      /search downloads the current results.csv.
-- [ ] **Dark-mode opengraph image** — currently we have one OG.
-      Detect `?theme=dark` on /opengraph-image and ship a dark
-      variant for embedders that opt in.
-- [ ] **Public read-only `/p/[id]` pretty preview redirect** —
-      shorter URL that 302s to `/watchlists/[id]/preview`. Easier
-      to paste in tweets.
+- [ ] **OpenAPI spec for /api/v1/usage** — endpoint shipped in
+      723aad0; needs a path + Usage schema in `src/lib/openapi.ts`.
+- [ ] **`/api/v1/dockets` rate-limit response headers** — emit
+      `x-ratelimit-limit`, `x-ratelimit-remaining`,
+      `x-ratelimit-reset` so clients can self-pace before the
+      live meter ships.
+- [ ] **`/inbox/digest-preview`** — render exactly what
+      tomorrow's daily-digest email would look like, using the
+      current watchlist matches. Pairs with the daily-digest
+      template in the alert engine.
+- [ ] **404 telemetry** — small `/api/log-404?path=` endpoint
+      the DidYouMean island optionally POSTs to so we know which
+      typos to redirect. Disabled by default (DO_NOT_TRACK style
+      flag on root settings).
+- [ ] **/api/v1/saved-searches CRUD** — currently only the feed
+      siblings exist. Add GET/POST/PATCH/DELETE so API consumers
+      can manage saved searches programmatically.
+- [ ] **Search-result row keyboard navigate** — `↑` / `↓` moves
+      focus through the rows on /search; `enter` opens the
+      docket.
+- [ ] **`prefers-color-scheme` indicator in topbar** — small
+      sun/moon glyph on the topbar showing which mode is
+      active. Already in command palette; bring to the topbar
+      for hover discoverability.
+- [ ] **`/widget/[id]` ?hide=footer toggle** — embedders can opt
+      out of the attribution footer at the cost of paying a higher
+      tier. Today the footer is mandatory; this introduces the
+      mechanism (just the flag; the gating logic lands later).
+- [ ] **Watchlist `priority` field** — Pro+ feature, ranks
+      matches in delivery order. Schema-only for v0; UI lands
+      in 0.2.0.
+- [ ] **`/api/v1/health` mirror** — many consumers expect
+      `/v1/health` rather than `/api/health`. Cheap alias with
+      a 301 to the canonical.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

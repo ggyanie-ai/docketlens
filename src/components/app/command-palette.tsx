@@ -14,6 +14,13 @@ import {
   Sun,
   Moon,
   FileText,
+  Code2,
+  ShieldCheck,
+  Inbox,
+  ScrollText,
+  Rss,
+  BookOpen,
+  Building2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Kbd } from "@/components/ui/kbd";
@@ -106,6 +113,16 @@ export function CommandPalette() {
                     onSelect={() => go("/alerts")}
                   />
                   <Item
+                    icon={Inbox}
+                    label="Inbox"
+                    onSelect={() => go("/inbox")}
+                  />
+                  <Item
+                    icon={ScrollText}
+                    label="Audit log"
+                    onSelect={() => go("/audit-log")}
+                  />
+                  <Item
                     icon={KeyRound}
                     label="API keys"
                     onSelect={() => go("/api-keys")}
@@ -114,6 +131,43 @@ export function CommandPalette() {
                     icon={Settings}
                     label="Settings"
                     onSelect={() => go("/settings")}
+                  />
+                </Command.Group>
+
+                <Command.Group heading="Tools + docs" className="text-[10.5px] uppercase tracking-[0.18em] text-[color:var(--color-fg-subtle)] px-2 pt-3 pb-1">
+                  <Item
+                    icon={Code2}
+                    label="API reference"
+                    hint="Interactive OpenAPI"
+                    onSelect={() => go("/docs/api-reference")}
+                  />
+                  <Item
+                    icon={Building2}
+                    label="Embed a widget"
+                    hint="Iframe-friendly case card"
+                    onSelect={() => go("/widget")}
+                  />
+                  <Item
+                    icon={ShieldCheck}
+                    label="Verify webhook signature"
+                    hint="Client-side HMAC playground"
+                    onSelect={() => go("/tools/verify-webhook")}
+                  />
+                  <Item
+                    icon={Rss}
+                    label="Feeds hub"
+                    hint="RSS / Atom / JSON"
+                    onSelect={() => go("/feeds")}
+                  />
+                  <Item
+                    icon={BookOpen}
+                    label="Glossary"
+                    onSelect={() => go("/glossary")}
+                  />
+                  <Item
+                    icon={FileText}
+                    label="Pricing"
+                    onSelect={() => go("/pricing")}
                   />
                 </Command.Group>
 
