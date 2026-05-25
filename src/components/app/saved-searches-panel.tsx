@@ -27,6 +27,7 @@ import {
   suggestName,
   type SavedSearch,
 } from "@/lib/saved-searches";
+import { runSearch } from "@/lib/search/filter";
 
 /* ============================================================================
  *  SavedSearchesPanel
@@ -203,6 +204,24 @@ export function SavedSearchesPanel({
                       {summarizeQuery(s.query)}
                     </p>
                   </div>
+                  {(() => {
+                    // Live match-count badge, computed in-memory against
+                    // SAMPLE_DOCKETS via the shared runSearch() helper.
+                    // No DB roundtrip; recomputes on every render but the
+                    // dataset is small.
+                    const n = runSearch(s.query).length;
+                    return (
+                      <span
+                        className="hidden sm:inline-flex shrink-0 items-center gap-1 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-bg-subtle)]/60 px-2 py-0.5 font-mono text-[10.5px] text-[color:var(--color-fg-muted)]"
+                        title={`${n} matching ${n === 1 ? "case" : "cases"}`}
+                      >
+                        {n}
+                        <span className="text-[color:var(--color-fg-subtle)] uppercase tracking-wider">
+                          {n === 1 ? "match" : "matches"}
+                        </span>
+                      </span>
+                    );
+                  })()}
                   <button
                     type="button"
                     onClick={() => onLoad(s)}

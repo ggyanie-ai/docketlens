@@ -331,7 +331,10 @@ function EmptyChannels() {
           />
           <div className="flex justify-center mb-5">
             <span className="relative inline-flex">
-              <span className="absolute inset-0 inline-flex animate-ping rounded-full bg-[color:var(--color-accent)] opacity-40" />
+              <span
+                aria-hidden
+                className="motion-safe:animate-ping absolute inset-0 inline-flex rounded-full bg-[color:var(--color-accent)] opacity-40 motion-reduce:hidden"
+              />
               <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] shadow-soft">
                 <Bell className="size-6" />
               </span>
