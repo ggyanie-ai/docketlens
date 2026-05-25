@@ -442,6 +442,30 @@ export const savedSearches = sqliteTable("saved_searches", {
   ...timestamps,
 });
 
+/* -------------------- Docket notes ------------------- */
+
+/* Private per-org annotation attached to a docket. Markdown body, one row
+   per (org, docket) — replace-on-write. Lives separately from `dockets`
+   because the docket row is shared across orgs; notes are scoped. */
+export const docketNotes = sqliteTable(
+  "docket_notes",
+  {
+    id: text("id").primaryKey(),
+    orgId: text("org_id")
+      .notNull()
+      .references(() => orgs.id, { onDelete: "cascade" }),
+    docketId: text("docket_id")
+      .notNull()
+      .references(() => dockets.id, { onDelete: "cascade" }),
+    authorId: text("author_id").references(() => users.id, { onDelete: "set null" }),
+    body: text("body").notNull().default(""),
+    ...timestamps,
+  },
+  (t) => [
+    uniqueIndex("docket_notes_org_docket_idx").on(t.orgId, t.docketId),
+  ]
+);
+
 /* -------------------- Audit log ------------------- */
 
 export const auditEvents = sqliteTable(
@@ -478,3 +502,4 @@ export type WatchlistMatch = typeof watchlistMatches.$inferSelect;
 export type AlertRule = typeof alertRules.$inferSelect;
 export type AiSummary = typeof aiSummaries.$inferSelect;
 export type ApiKey = typeof apiKeys.$inferSelect;
+export type DocketNote = typeof docketNotes.$inferSelect;
