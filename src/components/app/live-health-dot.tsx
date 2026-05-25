@@ -28,7 +28,10 @@ function fmtAgo(ms: number): string {
 export function LiveHealthDot() {
   const [state, setState] = useState<State>("loading");
   const [checkedAt, setCheckedAt] = useState<number | null>(null);
-  const [, setTick] = useState(0);
+  // `now` is updated on a 5s display tick so the "30s ago" label decays
+  // in realtime without us calling Date.now() during render (which the
+  // react-hooks/purity rule flags as impure).
+  const [now, setNow] = useState<number>(() => Date.now());
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -47,8 +50,7 @@ export function LiveHealthDot() {
     }
     check();
     timerRef.current = setInterval(check, 60_000);
-    // Bump display every 5s so the "30s ago" label decays in realtime.
-    const display = setInterval(() => setTick((n) => n + 1), 5_000);
+    const display = setInterval(() => setNow(Date.now()), 5_000);
     return () => {
       cancelled = true;
       if (timerRef.current) clearInterval(timerRef.current);
@@ -66,7 +68,7 @@ export function LiveHealthDot() {
   const label =
     state === "ok"
       ? checkedAt
-        ? `Live check ${fmtAgo(Date.now() - checkedAt)}`
+        ? `Live check ${fmtAgo(now - checkedAt)}`
         : "Live check…"
       : state === "degraded"
       ? "Check failed — see logs"

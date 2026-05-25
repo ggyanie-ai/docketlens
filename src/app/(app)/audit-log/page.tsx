@@ -130,14 +130,20 @@ export default function AuditLogPage() {
     return () => clearTimeout(t);
   }, [filter, range, q, pushUrl]);
 
+  // Wall-clock reference captured once at mount — the audit-log demo
+  // is a snapshot, so "last 24h" is anchored to the time the page
+  // loaded rather than recomputed every render. Keeps the useMemo
+  // callbacks pure (Date.now() inside a memo is flagged by the
+  // react-hooks/purity rule).
+  const [mountTime] = useState(() => Date.now());
+
   const events = useMemo(() => {
     const cutoff = RANGE_MS[range];
-    const now = Date.now();
     return SAMPLE_AUDIT_EVENTS.filter((e) => {
       if (filter !== "all" && e.category !== filter) return false;
       if (cutoff !== null) {
         const occurred = new Date(e.occurredAt).getTime();
-        if (now - occurred > cutoff) return false;
+        if (mountTime - occurred > cutoff) return false;
       }
       if (q) {
         const hay =
@@ -149,12 +155,12 @@ export default function AuditLogPage() {
       (a, b) =>
         new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
     );
-  }, [filter, range, q]);
+  }, [filter, range, q, mountTime]);
 
   // Stats — based on the full set, not the filtered view
   const stats = useMemo(() => {
     const last24 = SAMPLE_AUDIT_EVENTS.filter(
-      (e) => Date.now() - new Date(e.occurredAt).getTime() < 86_400_000
+      (e) => mountTime - new Date(e.occurredAt).getTime() < 86_400_000
     ).length;
     const failed = SAMPLE_AUDIT_EVENTS.filter((e) =>
       e.action.includes("failed")
@@ -172,7 +178,7 @@ export default function AuditLogPage() {
         ? { name: CATEGORY_META[topCat[0] as AuditCategory].label, n: topCat[1] }
         : null,
     };
-  }, []);
+  }, [mountTime]);
 
   return (
     <>
