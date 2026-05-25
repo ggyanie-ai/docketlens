@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { CopyButton } from "@/components/app/copy-button";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Press kit",
@@ -69,6 +70,12 @@ at $199/mo for whole firms and newsrooms.`;
 export default function PressPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Press kit", url: "/press" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

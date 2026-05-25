@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LiveHealthDot } from "@/components/app/live-health-dot";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Status",
@@ -151,6 +152,12 @@ export default function StatusPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Status", url: "/status" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Overall banner */}

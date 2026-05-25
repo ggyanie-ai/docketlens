@@ -11,6 +11,7 @@ import {
   SUPREME,
   TOTALS,
 } from "@/content/jurisdictions";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Jurisdictions we cover",
@@ -31,6 +32,12 @@ export default function JurisdictionsPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Jurisdictions", url: "/jurisdictions" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

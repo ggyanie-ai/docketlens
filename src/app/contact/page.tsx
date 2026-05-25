@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
@@ -97,6 +98,12 @@ export default function ContactPage() {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Contact", url: "/contact" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-7xl px-6 pt-16 md:pt-24 pb-12">

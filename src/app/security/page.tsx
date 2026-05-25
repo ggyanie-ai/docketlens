@@ -13,6 +13,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Security disclosure policy",
@@ -48,6 +49,12 @@ const SAFE_HARBOR = [
 export default function SecurityPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Security disclosure", url: "/security" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}

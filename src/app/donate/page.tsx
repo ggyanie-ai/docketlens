@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Donate to the Free Law Project",
@@ -73,6 +74,12 @@ const OTHER_WAYS = [
 export default function DonatePage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Donate", url: "/donate" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}
