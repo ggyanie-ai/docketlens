@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
-import { BreadcrumbJsonLd } from "@/lib/structured-data";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
@@ -76,6 +76,21 @@ export default async function DemoDocketPage({
           { name: "Demo cases", url: "/demo" },
           { name: docket.caseNameShort, url: `/demo/${docket.id}` },
         ]}
+      />
+      <ArticleJsonLd
+        meta={{
+          headline: `${docket.caseName} (${docket.court})`,
+          description: `Public-records federal court docket — ${docket.natureOfSuit}, case number ${docket.caseNumber}. ${docket.entries.length} entries timeline-rendered with AI summaries.`,
+          url: `/demo/${docket.id}`,
+          datePublished: docket.filed,
+          dateModified:
+            docket.entries
+              .map((e) => e.dateFiled)
+              .sort()
+              .at(-1) ?? docket.filed,
+          authorName: "DocketLens",
+          section: "Demo docket",
+        }}
       />
       <SiteHeader />
       <main id="main" className="flex-1">
