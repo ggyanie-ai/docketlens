@@ -25,6 +25,8 @@ export async function GET() {
       { method: "PUT",  path: "/api/v1/dockets/:id/notes", desc: "Create/replace note (Pro+); empty body deletes" },
       { method: "DELETE", path: "/api/v1/dockets/:id/notes", desc: "Delete this org's note for a docket (Pro+)" },
       { method: "GET",  path: "/api/v1/dockets/:id/notes/render", desc: "Render this org's note as HTML" },
+      { method: "GET",  path: "/api/v1/dockets/:id/related", desc: "Dockets sharing party / judge / lawfirm / tag" },
+      { method: "GET",  path: "/api/v1/health/db",        desc: "Bare DB liveness probe (200 / 503, no body)" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
       { method: "DELETE", path: "/api/v1/watchlists",    desc: "Bulk soft-delete via { ids: […] } (Team plan)" },
