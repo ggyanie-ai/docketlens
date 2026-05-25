@@ -19,6 +19,13 @@ export const metadata = {
   title: "DocketLens vs Lex Machina",
   description:
     "Honest comparison: Lex Machina is the gold standard for enterprise litigation analytics — at enterprise pricing. DocketLens is the same kind of work done at a price an individual or small firm can actually pay.",
+  openGraph: {
+    title: "DocketLens vs Lex Machina",
+    description:
+      "Honest comparison: Lex Machina is the gold standard for enterprise litigation analytics at enterprise pricing. DocketLens is the affordable option for the 80% who can't justify a $25k/yr seat.",
+    url: "/vs/lex-machina",
+    type: "article" as const,
+  },
 };
 
 /* ============================================================================

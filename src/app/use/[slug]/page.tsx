@@ -17,9 +17,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = getPersona(slug);
   if (!p) return { title: "Not found" };
+  const title = `${p.hero.title} ${p.hero.titleAccent}`.trim();
   return {
-    title: `${p.hero.title} ${p.hero.titleAccent}`,
+    title,
     description: p.hero.subtitle,
+    openGraph: {
+      title,
+      description: p.hero.subtitle,
+      url: `/use/${p.slug}`,
+      type: "article" as const,
+    },
   };
 }
 

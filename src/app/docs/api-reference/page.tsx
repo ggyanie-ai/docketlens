@@ -14,6 +14,13 @@ export const metadata = {
   title: "API reference",
   description:
     "Interactive reference for the DocketLens REST API — every endpoint, every schema, generated from the OpenAPI 3.1 spec.",
+  openGraph: {
+    title: "DocketLens API reference",
+    description:
+      "Interactive reference for the DocketLens REST API — every endpoint, every schema, generated from the OpenAPI 3.1 spec.",
+    url: "/docs/api-reference",
+    type: "article" as const,
+  },
 };
 
 /* ============================================================================

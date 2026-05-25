@@ -13,6 +13,13 @@ export const metadata = {
   title: "Comparisons",
   description:
     "How DocketLens compares to PACER, Lex Machina, and the rest of the federal court-data tooling landscape.",
+  openGraph: {
+    title: "DocketLens comparisons",
+    description:
+      "How DocketLens compares to PACER, Lex Machina, and the rest of the federal court-data tooling landscape.",
+    url: "/comparison",
+    type: "website" as const,
+  },
 };
 
 interface Comparison {

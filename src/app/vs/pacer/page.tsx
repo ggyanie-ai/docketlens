@@ -19,6 +19,13 @@ export const metadata = {
   title: "DocketLens vs PACER",
   description:
     "Honest comparison: PACER's per-page paywall and 1995 UX versus DocketLens's $0–$49/mo flat pricing, AI summaries, watchlists, and alerts.",
+  openGraph: {
+    title: "DocketLens vs PACER",
+    description:
+      "Honest comparison: PACER's per-page paywall and 1995 UX versus DocketLens's flat pricing, AI summaries, watchlists, and alerts.",
+    url: "/vs/pacer",
+    type: "article" as const,
+  },
 };
 
 /* ============================================================================
