@@ -12,6 +12,8 @@ export async function GET() {
     openapi: "/api/v1/openapi.json",
     health: "/api/health",
     endpoints: [
+      { method: "GET",  path: "/api/v1/me",              desc: "Caller identity + plan + rate-limit ceilings" },
+      { method: "GET",  path: "/api/v1/courts",          desc: "List CourtListener-mirrored courts we cache" },
       { method: "GET",  path: "/api/v1/dockets",         desc: "List recent dockets" },
       { method: "GET",  path: "/api/v1/dockets/:id",     desc: "Get one docket with entries + parties" },
       { method: "GET",  path: "/api/v1/dockets/:id/ai-summaries", desc: "Extractive AI summaries (tier-gated)" },
