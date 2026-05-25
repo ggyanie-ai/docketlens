@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { POSTS } from "@/content/posts";
-import { BreadcrumbJsonLd } from "@/lib/structured-data";
+import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata({
   params,
@@ -29,6 +29,16 @@ export default async function BlogPost({
 
   return (
     <>
+      <ArticleJsonLd
+        meta={{
+          headline: post.title,
+          description: post.excerpt,
+          url: `/blog/${post.slug}`,
+          datePublished: post.date,
+          authorName: post.author,
+          section: post.tag,
+        }}
+      />
       <BreadcrumbJsonLd
         items={[
           { name: "Home", url: "/" },

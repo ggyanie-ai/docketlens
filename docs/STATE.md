@@ -365,6 +365,20 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] NewsArticle / TechArticle JSON-LD on /blog/[slug]. New
+      `<ArticleJsonLd meta={…} />` island in
+      `src/lib/structured-data.tsx` picks the subtype from the
+      post's `tag`: anything matching /engineer/i (case-insensitive)
+      emits `TechArticle`, everything else emits `NewsArticle`.
+      Payload includes headline, description, url (absolute via
+      mainEntityOfPage), datePublished (normalised to RFC 3339 if
+      the source is YYYY-MM-DD only), dateModified, author
+      (Organization), publisher (Organization + logo as ImageObject),
+      articleSection (the post tag), image (defaults to
+      /opengraph-image), inLanguage en-US, isAccessibleForFree true.
+      Wired on /blog/[slug] right alongside the existing
+      BreadcrumbJsonLd. Verified end-to-end: extractive-architecture
+      post → TechArticle/Engineering; PACER post → NewsArticle/Industry.
 - [x] Organization JSON-LD on /about. Companion to the
       SoftwareApplication entity on / (Google resolves them via
       the shared `publisher` field). New helper
@@ -789,14 +803,15 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **NewsArticle/TechArticle JSON-LD on /blog/[slug]** —
-      `TechArticle` for Engineering-tagged posts, `NewsArticle`
-      for the rest. headline, datePublished, author, publisher,
-      mainEntityOfPage. Helps Google News + Discover surface the
-      posts.
 - [ ] **WebSite JSON-LD with SearchAction on /** — `@type: WebSite`
-      + `potentialAction: SearchAction` so Google can show a
-      sitelinks search box in our SERP entry.
+      + `potentialAction: SearchAction` (target = `/search?q=…`,
+      query-input = required `name=search_term_string`) so Google
+      can show a sitelinks search box in our SERP entry.
+- [ ] **Author entity for blog posts** — instead of
+      `author: { @type: Organization, name: "The DocketLens team" }`,
+      emit `@type: Person` with sameAs/url when an individual
+      authored the post. Pulls from a new `authorUrl` field on
+      Post.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
