@@ -2,6 +2,15 @@
 
 Base URL: `https://docketlens.ai/api/v1`
 
+> **This document is a guided tour, not the complete reference.** Only
+> the most common endpoints are walked through below. For every endpoint
+> and every schema (auto-generated from the typed OpenAPI 3.1 source),
+> use one of:
+>
+> - **Interactive reference**: [`/docs/api-reference`](/docs/api-reference)
+> - **Raw OpenAPI 3.1 JSON**: [`/api/v1/openapi.json`](/api/v1/openapi.json)
+> - **Discovery payload (machine-readable index)**: [`/api/v1`](/api/v1)
+
 ## Authentication
 
 All endpoints under `/api/v1/` require a bearer token. Generate one
