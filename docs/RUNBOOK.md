@@ -109,3 +109,62 @@ Open the following dashboards weekly:
 
 Trigger a "talk to ops" moment if any single line item exceeds **3×
 month-over-month**.
+
+## Lazy side-tables
+
+Four ops-flavor tables intentionally live OUTSIDE the Drizzle
+schema/migration pipeline and lazy-create via `CREATE TABLE IF
+NOT EXISTS` on first request. They're decoupled because the data
+is throwaway aggregate, not user-facing state, and we don't want
+their growth tied to user-data migration coordination.
+
+| Table | Source file | Grain | Growth |
+| --- | --- | --- | --- |
+| `widget_pings` | `src/lib/widget-pings.ts` | `(docket_id, day, count)` | one row per docket per day. ~365 rows per docket per year. |
+| `not_found_pings` | `src/app/api/log-404/route.ts` | `(path, day, count)` | one row per unique 404 path per day. |
+| `ai_summary_refresh_queue` | `src/app/api/v1/dockets/[id]/ai-summaries/refresh/route.ts` | one row per refresh request | bounded by the 60s per-docket cooldown. |
+| `docket_notes` | `src/app/api/v1/dockets/[id]/notes/route.ts` | one row per `(org_id, docket_id)` | user-data — never auto-truncate. |
+
+### Inspection
+
+```
+sqlite3 docketlens.db
+SELECT * FROM widget_pings ORDER BY count DESC LIMIT 20;
+SELECT path, SUM(count) FROM not_found_pings GROUP BY path ORDER BY 2 DESC LIMIT 20;
+SELECT status, COUNT(*) FROM ai_summary_refresh_queue GROUP BY status;
+```
+
+### Truncation policy
+
+None today. When any of the first three tables passes 1 GB, set
+up a nightly cron that drops rows older than 90 days. Never
+auto-truncate `docket_notes`.
+
+### Migrating to Postgres on Tuesday
+
+Run `drizzle-kit generate` AFTER the app has hit the lazy
+`CREATE TABLE` paths at least once. Otherwise the generated
+migration won't know about the side-tables and they'll be
+re-created in Postgres without indexes (correct, but inefficient
+for reads).
+
+## On-call quick recipes
+
+- **Check `/api/health` from the CLI**:
+  ```
+  curl -s https://docketlens.ai/api/health | jq
+  ```
+  `checks.cl_pool.remaining.per_day` shows pool saturation.
+
+- **Invalidate the AI prompt cache** after a prompt bump: edit
+  `PROMPT_VERSION` in `src/lib/ai/prompts.ts` (date.v# format),
+  deploy. Old cache rows become `stale: true` automatically;
+  fresh summaries regenerate on next view.
+
+- **Rotate an API key**: in the app, Settings → API keys →
+  revoke. Server-side, the row's `revoked_at` is set;
+  subsequent requests with that token return 401.
+
+- **Force a webhook redelivery**: stubbed today — Retry button
+  on /alerts is wired UI-side but the worker that consumes
+  `alert_deliveries WHERE status = 'failed'` lands Tuesday.
