@@ -833,28 +833,99 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- _(none currently queued — the polish queue is now empty; next:
-  content + features below)_
+- [ ] **404 page redesign** — current /404 is generic. Add a
+      "Did you mean?" block that fuzzy-matches the typed path
+      against the sitemap and surfaces the 3 closest matches.
+- [ ] **/status page real-meter wiring** — currently static. Wire
+      the four indicator dots to actual `/api/health` polling on
+      the client (1-min cadence) so it reflects reality.
+- [ ] **Topbar command palette keyboard hint** — add a small
+      `⌘K` chip inside the search input on /search and
+      /dashboard so users discover the palette.
+- [ ] **Empty-state for /alerts inbox** — currently shipped; tune
+      the illustration (decorative SVG with reduced-motion guard)
+      and add a "Send a test webhook" CTA.
+- [ ] **Footer wordmark hover** — add a subtle 200ms accent
+      underline-grow on the SiteFooter wordmark to match the
+      header treatment.
+- [ ] **Dockets/[id] entry anchors** — emit `id="entry-{n}"` on
+      each timeline row so the `/dockets/{id}#entry-12` deep
+      links from the dashboard "recent filings" feed actually
+      scroll.
 
 ### Content
-- _(none currently queued — Content queue is now empty)_
+- [ ] **Fifth blog post** — "Three months of RECAP throughput:
+      what a free public archive can and can't deliver in May
+      2026." Engineering tag, ~7 min read, real numbers from
+      ingest worker traces.
+- [ ] **Sixth blog post** — "How we picked our pricing:
+      anchoring to the Bloomberg Law seat, not to PACER's per-page
+      cost." Industry tag. Covers the framing math.
+- [ ] **Two more glossary terms** — "scheduling order" and
+      "Daubert motion." Both come up constantly in patent +
+      product-liability dockets.
+- [ ] **`/comparison` table refresh** — current table is from
+      0.1.0. Add three more rows (CourtListener Recap Email Alerts,
+      Docket Alarm Tracker, Pacer Pro) so the comparison reads as
+      thorough instead of selective.
 
 ### Features
-- [ ] **structured-data unit test** — a tiny tsx test that asserts
-      each helper emits a parseable script and the expected @type.
-      Cheap regression cover; protects the SEO investment as the
-      site grows.
 - [ ] **/docs/structured-data.md internal doc** — single page
       listing every JSON-LD entity we ship and where, so future
-      maintainers don't accidentally duplicate or contradict them.
+      maintainers don't accidentally duplicate or contradict
+      them. Pair with a one-paragraph "how to add a new entity"
+      checklist.
+- [ ] **Healthcheck includes CourtListener pool budget** —
+      `/api/health` currently checks DB only. Extend with a
+      best-effort cached read of the leaky-bucket budget so ops
+      monitors can see when we're rate-limit-saturated.
+- [ ] **`/api/v1/me`** — returns the current API key's plan,
+      keyId, orgId, scopes, lastUsedAt, and the rate-limit
+      remaining for the window. Standard endpoint every API has;
+      we don't yet.
+- [ ] **Webhook delivery dashboard** — read-only table on /alerts
+      showing the last 30 webhook deliveries with status, latency,
+      response code, and a retry button. Already have the
+      schema for `alert_deliveries`.
+- [ ] **Audit-log filter chips** — /audit-log currently shows a
+      raw timeline. Add chips for `event_type` (sign-in, watchlist
+      created, API key revoked, etc.) and a date range picker
+      that drives URL params.
+- [ ] **Saved-search "Run" preview** — clicking a saved search
+      on /search currently sets the form; add a small in-place
+      results count badge so users see "47 matches" without
+      submitting.
+- [ ] **/widget/[id]?theme=light|dark|auto** query param —
+      already auto-themed; explicit override lets embedders match
+      their host page's theme without media-query guesswork.
+- [ ] **`<a hreflang="x-default">` on i18n-future pages** —
+      placeholder for /pricing and /. Sets up the eventual
+      i18n story without committing to translations now.
+- [ ] **`/api/v1/courts`** — return the list of courts we cover
+      (id, full_name, short_name, jurisdiction, in_use) so API
+      consumers can populate dropdowns without scraping
+      /jurisdictions.
+- [ ] **Watchlist "share preview"** — read-only public URL like
+      `/watchlists/{id}/preview` that shows the watchlist title +
+      latest 5 matches without auth. Linkable in Slack/email.
+      Owner can toggle on/off in settings.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
       Google OAuth gated on env. Schema is already ready.
 
-### Tests (deferred until 0.2.0)
-- [ ] vitest setup, snapshot tests for the matcher, a Playwright
-      smoke for the marketing pages.
+### Tests (in progress — background agent)
+- [ ] vitest setup + matcher/filter/structured-data/widget-pings
+      tests are being built on a separate worktree branch by a
+      background agent (spawned 2026-05-25). Don't duplicate this
+      work in main; once the agent's branch lands the user will
+      merge it.
+
+### Operating cadence (refresh 2026-05-25)
+- Wakeups now fire every ~270s (cache-friendly) instead of 1800s.
+- Per tick, do 3–5 items from this queue rather than one.
+- When the queue dips below 10 open items, refill aggressively
+  from what you noticed while building — don't let it run dry.
 
 ## Open invariants — do not violate
 
