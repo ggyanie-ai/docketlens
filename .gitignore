@@ -45,3 +45,6 @@ next-env.d.ts
 
 # generated
 drizzle/migrations/meta
+
+# Agent worktrees (isolated branches spawned via the Agent tool)
+.claude/
