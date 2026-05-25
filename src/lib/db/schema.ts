@@ -315,6 +315,10 @@ export const watchlists = sqliteTable(
     })
       .notNull()
       .default("daily"),
+    // Pro+ ranking field — higher priority watchlists ship to the top of
+    // daily digests + show first in the dashboard "your watchlists" list.
+    // 0..100; default 50. UI for adjusting it lands in 0.2.0.
+    priority: integer("priority").notNull().default(50),
     lastRunAt: integer("last_run_at", { mode: "timestamp_ms" }),
     matchCount: integer("match_count").notNull().default(0),
     deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
@@ -323,6 +327,7 @@ export const watchlists = sqliteTable(
   (t) => [
     index("watchlists_org_idx").on(t.orgId),
     index("watchlists_active_idx").on(t.isActive, t.refreshCadence),
+    index("watchlists_priority_idx").on(t.orgId, t.priority),
   ]
 );
 

@@ -854,43 +854,57 @@ of work, sized to fit one wakeup.
       ui/skeleton.tsx could be `motion-safe:` for clarity.
 
 ### Content
-- [ ] **Eleventh blog post** — "The pricing question we hear most
-      often: 'what counts as a watchlist?'" Industry tag.
-      ~5 min. Definitional but useful for evaluators.
-- [ ] **Two more glossary terms** — "scheduling conference"
-      (procedural) and "Brady material" (criminal-adjacent,
-      occasionally pops up in civil-rights dockets).
+- [ ] **Twelfth blog post** — "Three months in: the metrics we
+      stopped publishing on /status, and the ones we added."
+      Engineering tag. Honest behind-the-scenes on what
+      actually correlates with user satisfaction.
+- [ ] **Thirteenth blog post** — "A field guide to NOS codes
+      (the three-digit numbers that classify every civil case)."
+      Industry tag. Glossary-flavor reference post; cross-links
+      to all the NOS-related terms we already have.
 
 ### Features
-- [ ] **OpenAPI spec for /api/v1/saved-searches CRUD** —
-      endpoints shipped this tick (9cc6919); needs path + schema
-      entries in `src/lib/openapi.ts` for SavedSearch + create/
-      update bodies. Mirror what /api/v1/watchlists already
-      does.
-- [ ] **`/api/v1/dockets/{id}/ai-summaries` triggers an on-demand
-      summarization** — today returns null when no cache + no
-      sample seed exists. Add a `POST /api/v1/dockets/{id}/
-      ai-summaries/refresh` (Pro+) that queues a background
-      regen.
-- [ ] **CL pool header on /api/v1/* responses** — emit
-      `x-docketlens-cl-pool-remaining` so ingest-aware clients
-      can back off when we're saturated. Read from
-      `courtListenerPoolSnapshot()`.
-- [ ] **/api/v1/dockets/{id} ETag** — strong ETag derived from
-      max(updatedAt across entries + parties + the docket row
-      itself). 304 on If-None-Match. Adds nothing to the payload
-      and saves significant client bandwidth on poll loops.
-- [ ] **Watchlist `priority` field** — Pro+ feature, ranks
-      matches in delivery order. Drizzle column + migration
-      pending until Tuesday's auth wire-up coordinates the
-      database push.
-- [ ] **`/dashboard?focus=embeds`** — deep-link anchor that
-      scroll-snaps to the "Your embeds" card. Tiny but lets us
-      link to specific dashboard sections from the marketing
-      site.
-- [ ] **`x-robots-tag: noindex`** on every /widget/* response
-      from the HTTP layer (already in metadata; reinforces via
-      next.config headers).
+- [ ] **Watchlist `priority` UI slider** — the column landed in
+      schema.ts this tick (a909f29's successor); the
+      `/watchlists/[id]` edit form still doesn't expose it. Add
+      a 0-100 slider with three labeled stops (Low / Normal /
+      High) and a tooltip explaining how it affects digest order.
+- [ ] **`/api/v1/dockets/{id}` PATCH** — currently no way for
+      consumers to add a private note to a docket. Schema gain:
+      a `notes` column scoped per (orgId, docketId). New table.
+- [ ] **Bulk POST /api/v1/watchlists** — Pro+. Accept a JSON
+      array of CreateWatchlist bodies (cap 50) so a CLI can
+      seed an org's watchlists in one shot. Useful for the
+      "new lit team onboarding" path.
+- [ ] **/api/v1/digest/preview** — REST equivalent of the
+      /inbox/digest-preview page. Returns the rendered HTML
+      (or JSON spec) for the next digest the calling org would
+      receive at its configured cadence.
+- [ ] **`x-request-id` echo header** — generate a uuid for
+      every /api/v1/* response and emit it as
+      `x-request-id` for log correlation. Same value goes
+      into the audit log when wire-up lands.
+- [ ] **`OPTIONS` discovery on `/api/v1`** — currently 404s. Should
+      return the same payload as `GET /api/v1` so tools doing
+      preflight-only discovery (Postman) don't fail.
+- [ ] **/dockets/[id] keyboard hint chip** — render `j k ↓ ↑`
+      kbd chips below the page header on the dockets detail
+      view so the vim binding shipped in fa1ece0 is more
+      discoverable.
+- [ ] **Inbox bulk-archive** — `cmd+a` selects all visible
+      messages; `e` archives. Mirrors Gmail's bindings since
+      that's what /inbox is modeled on.
+
+### Polish (next batch)
+- [ ] **`/glossary` count badge in topbar** — small kbd-pill
+      showing "30+ terms" so users know it's deeper than they
+      expected.
+- [ ] **Loading skeleton on /audit-log** — already has a
+      loading.tsx for the route; tune it to mimic the actual
+      timeline shape.
+- [ ] **`/widget` index hover preview** — when hovering over
+      one of the three example iframes, show the embed snippet
+      via a popover instead of always-rendered code block.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
