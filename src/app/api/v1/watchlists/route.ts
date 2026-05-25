@@ -5,7 +5,7 @@ import { watchlists } from "@/lib/db/schema";
 import { ids, normalizeEntityName } from "@/lib/db/ids";
 import { authenticateApiRequest } from "@/lib/api/keys";
 import { err, ok, preflight } from "@/lib/api/respond";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, inArray } from "drizzle-orm";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -112,4 +112,63 @@ export async function POST(req: NextRequest) {
   const row = buildRow(auth.orgId, auth.keyId, parsed.data);
   await db.insert(watchlists).values(row);
   return ok({ id: row.id }, { status: 201 });
+}
+
+const BulkDeleteBody = z.object({
+  ids: z.array(z.string().min(1)).min(1).max(100),
+});
+
+/**
+ * DELETE /api/v1/watchlists
+ *   body: { ids: ["wl_…", …] }   (1..100)
+ *
+ * Bulk soft-delete. Sets `deleted_at` for every row matched by id
+ * AND owned by the calling org. Rows that don't match (already
+ * deleted, never existed, owned by another org) are silently
+ * skipped — same idempotent semantics as the per-id DELETE.
+ *
+ * Returns `{ deleted: [actually-affected-ids] }` so the caller can
+ * tell what changed vs. what was a no-op.
+ */
+export async function DELETE(req: NextRequest) {
+  const auth = await authenticateApiRequest(req.headers.get("authorization"));
+  if (!auth) return err("unauthorized", 401);
+  if (auth.plan === "free") {
+    return err("upgrade required for API write access (Team plan)", 402);
+  }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return err("invalid JSON body", 400);
+  }
+  const parsed = BulkDeleteBody.safeParse(body);
+  if (!parsed.success) {
+    return err("validation failed", 422, { issues: parsed.error.issues });
+  }
+
+  // Resolve only the ids that belong to this org AND aren't already deleted
+  const affected = await db
+    .select({ id: watchlists.id })
+    .from(watchlists)
+    .where(
+      and(
+        eq(watchlists.orgId, auth.orgId),
+        isNull(watchlists.deletedAt),
+        inArray(watchlists.id, parsed.data.ids)
+      )
+    );
+  const ids = affected.map((r) => r.id);
+
+  if (ids.length === 0) {
+    return ok({ deleted: [] as string[] });
+  }
+
+  const now = new Date();
+  await db
+    .update(watchlists)
+    .set({ deletedAt: now, updatedAt: now, isActive: false })
+    .where(inArray(watchlists.id, ids));
+  return ok({ deleted: ids });
 }
