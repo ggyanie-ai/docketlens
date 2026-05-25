@@ -328,3 +328,57 @@ export function OrganizationJsonLd(): ReactElement {
     />
   );
 }
+
+export interface DefinedTermEntry {
+  /** Anchor slug — mounted as `#<slug>` on the glossary page. */
+  slug: string;
+  /** Display name of the term. */
+  name: string;
+  /** Short definition. Plain text; ~1 sentence is the sweet spot for SERPs. */
+  description: string;
+  /** Optional taxonomic grouping (e.g. "Data sources", "Pleadings"). */
+  category?: string;
+}
+
+/**
+ * DefinedTermSet JSON-LD for the glossary index. Each term is emitted as a
+ * `DefinedTerm` with a fragment URL — Google treats these as candidates
+ * for definition-style rich results and disambiguates similar queries
+ * across the site.
+ */
+export function DefinedTermSetJsonLd({
+  name,
+  description,
+  pageUrl,
+  terms,
+}: {
+  name: string;
+  description: string;
+  pageUrl: string;
+  terms: DefinedTermEntry[];
+}): ReactElement {
+  const fullUrl = pageUrl.startsWith("http") ? pageUrl : `${SITE}${pageUrl}`;
+  const payload = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    name,
+    description,
+    inLanguage: "en-US",
+    url: fullUrl,
+    hasDefinedTerm: terms.map((t) => ({
+      "@type": "DefinedTerm",
+      "@id": `${fullUrl}#${t.slug}`,
+      name: t.name,
+      description: t.description,
+      inDefinedTermSet: fullUrl,
+      ...(t.category ? { termCode: t.category } : {}),
+      url: `${fullUrl}#${t.slug}`,
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
+  );
+}

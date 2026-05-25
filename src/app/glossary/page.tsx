@@ -12,6 +12,10 @@ import {
   termsByCategory,
   type GlossaryTerm,
 } from "@/content/glossary";
+import {
+  BreadcrumbJsonLd,
+  DefinedTermSetJsonLd,
+} from "@/lib/structured-data";
 
 export const metadata = {
   title: "Glossary",
@@ -19,11 +23,39 @@ export const metadata = {
     "Plain-English definitions for the legal terms used inside DocketLens — NOS, MDL, TRO, Rule 12(b)(6), Markman, and more.",
 };
 
+const GLOSSARY_DESCRIPTION =
+  "Plain-English definitions for the legal terms used inside DocketLens — NOS codes, MDL, TRO, Rule 12(b)(6), Markman, and more.";
+
 export default function GlossaryPage() {
   const grouped = termsByCategory();
+  const categoryLabel = (key: string) =>
+    CATEGORIES.find((c) => c.key === key)?.label ?? key;
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Glossary", url: "/glossary" },
+        ]}
+      />
+      <DefinedTermSetJsonLd
+        name="DocketLens federal-court glossary"
+        description={GLOSSARY_DESCRIPTION}
+        pageUrl="/glossary"
+        terms={GLOSSARY.map((t) => ({
+          slug: t.slug,
+          name: t.term,
+          // Strip markdown emphasis for a clean SERP-quality first sentence.
+          description: t.body
+            .split(/\n\n/)[0]
+            .replace(/\*\*?(.+?)\*\*?/g, "$1")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 320),
+          category: categoryLabel(t.category),
+        }))}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}
