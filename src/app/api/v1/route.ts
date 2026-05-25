@@ -41,3 +41,11 @@ export async function GET() {
     ],
   });
 }
+
+/**
+ * `OPTIONS /api/v1` returns the same discovery payload as GET. Some
+ * preflight-style discovery tools (Postman's API import, certain
+ * compliance scanners) only fire OPTIONS; we'd rather give them the
+ * payload than 404.
+ */
+export const OPTIONS = GET;
