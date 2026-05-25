@@ -2,6 +2,156 @@
 
 We track changes by ISO date (UTC). Stable shipping starts at 1.0.0.
 
+## 0.1.4 — 2026-05-25 (CRUD completion + observability)
+
+The continuous-loop pass continued — 20 commits between 0.1.3 and
+0.1.4. Focus: filling out the REST API into a complete CRUD
+surface, observability headers + telemetry, three more blog posts,
+two more glossary terms, and a watchlist `priority` field. No
+breaking changes.
+
+### Added — API
+
+- **`/api/v1/watchlists/{id}` PATCH + DELETE** — completes the
+  REST CRUD quad. Sparse Zod-validated PATCH; idempotent
+  soft-delete via `deleted_at`.
+- **`/api/v1/saved-searches` + `/{id}` CRUD** — list, create,
+  get, sparse PATCH, idempotent DELETE. Pro+ on writes. Same id
+  space as the existing feed siblings.
+- **`/api/v1/health` 301 alias** to `/api/health` for monitors
+  that assume the version prefix.
+- **`/api/v1/me` + `/api/v1/usage`** — caller identity + plan +
+  per-plan ceiling, with usage shape forward-compatible for the
+  Tuesday token-bucket meter.
+- **`/api/v1/courts`** — every CourtListener-mirrored court we
+  cache, filterable by `?in_use=` and `?jurisdiction=`.
+- **`/api/v1/dockets` query expansion** — list endpoint now
+  filters by `?nos=` (NOS-code prefix), `?date_from=`, `?date_to=`.
+- **`/api/v1/dockets/{id}` ETag + 304** — strong ETag derived
+  from `(id + max-mtime + count)`; conditional GET via
+  `If-None-Match`.
+- **`/api/v1/dockets/{id}/parties` + `/entries`** — narrow
+  siblings of the combined endpoint for clients that only need
+  one shape. Entries supports `?since=` and `?limit=`.
+- **`/api/v1/dockets/{id}/ai-summaries/refresh`** — Pro+ POST
+  that queues an on-demand summarization. 202 with opaque
+  `job_id`; 60s per-docket cooldown returns 429 with
+  `retry_after_seconds`.
+- **`/api/v1/dockets/{id}/notes` GET/PUT/DELETE** — per-org
+  private Markdown annotations on a docket. Replace-on-write,
+  20KB cap, idempotent delete. Notes are never shared across
+  orgs.
+- **`/api/v1/digest/preview`** — REST twin of `/inbox/digest-preview`.
+  Returns the next outgoing digest with `?cadence=` +
+  `?format=json|html|text`. Plan-gated cadence (Free = daily
+  only).
+- **`/api/v1/log-404`** — privacy-preserving 404 telemetry the
+  /404 page POSTs to. Aggregate counts only; DNT-respecting.
+- **OpenAPI 3.1 spec catch-up** — 23 paths, 24 schemas. Spec
+  now covers every shipped endpoint.
+
+### Added — response headers
+
+- **`x-request-id`** on every `/api/v1/*` response (uuid-shaped
+  `req_…`). CORS-exposed alongside `etag`, `x-ratelimit-*`, and
+  `x-docketlens-cl-pool-remaining`.
+- **`x-ratelimit-{limit,remaining,reset}`** on `/api/v1/dockets`
+  list responses.
+- **`x-docketlens-cl-pool-remaining`** on `/api/v1/dockets/{id}`
+  responses so ingest-aware clients can back off when the pool
+  is saturated.
+- **`X-Robots-Tag: noindex, nofollow`** on `/widget/:path*` via
+  `next.config.ts` — third-layer defense alongside `metadata.
+  robots` + `robots.txt`.
+
+### Added — surfaces
+
+- **`/p/{id}` short-URL redirect** — `wl_` → /watchlists/preview,
+  `dkt_` → /demo. Cleaner pastes for tweets and SMS.
+- **`/watchlists/{id}/preview` Copy URL button** — navigator.share-
+  aware `CopyLinkButton`.
+- **`/404` "Did you mean?"** — Damerau-Levenshtein fuzzy-match
+  against a curated public-route pool.
+- **`/audit-log` URL-driven filters** — `?q=&category=&range=`
+  with 250ms debounce; shareable + back-button-navigable.
+- **`/audit-log` date-range chips + CSV export** wired to
+  `csv.ts`. Range chips: Last 24h / 7d / 30d / All time.
+- **`/audit-log` loading skeleton** that mimics the timeline
+  shape — admin banner, KPI strip, filter bar, 6-row rows.
+- **`/inbox?empty=1`** empty-state with motion-safe pulse and a
+  CTA into the watchlist templates flow.
+- **`/inbox` Gmail-style keyboard nav** — `e` archives + auto-
+  advances; `j/k` (and ↓/↑) walk the filtered list.
+- **`/dockets/{id}` vim-style timeline keynav** — `j/k/g/G/↓/↑`
+  + `/` focuses search; one-time sonner hint. Discoverable kbd
+  chip ("j k to navigate") in the timeline header.
+- **`/widget/{id}?theme=light|dark|auto`** explicit theme override.
+- **`/widget/{id}?hide=footer`** strips the attribution footer
+  (gating mechanism in place; plan-check lands Tuesday).
+- **`/widget` snippet collapse** — embed code now lives behind
+  a `<details>` summary; the live iframe is the primary
+  affordance.
+- **`/search` `⌘E`/`Ctrl+E` + `↑`/`↓` row navigation + Enter to
+  open**. Discoverable chip on the Export button.
+- **`/search` filter persistence** in localStorage with 300ms
+  debounce; URL params still win.
+- **`/dashboard?focus=embeds`** deep-link scroll via inline RAF-
+  scheduled `scrollIntoView`.
+- **`/settings` → Security audit preview** card with the last
+  10 events linking to `/audit-log`.
+- **`/inbox/digest-preview`** page renders the live digest HTML
+  in a sandboxed iframe (no JS, no images).
+- **`/api/og?theme=light|dark`** theme-able Open Graph generator
+  for light-mode embedders.
+- **WatchlistEditForm priority slider** (PRO) — 0-100 with Low /
+  Normal / High labeled stops.
+- **Watchlist starter templates surface** (`?empty=1`) now
+  reachable one click earlier via the OnboardingChecklist.
+- **`/tools/verify-webhook` HowTo JSON-LD** for tutorial rich
+  cards.
+
+### Added — content
+
+- 5 new blog posts (#9–#13): OpenAPI 3.1 comparison,
+  state-court coverage gaps, "what counts as a watchlist,"
+  NOS field guide, and the `/status` metrics retrospective.
+- 5 new glossary terms: JPML, MDL transferee judge, §1782
+  discovery, in camera review, PSLRA pleading standard,
+  scheduling conference, Brady material (7 total since 0.1.3).
+- Engineering-tagged blog posts continue to surface the
+  API-reference CTA card.
+
+### Schema
+
+- **`watchlists.priority`** — Pro+ ranking field (0-100, default
+  50). Composite index `(org_id, priority)` for hot per-org
+  sorted listings.
+- **`docketNotes`** — new table for per-org private Markdown
+  annotations on a docket. Unique index `(org_id, docket_id)`.
+- **`docket_notes`**, **`not_found_pings`**, and
+  **`ai_summary_refresh_queue`** all lazy-create via
+  `CREATE TABLE IF NOT EXISTS` at the call site so the
+  in-code Drizzle schema and the live DB stay loosely coupled
+  until Tuesday's `drizzle-kit generate` pass.
+
+### Changed
+
+- **`matcher.ts` tier-3** unreachable dead code removed (proven
+  by the 134-test vitest suite on the parallel branch).
+- **Command palette** — 9 new destinations across Navigation +
+  "Tools + docs" group: Inbox, Audit log, API reference, widget,
+  verify-webhook, feeds, glossary, pricing, etc.
+- **Footer wordmark** is now a link with an accent-underline-
+  grow hover; Resources column gains "Feeds" + retargets API
+  reference to the interactive renderer.
+
+### Parallel branches (NOT merged on main — user supervises)
+
+- **`worktree-agent-a15024f436e5cce40`** — vitest infra + 134
+  passing tests, CI integration, `docs/TESTING.md`.
+- **`worktree-agent-afbd4f9582cd409c9`** — /comparison refresh
+  + ARCHITECTURE/API/RUNBOOK doc refreshes.
+
 ## 0.1.3 — 2026-05-25 (operations + shareability)
 
 The continuous-loop pass. Smaller than 0.1.2 in surface area,

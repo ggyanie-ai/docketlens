@@ -833,78 +833,70 @@ Priority order — tackle from the top. Each item is roughly 30–60 min
 of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
-- [ ] **Watchlists DELETE / PATCH** — REST verbs on
-      `/api/v1/watchlists/{id}`. Already have GET-list + POST;
-      finish the CRUD quad.
-- [ ] **/dockets/[id] keyboard nav** — `j` / `k` moves between
-      timeline entries; `/` focuses the entry filter. Matches
-      Vim conventions readers expect.
-- [ ] **Search filter persistence** — restore last `q`, `court`,
-      `nos`, `scope` from localStorage on revisit. Already saved
-      via SavedSearches; this is the "last unsaved query" path.
-- [ ] **Tabs ARIA: review TabsTrigger active state** —
-      `data-state="active"` should map to `aria-selected="true"`
-      already, but the role wiring on /settings has six tabs and
-      deserves a spot-check.
 - [ ] **/dockets/[id] AI-summary cache stamp** — render the
       cached `prompt_version` next to the summary so power users
-      can see what generation it came from.
-- [ ] **`Skeleton` shimmer respects prefers-reduced-motion** —
-      already paused via global CSS, but the bg-pos animation in
-      ui/skeleton.tsx could be `motion-safe:` for clarity.
+      can see what generation it came from. (PROMPT_VERSION
+      already in the exec-summary meta strip; this is the
+      same treatment on the always-shown per-entry one-liners.)
+- [ ] **Tabs ARIA spot-check** — verify TabsTrigger sets
+      `aria-selected` correctly on the 6-tab /settings panel.
+- [ ] **`/audit-log` shareable URL banner** — when the page
+      loads with non-default filter URL params, show a small
+      "Filtered view · share this URL" banner above the
+      timeline.
+- [ ] **`/dockets/[id]` notes UI** — render the API we shipped
+      (POST/PUT/DELETE /api/v1/dockets/{id}/notes) into a small
+      "Org notes" panel under the timeline. Save-on-blur.
+- [ ] **Empty-state for /api-keys** — currently always shows a
+      mock key. Add `?empty=1` empty state with a "Generate
+      your first key" CTA + one-time secret reveal demo.
+- [ ] **/watchlists DELETE-undo toast** — when delete fires from
+      the in-app, show a 5-second sonner toast with an "Undo"
+      action that hits the new PATCH endpoint to unset
+      deleted_at.
 
 ### Content
-- [ ] **Twelfth blog post** — "Three months in: the metrics we
-      stopped publishing on /status, and the ones we added."
-      Engineering tag. Honest behind-the-scenes on what
-      actually correlates with user satisfaction.
-- [ ] **Thirteenth blog post** — "A field guide to NOS codes
-      (the three-digit numbers that classify every civil case)."
-      Industry tag. Glossary-flavor reference post; cross-links
-      to all the NOS-related terms we already have.
+- [ ] **Fourteenth blog post** — "Building a vim mode for a
+      timeline (and why we didn't use a library)." Engineering
+      tag. Walks through the j/k handler shipped in fa1ece0,
+      the focus-management edge cases, and the 6-line
+      one-time-hint pattern.
+- [ ] **Three more glossary terms** — "vacatur" (procedural),
+      "Lanham Act §43(a)" (pleadings), "treble damages"
+      (pleadings).
 
 ### Features
-- [ ] **Watchlist `priority` UI slider** — the column landed in
-      schema.ts this tick (a909f29's successor); the
-      `/watchlists/[id]` edit form still doesn't expose it. Add
-      a 0-100 slider with three labeled stops (Low / Normal /
-      High) and a tooltip explaining how it affects digest order.
-- [ ] **`/api/v1/dockets/{id}` PATCH** — currently no way for
-      consumers to add a private note to a docket. Schema gain:
-      a `notes` column scoped per (orgId, docketId). New table.
-- [ ] **Bulk POST /api/v1/watchlists** — Pro+. Accept a JSON
-      array of CreateWatchlist bodies (cap 50) so a CLI can
-      seed an org's watchlists in one shot. Useful for the
-      "new lit team onboarding" path.
-- [ ] **/api/v1/digest/preview** — REST equivalent of the
-      /inbox/digest-preview page. Returns the rendered HTML
-      (or JSON spec) for the next digest the calling org would
-      receive at its configured cadence.
-- [ ] **`x-request-id` echo header** — generate a uuid for
-      every /api/v1/* response and emit it as
-      `x-request-id` for log correlation. Same value goes
-      into the audit log when wire-up lands.
-- [ ] **`OPTIONS` discovery on `/api/v1`** — currently 404s. Should
-      return the same payload as `GET /api/v1` so tools doing
-      preflight-only discovery (Postman) don't fail.
-- [ ] **/dockets/[id] keyboard hint chip** — render `j k ↓ ↑`
-      kbd chips below the page header on the dockets detail
-      view so the vim binding shipped in fa1ece0 is more
-      discoverable.
-- [ ] **Inbox bulk-archive** — `cmd+a` selects all visible
-      messages; `e` archives. Mirrors Gmail's bindings since
-      that's what /inbox is modeled on.
+- [ ] **Bulk DELETE /api/v1/watchlists** — counterpart to the
+      bulk POST we shipped. Accept an array of ids; soft-delete
+      all in one transaction. Returns `{ deleted: [ids] }`.
+- [ ] **`/api/v1/dockets/{id}/notes` markdown render endpoint** —
+      `GET .../notes/render` returns the HTML rendering of the
+      stored markdown body via the existing in-house
+      src/lib/markdown.tsx pipeline. Saves the client a
+      round-trip + a library bundle.
+- [ ] **`/api/v1/audit` read endpoint** — Team+ only. Returns
+      the audit log scoped to the calling org with pagination.
+      The /audit-log page should also call this once auth wires.
+- [ ] **`/api/v1/webhooks` listing endpoint** — returns the
+      configured webhook destinations for the calling org, last
+      24h delivery success rate, and the next retry attempt for
+      any failing ones. Pairs with the WebhookDeliveries UI on
+      /alerts.
+- [ ] **`/api/v1/widget-pings/aggregate?days=30`** — exposes
+      the widget-impressions rollup data the dashboard already
+      shows in card form. Useful for embedders who want their
+      own analytics dashboards.
+- [ ] **WS keepalive `/api/v1/events`** — long-lived SSE
+      endpoint that streams `match.created` events to a logged-in
+      client. Phase-1 stub today; live wire happens Tuesday.
 
-### Polish (next batch)
-- [ ] **`/glossary` count badge in topbar** — small kbd-pill
-      showing "30+ terms" so users know it's deeper than they
-      expected.
-- [ ] **Loading skeleton on /audit-log** — already has a
-      loading.tsx for the route; tune it to mimic the actual
-      timeline shape.
-- [ ] **`/widget` index hover preview** — when hovering over
-      one of the three example iframes, show the embed snippet
-      via a popover instead of always-rendered code block.
+### Refresh next loop
+- [ ] **OpenAPI servers entry update** — when production domain
+      lands, swap from docketlens.ai to the actual prod host.
+- [ ] **`docs/RUNBOOK.md` extension** — runbook for the new
+      lazy side-tables (widget_pings, not_found_pings,
+      docket_notes, ai_summary_refresh_queue): what they store,
+      growth assumptions, when to truncate.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
