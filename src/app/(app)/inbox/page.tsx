@@ -155,7 +155,6 @@ export default function InboxPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // selectMessage + setStatus capture state via closure each render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
   // Empty-org preview: render after all hooks have registered so the

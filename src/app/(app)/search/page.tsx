@@ -239,7 +239,6 @@ export default function SearchPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // exportCsv captures the latest `filtered` via closure on every render.
-     
   });
 
   const filtered = useMemo(() => {
