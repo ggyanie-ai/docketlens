@@ -365,6 +365,15 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] Pricing FAQs ship schema.org FAQPage JSON-LD for SERP rich
+      results. Added a `plain` (HTML-free) twin field per FAQ on
+      /pricing alongside the existing JSX answer; injected
+      `<script type="application/ld+json">` with `@type: FAQPage`
+      and 8 `Question` entries (`acceptedAnswer.text` = plain
+      version). Plain text deliberately written for readability
+      in SERPs — search engines accept HTML but a clean prose
+      snippet is what ranks. Verified payload: @type FAQPage,
+      8 questions, full answers serialize.
 - [x] OnboardingChecklist "Create your first watchlist" step now
       routes through `/watchlists?empty=1` (instead of jumping
       straight to /watchlists/new), surfacing the six prebuilt
@@ -742,10 +751,14 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **Pricing-FAQ FAQPage JSON-LD** — pricing FAQs are
-      semantically valuable for SERPs. Emit `application/ld+json`
-      with `@type: FAQPage` for the eight Q/A pairs so Google can
-      surface them as rich results.
+- [ ] **Product/SoftwareApplication JSON-LD on /** — single
+      `@type: SoftwareApplication` block on the marketing root
+      with name, applicationCategory, offers (Free + Pro + Team
+      prices), aggregateRating (skip if no real reviews yet).
+      Companion to the FAQPage rich result.
+- [ ] **BreadcrumbList JSON-LD on deep pages** — /blog/[slug],
+      /docs/[slug], /demo/[id]. Small JSON-LD island per page.
+      Helps Google understand the IA.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,

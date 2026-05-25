@@ -6,9 +6,19 @@ import { Faq } from "@/components/marketing/faq";
 import { Check, X, ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
+const PRICING_FAQS: {
+  q: string;
+  /** Rendered into the on-page accordion. May contain links + code. */
+  a: React.ReactNode;
+  /** Plain-text fallback used for the FAQPage JSON-LD payload. Search
+   *  engines accept HTML inside `acceptedAnswer.text` — we keep it
+   *  prose-only here so the snippet that ends up in SERPs reads cleanly. */
+  plain: string;
+}[] = [
   {
     q: "What can I actually do on Free?",
+    plain:
+      "Five watchlists, one-line AI summaries on every filing, daily email digests, and a 7-day window of filing history. Free isn't a teaser — most solo journalists and law students stay on it indefinitely. The Pro features (paragraph + exec summaries, real-time alerts, webhook delivery, BYO token) are about volume and freshness, not access to the data itself.",
     a: (
       <>
         Five watchlists, one-line AI summaries on every filing, daily email
@@ -22,6 +32,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "Can I BYO CourtListener token?",
+    plain:
+      "Yes — on Pro and Team. Plug in your own CourtListener API token and your watchlists hit your own budget (5/min, 50/hr, 125/day) instead of competing for the shared pool. This is the single biggest lever on freshness. Free uses the shared pool with priority-by-cadence (real-time → hourly → daily).",
     a: (
       <>
         Yes — on Pro and Team. Plug in your own CourtListener API token
@@ -34,6 +46,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "What happens if I hit 50,000 API calls in a day?",
+    plain:
+      "Team-tier API keys throttle at 50,000/day (and 5/sec, 1000/hr). At the limit you get 429 responses with Retry-After headers — no surprise overage charges. Need more? Email support@docketlens.ai and we'll raise it.",
     a: (
       <>
         Team-tier API keys throttle at 50k/day (and 5/sec, 1000/hr — see{" "}
@@ -58,6 +72,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "What counts as a “seat” on Team?",
+    plain:
+      "A seat is one human with their own login. API keys aren't seats — Team gets unlimited API keys for service-to-service use. Watchlists, saved searches, and the audit log are shared org-wide. First 5 seats included; $25/seat/month after that, prorated.",
     a: (
       <>
         A seat is one human with their own login. API keys aren&apos;t
@@ -69,6 +85,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "Annual discount?",
+    plain:
+      "Two months free if you pay annually on Pro or Team. The discount applies at checkout — you don't have to ask. We don't do custom enterprise pricing; the published price is the price.",
     a: (
       <>
         Two months free if you pay annually on Pro or Team. The discount
@@ -79,6 +97,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "How does cancellation work?",
+    plain:
+      "Cancel any time in Settings → Billing. You keep Pro/Team features through the end of the current period, then drop to Free. Your watchlists stay (the extras beyond Free's 5 are paused, not deleted). Re-upgrade to wake them up.",
     a: (
       <>
         Cancel any time in Settings → Billing. You keep Pro/Team features
@@ -90,6 +110,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "Refund policy?",
+    plain:
+      "Email us within 30 days of any charge and we'll refund it, no questions asked. Annual plans get a prorated refund based on months unused. We'd rather you not pay than feel locked in.",
     a: (
       <>
         Email us within 30 days of any charge and we&apos;ll refund it,
@@ -100,6 +122,8 @@ const PRICING_FAQS: { q: string; a: React.ReactNode }[] = [
   },
   {
     q: "Can I export my data if I leave?",
+    plain:
+      "Yes — Settings → Export downloads every watchlist (JSON), every saved search (JSON), and the last 12 months of alert deliveries (CSV). The public REST API is also available on Team if you want a programmatic snapshot. We don't hold data hostage.",
     a: (
       <>
         Yes — Settings → Export downloads every watchlist (JSON), every
@@ -246,6 +270,26 @@ export default function PricingPage() {
         </section>
 
         <section className="mx-auto max-w-3xl px-6 pb-24">
+          {/* FAQPage rich-results structured data (schema.org). Plain-text
+              answers chosen for readability in SERPs — search engines
+              accept HTML, but a clean prose snippet is what ranks. */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: PRICING_FAQS.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: f.plain,
+                  },
+                })),
+              }),
+            }}
+          />
           <h2 className="font-serif text-2xl tracking-tight mb-2 text-center">
             Pricing questions
           </h2>
