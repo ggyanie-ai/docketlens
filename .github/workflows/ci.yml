@@ -24,6 +24,9 @@ jobs:
       - name: Type check
         run: pnpm typecheck
 
+      - name: Test
+        run: pnpm test
+
       - name: Lint
         run: pnpm lint || echo "lint warnings only — non-blocking"
 
