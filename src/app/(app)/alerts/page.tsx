@@ -256,7 +256,142 @@ function PopulatedAlerts() {
           </ul>
         </Card>
       </section>
+
+      <WebhookDeliveries />
     </>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Webhook deliveries (read-only, per-channel detail)                         */
+/* -------------------------------------------------------------------------- */
+
+interface WebhookRow {
+  id: string;
+  when: string;
+  status: "200" | "204" | "500" | "503" | "timeout";
+  latencyMs: number;
+  endpoint: string;
+  rule: string;
+  attempt: number;
+}
+
+const WEBHOOK_DELIVERIES: WebhookRow[] = [
+  { id: "wh1", when: "2 min ago", status: "200", latencyMs: 184, endpoint: "hooks.slack.com/…/x9k7", rule: "Securities — SDNY", attempt: 1 },
+  { id: "wh2", when: "13 min ago", status: "200", latencyMs: 142, endpoint: "hooks.slack.com/…/x9k7", rule: "Hon. Alsup", attempt: 1 },
+  { id: "wh3", when: "47 min ago", status: "200", latencyMs: 211, endpoint: "alerts.example.com/intake", rule: "Kirkland & Ellis", attempt: 1 },
+  { id: "wh4", when: "2h ago", status: "503", latencyMs: 1840, endpoint: "hooks.slack.com/…/x9k7", rule: "Apple Inc.", attempt: 2 },
+  { id: "wh5", when: "2h ago", status: "503", latencyMs: 1602, endpoint: "hooks.slack.com/…/x9k7", rule: "Apple Inc.", attempt: 1 },
+  { id: "wh6", when: "5h ago", status: "timeout", latencyMs: 10_000, endpoint: "alerts.example.com/intake", rule: "Securities — SDNY", attempt: 1 },
+  { id: "wh7", when: "8h ago", status: "200", latencyMs: 167, endpoint: "hooks.slack.com/…/x9k7", rule: "Hon. Alsup", attempt: 1 },
+];
+
+function statusVariant(s: WebhookRow["status"]): "success" | "danger" | "warning" {
+  if (s === "200" || s === "204") return "success";
+  if (s === "500" || s === "503") return "danger";
+  return "warning";
+}
+
+function WebhookDeliveries() {
+  return (
+    <section>
+      <div className="flex items-end justify-between gap-4 mb-4 flex-wrap">
+        <div>
+          <h2 className="font-serif text-2xl tracking-tight">
+            Webhook deliveries
+          </h2>
+          <p className="text-sm text-[color:var(--color-fg-muted)] mt-0.5">
+            Last 30 days of HTTPS POSTs to configured webhook endpoints —
+            status, latency, attempt count.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link
+              href={"/tools/verify-webhook" as never}
+              title="Open the in-browser signature verifier"
+            >
+              <Webhook className="size-3.5" />
+              Verify a signature
+            </Link>
+          </Button>
+          <Button variant="accent" size="sm" title="Fire a sample event to every configured webhook">
+            <Sparkles className="size-3.5" />
+            Send a test webhook
+          </Button>
+        </div>
+      </div>
+      <Card className="overflow-hidden">
+        <table className="w-full text-sm">
+          <caption className="sr-only">Webhook deliveries — last 30 days</caption>
+          <thead className="bg-[color:var(--color-bg-subtle)]/40">
+            <tr className="text-left">
+              <th scope="col" className="px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+                Status
+              </th>
+              <th scope="col" className="px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+                Latency
+              </th>
+              <th scope="col" className="px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+                Endpoint
+              </th>
+              <th scope="col" className="px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+                Rule
+              </th>
+              <th scope="col" className="px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)] text-right">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {WEBHOOK_DELIVERIES.map((d) => (
+              <tr
+                key={d.id}
+                className="border-t border-[color:var(--color-border)]/70"
+              >
+                <td className="px-4 py-3 align-middle">
+                  <div className="flex items-center gap-2">
+                    <Badge variant={statusVariant(d.status)}>
+                      {d.status === "timeout" ? "timeout" : `HTTP ${d.status}`}
+                    </Badge>
+                    {d.attempt > 1 && (
+                      <span className="font-mono text-[10.5px] text-[color:var(--color-fg-subtle)]">
+                        attempt {d.attempt}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 font-mono text-[10.5px] text-[color:var(--color-fg-subtle)]">
+                    {d.when}
+                  </p>
+                </td>
+                <td className="px-4 py-3 align-middle font-mono text-[12px] tabular text-[color:var(--color-fg)]">
+                  {d.latencyMs.toLocaleString()} ms
+                </td>
+                <td className="px-4 py-3 align-middle font-mono text-[12px] text-[color:var(--color-fg)] truncate max-w-[260px]">
+                  {d.endpoint}
+                </td>
+                <td className="px-4 py-3 align-middle text-[12.5px] text-[color:var(--color-fg-muted)]">
+                  {d.rule}
+                </td>
+                <td className="px-4 py-3 align-middle text-right">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    title="Resend the same payload to this endpoint"
+                    disabled={statusVariant(d.status) === "success"}
+                  >
+                    Retry
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+      <p className="mt-3 font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]">
+        Retries use exponential backoff (1s, 5s, 25s, 125s, give up at 5 attempts).
+      </p>
+    </section>
   );
 }
 

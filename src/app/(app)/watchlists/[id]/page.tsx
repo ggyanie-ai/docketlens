@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowUpRight,
   Bell,
   Pause,
+  Share2,
   Trash2,
   Pencil,
   FileText,
@@ -174,6 +176,18 @@ export default async function WatchlistDetailPage({
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
+              <Button asChild variant="outline" size="md">
+                <Link
+                  href={`/watchlists/${watchlist.id}/preview` as never}
+                  target="_blank"
+                  rel="noopener"
+                  title="Open the public read-only share page"
+                >
+                  <Share2 className="size-4" />
+                  Public preview
+                  <ArrowUpRight className="size-3" />
+                </Link>
+              </Button>
               <Button variant="outline" size="md">
                 <Pause className="size-4" />
                 Pause
