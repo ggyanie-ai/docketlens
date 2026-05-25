@@ -37,14 +37,22 @@ export async function generateMetadata({
   const docketUrl = `${SITE}/demo/${d.id}`;
   const oembedHref = `${SITE}/api/oembed?url=${encodeURIComponent(docketUrl)}&format=json`;
 
+  const title = `${d.caseNameShort} — ${d.court}`;
+  const description = `${d.caseName} — ${d.natureOfSuit}. Filed ${d.filed}.`;
   return {
-    title: `${d.caseNameShort} — ${d.court}`,
-    description: `${d.caseName} — ${d.natureOfSuit}. Filed ${d.filed}.`,
+    title,
+    description,
     alternates: {
       canonical: `/demo/${d.id}`,
       types: {
         "application/json+oembed": oembedHref,
       },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `/demo/${d.id}`,
+      type: "article" as const,
     },
   };
 }

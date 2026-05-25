@@ -13,6 +13,13 @@ const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 export const metadata = {
   title: "Live demo",
   description: "See how DocketLens renders federal court dockets, without signing up.",
+  openGraph: {
+    title: "DocketLens live demo",
+    description:
+      "See how DocketLens renders federal court dockets — six synthetic sample cases with timeline, AI summaries, and parties. No signup.",
+    url: "/demo",
+    type: "website" as const,
+  },
 };
 
 export default function DemoPage() {

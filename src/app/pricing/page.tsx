@@ -6,6 +6,19 @@ import { Faq } from "@/components/marketing/faq";
 import { Check, X, ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
+export const metadata = {
+  title: "Pricing",
+  description:
+    "Free for 5 watchlists. Pro at $49/mo for serious solo use. Team at $199/mo for a whole firm (5 seats). Self-serve checkout, no contracts.",
+  openGraph: {
+    title: "DocketLens pricing",
+    description:
+      "Free for 5 watchlists. Pro at $49/mo for serious solo use. Team at $199/mo for a whole firm (5 seats). Self-serve checkout, no contracts.",
+    url: "/pricing",
+    type: "website" as const,
+  },
+};
+
 const PRICING_FAQS: {
   q: string;
   /** Rendered into the on-page accordion. May contain links + code. */
