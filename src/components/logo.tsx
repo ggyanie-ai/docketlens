@@ -32,7 +32,7 @@ export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2 select-none", className)}>
       <Logo />
-      <span className="font-serif text-[18px] tracking-tight leading-none">
+      <span className="dl-word font-serif text-[18px] tracking-tight leading-none">
         Docket<span className="text-[color:var(--color-accent)]">Lens</span>
       </span>
     </span>

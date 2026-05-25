@@ -137,9 +137,16 @@ export default function SearchPage() {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Search by case name, number, party, attorney, or judge…"
-                  className="pl-9 h-11 text-[15px]"
+                  className="pl-9 pr-16 h-11 text-[15px]"
                   autoFocus
                 />
+                <span
+                  aria-hidden
+                  className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]"
+                  title="Open command palette"
+                >
+                  ⌘K
+                </span>
               </div>
               <Button variant="accent" size="lg">
                 Search

@@ -41,7 +41,27 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
           <div className="col-span-2 md:col-span-2 flex flex-col gap-4">
-            <Wordmark />
+            <Link
+              href={"/" as never}
+              className="group inline-flex items-center w-fit"
+              aria-label="DocketLens — home"
+            >
+              <Wordmark
+                className="
+                  [&_.dl-word]:relative
+                  [&_.dl-word]:after:content-['']
+                  [&_.dl-word]:after:absolute
+                  [&_.dl-word]:after:left-0
+                  [&_.dl-word]:after:-bottom-0.5
+                  [&_.dl-word]:after:h-px
+                  [&_.dl-word]:after:w-0
+                  [&_.dl-word]:after:bg-[color:var(--color-accent)]
+                  [&_.dl-word]:after:transition-[width]
+                  [&_.dl-word]:after:duration-200
+                  group-hover:[&_.dl-word]:after:w-full
+                "
+              />
+            </Link>
             <p className="text-sm text-[color:var(--color-fg-muted)] max-w-xs leading-relaxed">
               AI court intelligence built on public docket data. Watch the cases
               that matter. Skip PACER's per-page fees and 1995 UX.
