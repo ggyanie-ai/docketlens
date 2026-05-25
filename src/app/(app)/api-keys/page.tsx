@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   KeyRound,
   Plus,
@@ -113,6 +115,9 @@ function persistUserKeys(rows: KeyRow[]): void {
 }
 
 export default function ApiKeysPage() {
+  const searchParams = useSearchParams();
+  const isEmpty = searchParams.get("empty") === "1";
+
   const [userKeys, setUserKeys] = useState<KeyRow[]>([]);
   const [reveal, setReveal] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -128,10 +133,64 @@ export default function ApiKeysPage() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setUserKeys(loadUserKeys());
-  }, []);
+    if (!isEmpty) setUserKeys(loadUserKeys());
+  }, [isEmpty]);
 
-  const keys = useMemo(() => [...userKeys, ...SAMPLE_KEYS], [userKeys]);
+  const keys = useMemo(
+    () => (isEmpty ? [] : [...userKeys, ...SAMPLE_KEYS]),
+    [userKeys, isEmpty]
+  );
+
+  // Empty-org preview: brand-new org has no keys yet. Render a focused
+  // hero with a clear "Generate your first key" CTA + the security pitch.
+  if (isEmpty && keys.length === 0) {
+    return (
+      <>
+        <Topbar title="API keys" />
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
+            <div className="flex justify-center mb-5">
+              <span className="relative inline-flex">
+                <span
+                  aria-hidden
+                  className="motion-safe:animate-ping motion-reduce:hidden absolute inset-0 inline-flex rounded-full bg-[color:var(--color-accent)] opacity-40"
+                />
+                <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] shadow-soft">
+                  <KeyRound className="size-6" />
+                </span>
+              </span>
+            </div>
+            <p className="eyebrow mb-2">API keys · empty-org preview</p>
+            <h1 className="display-2">No API keys yet.</h1>
+            <p className="mt-5 text-base text-[color:var(--color-fg-muted)] leading-relaxed max-w-xl mx-auto">
+              Generate one to call /api/v1/* from a CLI, mobile app, or
+              webhook integration. We show the full token exactly once;
+              after that we keep only a sha256 hash and the prefix.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href={"/api-keys" as never}
+                className="inline-flex items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-accent)] text-[color:var(--color-accent-fg)] px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                <Plus className="size-4 mr-1.5" />
+                Generate your first key
+              </Link>
+              <Link
+                href={"/docs/api-reference" as never}
+                className="inline-flex items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-bg)] text-[color:var(--color-fg)] px-4 py-2 text-sm hover:border-[color:var(--color-border-strong)] transition-colors"
+              >
+                Read the API reference
+              </Link>
+            </div>
+            <p className="mt-6 inline-flex items-center gap-1.5 text-xs font-mono text-[color:var(--color-fg-subtle)]">
+              <ShieldCheck className="size-3" />
+              We never log the full token. One-time reveal only.
+            </p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   function toggleScope(s: string) {
     setDraftScopes((cur) =>

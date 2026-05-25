@@ -231,6 +231,41 @@ export default function AuditLogPage() {
             </Button>
           </Card>
 
+          {/* Filtered-view share banner.
+             Shows only when at least one filter is non-default — the
+             URL already reflects state via pushUrl(), so we just need
+             a clear affordance for users to copy it. */}
+          {(filter !== "all" || range !== "all" || q.trim() !== "") && (
+            <div className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-bg-subtle)]/60 px-4 py-2.5 flex-wrap">
+              <p className="text-xs text-[color:var(--color-fg-muted)]">
+                <span className="font-medium text-[color:var(--color-fg)]">
+                  Filtered view
+                </span>{" "}
+                · this URL captures your filters. Anyone with the link sees
+                the same query.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  if (typeof window === "undefined") return;
+                  const url = window.location.href;
+                  try {
+                    await navigator.clipboard.writeText(url);
+                    toast.success("URL copied", { description: url });
+                  } catch {
+                    toast.error("Couldn't copy", {
+                      description:
+                        "Clipboard blocked. Copy the address bar manually.",
+                    });
+                  }
+                }}
+              >
+                Copy filtered URL
+              </Button>
+            </div>
+          )}
+
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[color:var(--color-border)] rounded-[var(--radius-lg)] overflow-hidden">
             <Card className="rounded-none border-0 bg-[color:var(--color-bg)] p-5">
