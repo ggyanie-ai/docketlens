@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   ScrollText,
@@ -78,11 +79,56 @@ const RANGE_LABEL: Record<DateRange, string> = {
   all: "All time",
 };
 
+function parseFilter(raw: string | null): Filter {
+  if (!raw) return "all";
+  const allowed: Filter[] = [
+    "all",
+    "auth",
+    "watchlist",
+    "key",
+    "alert",
+    "billing",
+    "data",
+    "settings",
+  ];
+  return (allowed as string[]).includes(raw) ? (raw as Filter) : "all";
+}
+
+function parseRange(raw: string | null): DateRange {
+  if (!raw) return "all";
+  const allowed: DateRange[] = ["24h", "7d", "30d", "all"];
+  return (allowed as string[]).includes(raw) ? (raw as DateRange) : "all";
+}
+
 export default function AuditLogPage() {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [range, setRange] = useState<DateRange>("all");
-  const [q, setQ] = useState("");
+  const router = useRouter();
+  const params = useSearchParams();
+
+  // URL-driven filter state — `?q=&category=&range=` makes filtered views
+  // shareable + browser-back navigable. Initial state pulls from the URL;
+  // changes push a new history entry so back/forward works as expected.
+  const [filter, setFilter] = useState<Filter>(() => parseFilter(params.get("category")));
+  const [range, setRange] = useState<DateRange>(() => parseRange(params.get("range")));
+  const [q, setQ] = useState(() => params.get("q") ?? "");
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  // Sync state → URL (debounced so typing in the search box doesn't spam
+  // history entries — one push per 250ms of idle).
+  const pushUrl = useCallback(
+    (next: { filter: Filter; range: DateRange; q: string }) => {
+      const sp = new URLSearchParams();
+      if (next.filter !== "all") sp.set("category", next.filter);
+      if (next.range !== "all") sp.set("range", next.range);
+      if (next.q.trim()) sp.set("q", next.q.trim());
+      const qs = sp.toString();
+      router.replace(qs ? `/audit-log?${qs}` : "/audit-log", { scroll: false });
+    },
+    [router]
+  );
+  useEffect(() => {
+    const t = setTimeout(() => pushUrl({ filter, range, q }), 250);
+    return () => clearTimeout(t);
+  }, [filter, range, q, pushUrl]);
 
   const events = useMemo(() => {
     const cutoff = RANGE_MS[range];

@@ -277,4 +277,30 @@ export const POSTS: Post[] = [
       { type: "p", text: "If we ever need to revisit that decision, we'll do it loudly and on the changelog. So far the math works: Sonnet pricing keeps trending down, and the cache hit rate on canonical documents (the same Markman gets summarized many times across many tenants) keeps trending up. The team is comfortable with where the unit economics sit at the close of the first full quarter." },
     ],
   },
+  {
+    slug: "we-built-on-free-law-project-and-we-donate-back",
+    title: "We built on Free Law Project. So we donate back.",
+    excerpt:
+      "DocketLens reads federal court records through RECAP and CourtListener — both maintained by a small non-profit running on grants and small recurring donations. Here's how much we send them and why every legal-tech tool should.",
+    tag: "Industry",
+    date: "2026-05-25",
+    readMinutes: 5,
+    author: "The DocketLens team",
+    body: [
+      { type: "p", text: "Pull on any legal-tech tool built in the last fifteen years and the same thread comes out: it's standing on Free Law Project. The PACER alternative you use, the docket alerts you subscribe to, the academic empirical-legal-studies paper you read — somewhere in the credit roll is a 501(c)(3) running RECAP and CourtListener on a budget smaller than most Series A engineering team's snack-room line." },
+      { type: "h2", text: "What FLP actually does" },
+      { type: "p", text: "RECAP is the browser extension that uploads PACER documents (which the user has already paid for) to a free public archive. CourtListener is the website + API on top of that archive. Both are open-source, both are free to the public, both are maintained by a tiny team. The amount of legal infrastructure that quietly depends on them is hard to overstate: every \"PACER alternative\" SaaS, every academic litigation dataset, every news outlet's docket-tracking product." },
+      { type: "p", text: "Federal court records are public by law. They are not, in practice, free. PACER charges $0.10 per page. The Open Courts Act has been kicking around Congress since 2009 trying to fix that. In the meantime, Free Law Project does the unglamorous, decade-spanning work of building the alternative — and they do it on grants, a small bench of recurring corporate sponsors, and individual donations." },
+      { type: "h2", text: "What we donate" },
+      { type: "p", text: "DocketLens commits to donating a fixed 1% of net revenue to Free Law Project, quarterly, as a recurring corporate sponsorship. At our current scale that's not a meaningful amount of money to them. We send it anyway — for two reasons." },
+      { type: "ul", items: [
+        "It's the right thing to do. We make our money by AI-summarizing the corpus their volunteers and engineers spent years assembling. The marginal cost to us of writing a four-figure check every quarter is rounding-error compared to the marginal benefit of FLP continuing to exist.",
+        "It changes how we make product decisions. Once 1% goes off the top, every conversation about \"can we cache more aggressively and reduce CourtListener API calls\" becomes a conversation about how we can be a quieter, lighter-weight downstream consumer of their infrastructure.",
+      ]},
+      { type: "pull", text: "We make our money by AI-summarizing a corpus their volunteers spent years assembling. Writing a quarterly check is the smallest form of staying honest." },
+      { type: "h2", text: "If you're another tool reading this" },
+      { type: "p", text: "Become a corporate sponsor. Their tiers start at $1k/year and go up. Even at the $1k tier you'll get listed on their donors page, which we think matters less for marketing and more as a signal to your customers about what kind of company you are. Email donations@free.law or use the link on free.law. If you're a downstream consumer of CourtListener data and you haven't made this call yet, today's a good day." },
+      { type: "p", text: "Our /donate page at docketlens.ai/donate has more on the math + how we picked the 1% number. If you have feedback or think we should be doing more, we want to hear about it." },
+    ],
+  },
 ];

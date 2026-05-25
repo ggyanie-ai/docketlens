@@ -277,6 +277,88 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/dockets/{id}/parties": {
+      get: {
+        tags: ["Dockets"],
+        summary: "Narrow: parties only",
+        description:
+          "Returns the docket's party list without the full envelope. Pairs with `/entries`.",
+        operationId: "getDocketParties",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+        ],
+        responses: {
+          "200": {
+            description: "Party list",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["docket_id", "count", "parties"],
+                  properties: {
+                    docket_id: { type: "string" },
+                    count: { type: "integer", minimum: 0 },
+                    parties: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/Party" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+    },
+    "/api/v1/dockets/{id}/entries": {
+      get: {
+        tags: ["Dockets"],
+        summary: "Narrow: entries only",
+        description:
+          "Returns the docket's timeline newest-first with optional date + limit gates. Pairs with `/parties`.",
+        operationId: "getDocketEntries",
+        parameters: [
+          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "since",
+            in: "query",
+            description: "ISO date — only entries on/after this day.",
+            schema: { type: "string", format: "date" },
+          },
+          {
+            name: "limit",
+            in: "query",
+            description: "Max rows. 1–500.",
+            schema: { type: "integer", minimum: 1, maximum: 500, default: 100 },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Entry list",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["docket_id", "count", "entries"],
+                  properties: {
+                    docket_id: { type: "string" },
+                    count: { type: "integer", minimum: 0 },
+                    entries: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/DocketEntry" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+    },
     "/api/v1/dockets/{id}/ai-summaries": {
       get: {
         tags: ["Dockets"],
