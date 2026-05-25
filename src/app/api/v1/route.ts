@@ -27,6 +27,8 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/dockets/:id/notes/render", desc: "Render this org's note as HTML" },
       { method: "GET",  path: "/api/v1/dockets/:id/related", desc: "Dockets sharing party / judge / lawfirm / tag" },
       { method: "GET",  path: "/api/v1/health/db",        desc: "Bare DB liveness probe (200 / 503, no body)" },
+      { method: "GET",  path: "/api/v1/orgs/me",         desc: "Just the org subset of /api/v1/me" },
+      { method: "POST", path: "/api/v1/webhooks/:id/test", desc: "Fire a signed test payload at one webhook (Pro+)" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
       { method: "DELETE", path: "/api/v1/watchlists",    desc: "Bulk soft-delete via { ids: […] } (Team plan)" },

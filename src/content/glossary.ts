@@ -214,6 +214,20 @@ export const GLOSSARY: GlossaryTerm[] = [
     related: ["motion", "lanham-43a"],
   },
   {
+    slug: "interlocutory-appeal",
+    term: "Interlocutory appeal",
+    category: "procedural",
+    body: "An appeal of a court order that isn't the final judgment — typically allowed only for narrow categories (denied motions to compel arbitration, class-cert decisions under Rule 23(f), preliminary injunctions, certified questions under §1292(b)). Most rulings have to wait for final judgment; an interlocutory appeal jumping out mid-case is itself a noteworthy docket entry.",
+    related: ["motion", "preliminary-injunction"],
+  },
+  {
+    slug: "ad-damnum",
+    term: "Ad damnum clause",
+    category: "pleadings",
+    body: "The part of a civil complaint that states the amount of damages the plaintiff is seeking. Some jurisdictions don't allow specifying a dollar amount (\"according to proof at trial\") to prevent jury anchoring; others require it. Watchlist signal: the ad damnum number is often the most-searched datum on a high-profile complaint within hours of filing.",
+    related: ["complaint", "treble-damages"],
+  },
+  {
     slug: "voir-dire",
     term: "Voir dire",
     category: "lifecycle",
