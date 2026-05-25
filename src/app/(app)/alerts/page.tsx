@@ -19,6 +19,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SendTestWebhookButton } from "@/components/app/send-test-webhook-button";
 
 const CHANNELS = [
   {
@@ -315,10 +316,7 @@ function WebhookDeliveries() {
               Verify a signature
             </Link>
           </Button>
-          <Button variant="accent" size="sm" title="Fire a sample event to every configured webhook">
-            <Sparkles className="size-3.5" />
-            Send a test webhook
-          </Button>
+          <SendTestWebhookButton />
         </div>
       </div>
       <Card className="overflow-hidden">
