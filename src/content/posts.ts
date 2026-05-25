@@ -438,4 +438,33 @@ export const POSTS: Post[] = [
       { type: "p", text: "The AO doesn't redesign this. Codes get added slowly (840 in 2016 was the last major addition). What's changing is how courts use them — some districts now require attorneys to pick the most-specific code rather than defaulting to the catch-all 190 / 890, which is gradually making the data more useful for the rest of us. We re-derive NOS distributions weekly so the shifts show up in /dashboard's heatmap without manual intervention." },
     ],
   },
+  {
+    slug: "three-months-in-the-metrics-we-stopped-publishing",
+    title: "Three months in: the metrics we stopped publishing on /status, and the ones we added",
+    excerpt:
+      "When we launched /status we picked five service indicators that felt right. Three months of usage taught us that two of them were lying to us and one was being read backwards by ops.",
+    tag: "Engineering",
+    date: "2026-05-25",
+    readMinutes: 6,
+    author: "The DocketLens team",
+    body: [
+      { type: "p", text: "At launch our /status page had five indicators. Web app, REST API, ingest worker, AI summarization, email delivery, database. All green on launch day. That part was easy. The honest part — what we found out about each one over three months of running the service — is what this post is about." },
+      { type: "h2", text: "What we stopped publishing" },
+      { type: "p", text: "The first thing we cut was \"AI summarization\" as a binary status indicator. The thing it was measuring — whether Anthropic was up — is a Boolean question, but the user-facing experience isn't. When Anthropic returns 529s, we fall back to the cached summary the user saw twenty minutes ago. The page is functional. Setting that indicator to red would tell on-call to investigate when nothing in the product is actually broken. We replaced it with a `summary_freshness_p50` number: median age of the most recent summary shown across all org views. Anthropic outages move that number up by minutes, but nothing turns red until p50 crosses 90 minutes — which empirically only happens during a genuine multi-hour upstream outage." },
+      { type: "p", text: "Second cut: email delivery. Resend has a stellar track record, so the indicator was always green. The signal we actually care about — \"are *our* emails getting through to inboxes\" — turns out to be different from \"is Resend up.\" We now track `digest_open_rate_24h` and `bounce_rate_24h` and alert on those instead of the upstream provider's status page. Twice this quarter both upstream indicators were green and our bounce rate doubled because of a subject-line change that triggered a Gmail filter heuristic. The provider status would have told us nothing." },
+      { type: "pull", text: "Anthropic returning 529s isn't an outage if the page still works. Setting the indicator red would tell on-call to investigate when nothing in the product is actually broken." },
+      { type: "h2", text: "What we added" },
+      { type: "p", text: "Three new indicators replace the two cuts:" },
+      { type: "ul", items: [
+        "summary_freshness_p50 (and p95) — the median + 95th-percentile age of the most recent AI summary shown across all org views. Updates every 60 seconds. Pages red at p50 > 90m or p95 > 4h.",
+        "match_to_alert_p50 — wall-clock from when a docket entry first lands in our DB to when a watchlist alert leaves our outbox. Includes the matcher, dispatch, and any rate-limit waits. Pages at p50 > 12s on Pro, 90s on Free.",
+        "cl_pool_utilization — percentage of our pooled CourtListener token's daily budget consumed. Pages at >80%. We can do something useful when this trips (back-pressure, switch to BYO-token customers, ask FLP to raise). Provider-side rate-limit headers don't help if you're not watching them.",
+      ]},
+      { type: "h2", text: "The one indicator we kept but moved" },
+      { type: "p", text: "\"Web app\" was always green and always will be. Vercel doesn't go down often enough for the indicator to be useful. We kept it because users *expect* a Web App green light on a status page — but we moved it to the bottom of the list and dropped it from the page-level summary. The summary now reads \"All systems operational\" when the four indicators that actually correlate with user pain are happy; the web-app light is informational." },
+      { type: "h2", text: "What we learned about /status" },
+      { type: "p", text: "Three months of running this taught us that a status page isn't documentation, it's an oncall input. The right indicators are the ones that go red when on-call should look, and stay green when they shouldn't. Every other framing — \"our users want to see five services\" — is a way of lying to yourself + your team about what matters. We will keep cutting indicators that don't predict pages and adding ones that do." },
+      { type: "p", text: "Live status page: /status. Methodology + thresholds: linked from the page footer. As of today the page is, as the kids say, a real one." },
+    ],
+  },
 ];

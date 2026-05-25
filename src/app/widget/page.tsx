@@ -94,14 +94,30 @@ export default function WidgetIndexPage() {
                     />
                   </Card>
 
-                  <div className="relative">
-                    <pre className="overflow-x-auto rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] p-4 text-xs font-mono leading-relaxed text-[color:var(--color-fg)]">
+                  {/* Embed snippet — collapsed by default. The live iframe
+                      above is the primary affordance; the code is one
+                      click away when needed. */}
+                  <details className="group rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] overflow-hidden">
+                    <summary className="cursor-pointer select-none flex items-center justify-between gap-3 px-4 py-2.5 text-xs font-mono text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] transition-colors">
+                      <span className="inline-flex items-center gap-2">
+                        <span className="transition-transform group-open:rotate-90">
+                          ›
+                        </span>
+                        Show embed snippet
+                      </span>
+                      <span className="text-[10px] uppercase tracking-widest text-[color:var(--color-fg-subtle)]">
+                        {snippet.length} chars
+                      </span>
+                    </summary>
+                    <div className="relative border-t border-[color:var(--color-border)]">
+                      <pre className="overflow-x-auto p-4 text-xs font-mono leading-relaxed text-[color:var(--color-fg)]">
 {snippet}
-                    </pre>
-                    <div className="absolute top-2 right-2">
-                      <CopyButton text={snippet} />
+                      </pre>
+                      <div className="absolute top-2 right-2">
+                        <CopyButton text={snippet} />
+                      </div>
                     </div>
-                  </div>
+                  </details>
                 </div>
               );
             })}
