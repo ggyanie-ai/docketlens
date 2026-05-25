@@ -1,12 +1,20 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = { title: "Privacy Policy" };
 
 export default function PrivacyPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Legal", url: "/legal/privacy" },
+          { name: "Privacy Policy", url: "/legal/privacy" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Legal</p>

@@ -1,12 +1,20 @@
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = { title: "Terms of Service" };
 
 export default function TermsPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Legal", url: "/legal/terms" },
+          { name: "Terms of Service", url: "/legal/terms" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Legal</p>

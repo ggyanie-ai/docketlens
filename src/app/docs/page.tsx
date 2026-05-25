@@ -5,6 +5,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PUBLIC_DOCS } from "@/content/public-docs";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
 export const metadata = {
   title: "Documentation",
@@ -15,8 +18,33 @@ export const metadata = {
 export default function DocsIndex() {
   const groups = Array.from(new Set(PUBLIC_DOCS.map((d) => d.group)));
 
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "DocketLens documentation",
+    description:
+      "Reference, engineering notes, and the accessibility audit for DocketLens.",
+    numberOfItems: PUBLIC_DOCS.length,
+    itemListElement: PUBLIC_DOCS.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: d.title,
+      url: `${SITE}/docs/${d.slug}`,
+    })),
+  };
+
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Docs", url: "/docs" },
+        ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-4xl px-6 pt-16 md:pt-24 pb-10">

@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/app/copy-button";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   title: "Feeds",
@@ -100,6 +101,12 @@ function FeedTable({ caption, items }: { caption: string; items: FeedRow[] }) {
 export default function FeedsPage() {
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Feeds", url: "/feeds" },
+        ]}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-4xl px-6 pt-16 pb-10">

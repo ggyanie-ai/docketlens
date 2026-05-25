@@ -6,6 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
 export const metadata = {
   title: "Live demo",
@@ -13,8 +16,32 @@ export const metadata = {
 };
 
 export default function DemoPage() {
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "DocketLens demo dockets",
+    description:
+      "Synthetic sample federal-court dockets used for the public demo tour.",
+    numberOfItems: SAMPLE_DOCKETS.length,
+    itemListElement: SAMPLE_DOCKETS.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: d.caseName,
+      url: `${SITE}/demo/${d.id}`,
+    })),
+  };
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Demo", url: "/demo" },
+        ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1">
         <section className="mx-auto max-w-7xl px-6 pt-16 md:pt-24 pb-12">

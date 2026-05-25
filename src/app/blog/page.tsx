@@ -2,6 +2,9 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { POSTS } from "@/content/posts";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
+
+const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
 export const metadata = {
   title: "Blog",
@@ -13,8 +16,35 @@ export const metadata = {
 };
 
 export default function BlogIndex() {
+  const blogLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "DocketLens blog",
+    description:
+      "Notes from the workbench — court data, pricing experiments, and what we're learning from lawyers, journalists, and analysts using DocketLens.",
+    url: `${SITE}/blog`,
+    inLanguage: "en-US",
+    blogPost: POSTS.map((p) => ({
+      "@type": "BlogPosting",
+      headline: p.title,
+      url: `${SITE}/blog/${p.slug}`,
+      datePublished: p.date,
+      articleSection: p.tag,
+      author: { "@type": "Organization", name: "DocketLens" },
+    })),
+  };
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
+        ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }}
+      />
       <SiteHeader />
       <main id="main" className="flex-1 mx-auto max-w-3xl px-6 py-16 md:py-24">
         <p className="eyebrow mb-4">Notes from the workbench</p>
