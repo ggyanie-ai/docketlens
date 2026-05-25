@@ -58,6 +58,10 @@ export function WatchlistEditForm({
   const [cadence, setCadence] = useState<"realtime" | "hourly" | "daily">(
     "daily"
   );
+  // Priority 0–100; 50 = Normal. Schema column landed in 06bc365's
+  // successor commit. UI here for owners to adjust pre-launch; bound to
+  // the DB by the in-app save flow when auth wires Tuesday.
+  const [priority, setPriority] = useState<number>(50);
 
   const dirty =
     name !== initialName ||
@@ -66,7 +70,8 @@ export function WatchlistEditForm({
     matchValue !== initialMatchValue ||
     courts.length > 0 ||
     nos.length > 0 ||
-    cadence !== "daily";
+    cadence !== "daily" ||
+    priority !== 50;
 
   const toggle = <T,>(arr: T[], v: T): T[] =>
     arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
@@ -79,7 +84,11 @@ export function WatchlistEditForm({
     setCourts([]);
     setNos([]);
     setCadence("daily");
+    setPriority(50);
   }
+
+  const priorityLabel =
+    priority <= 33 ? "Low" : priority >= 67 ? "High" : "Normal";
 
   function save(e: React.FormEvent) {
     e.preventDefault();
@@ -218,6 +227,51 @@ export function WatchlistEditForm({
               </button>
             );
           })}
+        </div>
+      </Card>
+
+      <Card className="p-5 flex flex-col gap-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h3 className="text-sm font-medium tracking-tight inline-flex items-center gap-2">
+              Priority
+              <Badge variant="accent" className="text-[10px]">PRO</Badge>
+            </h3>
+            <p className="text-xs text-[color:var(--color-fg-muted)] mt-0.5 max-w-md">
+              Higher-priority watchlists ship to the top of daily digests
+              and the dashboard. Tie-break is creation date.
+            </p>
+          </div>
+          <div className="flex items-baseline gap-2 shrink-0">
+            <span className="font-serif text-2xl tabular leading-none">
+              {priority}
+            </span>
+            <span className="font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]">
+              {priorityLabel}
+            </span>
+          </div>
+        </div>
+        <label htmlFor="wl-priority" className="sr-only">
+          Watchlist priority (0–100)
+        </label>
+        <input
+          id="wl-priority"
+          type="range"
+          min={0}
+          max={100}
+          step={1}
+          value={priority}
+          onChange={(e) => setPriority(Number(e.target.value))}
+          className="w-full accent-[color:var(--color-accent)]"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={priority}
+          aria-valuetext={`${priority} of 100 (${priorityLabel})`}
+        />
+        <div className="flex justify-between text-[10.5px] font-mono uppercase tracking-wider text-[color:var(--color-fg-subtle)]">
+          <span>Low</span>
+          <span>Normal</span>
+          <span>High</span>
         </div>
       </Card>
 
