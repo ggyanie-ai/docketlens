@@ -20,6 +20,7 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/dockets/:id/parties", desc: "Narrow: parties only" },
       { method: "GET",  path: "/api/v1/dockets/:id/entries", desc: "Narrow: entries only (since/limit params)" },
       { method: "GET",  path: "/api/v1/dockets/:id/ai-summaries", desc: "Extractive AI summaries (tier-gated)" },
+      { method: "POST", path: "/api/v1/dockets/:id/ai-summaries/refresh", desc: "Queue an on-demand summary regen (Pro+)" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
       { method: "POST", path: "/api/v1/watchlists",      desc: "Create a watchlist (Team plan)" },
