@@ -562,6 +562,142 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/saved-searches": {
+      get: {
+        tags: ["Search"],
+        summary: "List org saved searches",
+        description: "Returns every saved search for the calling org, newest first.",
+        operationId: "listSavedSearches",
+        responses: {
+          "200": {
+            description: "Saved-search list",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["count", "saved_searches"],
+                  properties: {
+                    count: { type: "integer", minimum: 0 },
+                    saved_searches: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/SavedSearch" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+        },
+      },
+      post: {
+        tags: ["Search"],
+        summary: "Create a saved search",
+        description: "Creates a new saved search for the calling org. Requires Pro+.",
+        operationId: "createSavedSearch",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/CreateSavedSearch" },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Created",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["id"],
+                  properties: { id: { type: "string", example: "sch_F3kQ9pR2Lm" } },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "422": {
+            description: "Validation failed",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
+    "/api/v1/saved-searches/{id}": {
+      get: {
+        tags: ["Search"],
+        summary: "Get one saved search",
+        operationId: "getSavedSearch",
+        parameters: [{ $ref: "#/components/parameters/SavedSearchId" }],
+        responses: {
+          "200": {
+            description: "Saved search",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/SavedSearch" },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+      patch: {
+        tags: ["Search"],
+        summary: "Update a saved search",
+        description: "Sparse update — only sent fields are touched. Requires Pro+.",
+        operationId: "updateSavedSearch",
+        parameters: [{ $ref: "#/components/parameters/SavedSearchId" }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateSavedSearch" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Updated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/SavedSearch" },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "404": { $ref: "#/components/responses/NotFound" },
+          "422": {
+            description: "Validation failed",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+      delete: {
+        tags: ["Search"],
+        summary: "Delete a saved search",
+        description: "Hard delete. Idempotent — 204 even when already gone. Requires Pro+.",
+        operationId: "deleteSavedSearch",
+        parameters: [{ $ref: "#/components/parameters/SavedSearchId" }],
+        responses: {
+          "204": { description: "Deleted (or already deleted)" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
     "/api/v1/saved-searches/{id}/feed.atom": {
       get: {
         tags: ["Search"],
@@ -916,6 +1052,46 @@ export const openapi = {
               natureOfSuitCodes: { type: "array", items: { type: "string" } },
             },
           },
+        },
+      },
+      SavedSearchQuery: {
+        type: "object",
+        description: "Saved-search filter set — same shape /search uses internally.",
+        properties: {
+          q: { type: ["string", "null"] },
+          court: { type: ["string", "null"] },
+          nos: { type: ["string", "null"] },
+          scope: { type: ["string", "null"] },
+        },
+      },
+      SavedSearch: {
+        type: "object",
+        required: ["id", "name", "query", "is_pinned"],
+        properties: {
+          id: { type: "string", example: "sch_F3kQ9pR2Lm" },
+          name: { type: "string" },
+          query: { $ref: "#/components/schemas/SavedSearchQuery" },
+          is_pinned: { type: "boolean" },
+          created_at: { type: ["string", "null"], format: "date-time" },
+          updated_at: { type: ["string", "null"], format: "date-time" },
+        },
+      },
+      CreateSavedSearch: {
+        type: "object",
+        required: ["name", "query"],
+        properties: {
+          name: { type: "string", minLength: 1, maxLength: 120 },
+          query: { $ref: "#/components/schemas/SavedSearchQuery" },
+          is_pinned: { type: "boolean" },
+        },
+      },
+      UpdateSavedSearch: {
+        type: "object",
+        description: "Sparse update — supply only the fields you want to change.",
+        properties: {
+          name: { type: "string", minLength: 1, maxLength: 120 },
+          query: { $ref: "#/components/schemas/SavedSearchQuery" },
+          is_pinned: { type: "boolean" },
         },
       },
       Usage: {

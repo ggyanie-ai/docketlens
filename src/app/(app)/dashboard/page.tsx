@@ -69,10 +69,15 @@ const ENTRY_ICON: Record<string, typeof FileText> = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ empty?: string }>;
+  searchParams: Promise<{ empty?: string; focus?: string }>;
 }) {
   const sp = await searchParams;
   const isEmpty = sp.empty === "1";
+  // `?focus=<section-id>` adds a small client-side scroll on mount. We
+  // can't scroll from a server component, so this just stamps the id on
+  // <main> and a tiny inline script reads it. Lighter than wiring a
+  // useEffect through a client wrapper.
+  const focus = sp.focus && /^[a-z0-9-]{1,32}$/.test(sp.focus) ? sp.focus : null;
 
   const recentEntries = SAMPLE_DOCKETS.flatMap((d) =>
     d.entries.map((e) => ({ docket: d, entry: e }))
@@ -110,6 +115,13 @@ export default async function DashboardPage({
     <>
       <Topbar title="Dashboard" />
       <main className="flex-1 overflow-y-auto">
+        {focus && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(()=>{const id=${JSON.stringify(focus)};const t=document.getElementById(id);if(t)requestAnimationFrame(()=>t.scrollIntoView({behavior:"smooth",block:"start"}));})();`,
+            }}
+          />
+        )}
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col gap-8">
           {/* Demo-data switcher */}
           <DashboardDemoTag />
@@ -231,8 +243,9 @@ export default async function DashboardPage({
             <Leaderboard />
           </section>
 
-          {/* Embed impressions (privacy-preserving aggregate) */}
-          <section>
+          {/* Embed impressions (privacy-preserving aggregate).
+              `id="embeds"` is the scroll-target for /dashboard?focus=embeds. */}
+          <section id="embeds" className="scroll-mt-20">
             <WidgetImpressionsCard />
           </section>
 

@@ -178,6 +178,20 @@ export const GLOSSARY: GlossaryTerm[] = [
     related: ["12b6", "class-action", "motion"],
   },
   {
+    slug: "scheduling-conference",
+    term: "Scheduling conference",
+    category: "procedural",
+    body: "An early pretrial meeting between the judge and counsel where the case's calendar gets set — discovery cutoff, motion deadlines, expert disclosures, trial date. Required under Rule 16(b). The order coming out of it (the scheduling order) is what makes those dates enforceable. Watchlist signal: scheduling conferences are when timelines firm up enough to plan around.",
+    related: ["scheduling-order", "discovery"],
+  },
+  {
+    slug: "brady",
+    term: "Brady material",
+    category: "pleadings",
+    body: "Evidence in the prosecution's possession that's favorable to the defense — exculpatory or impeaching. Named after Brady v. Maryland (1963). Failure to disclose Brady material is a constitutional violation that can vacate a conviction. Mostly a criminal-case term but pops up in civil-rights dockets when alleged Brady violations underlie a §1983 wrongful-conviction suit.",
+    related: ["motion", "discovery"],
+  },
+  {
     slug: "voir-dire",
     term: "Voir dire",
     category: "lifecycle",
