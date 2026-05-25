@@ -493,6 +493,7 @@ export default function ApiReferencePage() {
                   href={"/api/v1/openapi.json" as never}
                   className="underline underline-offset-2 hover:text-[color:var(--color-fg)]"
                   target="_blank"
+                  rel="noopener"
                 >
                   /api/v1/openapi.json
                 </Link>

@@ -72,6 +72,7 @@ export default function WidgetIndexPage() {
                       href={`/widget/${d.id}` as never}
                       className="text-xs font-mono text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)]"
                       target="_blank"
+                      rel="noopener"
                     >
                       Open widget standalone →
                     </Link>

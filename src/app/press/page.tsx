@@ -289,6 +289,7 @@ export default function PressPage() {
                 key={s.href}
                 href={s.href as never}
                 target="_blank"
+                rel="noopener"
                 className="group block"
               >
                 <Card className="overflow-hidden hover:border-[color:var(--color-border-strong)] hover:shadow-soft transition-all">

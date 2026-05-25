@@ -81,6 +81,7 @@ function FeedTable({ caption, items }: { caption: string; items: FeedRow[] }) {
                   href={row.href as never}
                   className="font-mono text-[12px] break-all text-[color:var(--color-fg)] hover:text-[color:var(--color-accent)] underline underline-offset-2 decoration-[color:var(--color-border-strong)]"
                   target="_blank"
+                  rel="noopener"
                 >
                   {row.abs}
                 </Link>

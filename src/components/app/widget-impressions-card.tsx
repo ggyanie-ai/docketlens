@@ -102,6 +102,7 @@ export async function WidgetImpressionsCard() {
                     <Link
                       href={`/widget/${row.docketId}` as never}
                       target="_blank"
+                      rel="noopener"
                       aria-label={`Open ${d?.caseNameShort ?? row.docketId} widget`}
                       className="ml-1 text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)]"
                     >
