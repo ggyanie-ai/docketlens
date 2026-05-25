@@ -47,6 +47,21 @@ export async function GET(req: NextRequest) {
     .orderBy(desc(dockets.dateFiled))
     .limit(limit);
 
+  // Hint headers so clients can self-pace before the live token-bucket meter
+  // ships. Values mirror the per-plan ceilings in /api/v1/me — `remaining`
+  // is currently equal to `limit` (no per-request counter yet). The reset
+  // is a fixed UTC midnight for the day ceiling.
+  const PLAN_LIMITS: Record<string, { perHour: number; perDay: number }> = {
+    free: { perHour: 60, perDay: 1000 },
+    pro: { perHour: 500, perDay: 10000 },
+    team: { perHour: 1000, perDay: 50000 },
+    enterprise: { perHour: 5000, perDay: 250000 },
+  };
+  const lim = PLAN_LIMITS[auth.plan] ?? PLAN_LIMITS.free;
+  const tomorrowUtc = new Date();
+  tomorrowUtc.setUTCDate(tomorrowUtc.getUTCDate() + 1);
+  tomorrowUtc.setUTCHours(0, 0, 0, 0);
+
   return ok(
     rows.map((d) => ({
       id: d.id,
@@ -56,6 +71,13 @@ export async function GET(req: NextRequest) {
       nature_of_suit: d.natureOfSuit,
       date_filed: d.dateFiled?.toISOString().slice(0, 10) ?? null,
       assigned_to: d.assignedTo,
-    }))
+    })),
+    {
+      headers: {
+        "x-ratelimit-limit": String(lim.perDay),
+        "x-ratelimit-remaining": String(lim.perDay),
+        "x-ratelimit-reset": String(Math.floor(tomorrowUtc.getTime() / 1000)),
+      },
+    }
   );
 }
