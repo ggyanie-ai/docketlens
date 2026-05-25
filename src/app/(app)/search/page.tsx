@@ -58,17 +58,59 @@ export default function SearchPage() {
     setSaved(loadSavedSearches());
   }, []);
 
-  // Honor `/search?court=<slug>` deep-links from /jurisdictions.
+  // Honor `/search?court=<slug>` deep-links from /jurisdictions. If no URL
+  // params arrive, fall back to the user's last unsaved query from
+  // localStorage so a tab close + reopen doesn't lose their filters.
   const searchParams = useSearchParams();
   useEffect(() => {
     const courtParam = searchParams.get("court");
-    if (courtParam) {
-      const short = SLUG_TO_SHORT[courtParam] ?? courtParam;
-      setActiveCourt(short);
-    }
     const qParam = searchParams.get("q");
-    if (qParam) setQ(qParam);
+    const hasUrlParams = courtParam !== null || qParam !== null;
+
+    if (hasUrlParams) {
+      if (courtParam) {
+        const short = SLUG_TO_SHORT[courtParam] ?? courtParam;
+        setActiveCourt(short);
+      }
+      if (qParam) setQ(qParam);
+      return;
+    }
+    // No URL params → restore localStorage snapshot if present
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem("dl-search-last");
+      if (!raw) return;
+      const snap = JSON.parse(raw) as {
+        q?: string;
+        court?: string | null;
+        nos?: string | null;
+        scope?: string;
+      };
+      if (snap.q) setQ(snap.q);
+      if (snap.court) setActiveCourt(snap.court);
+      if (snap.nos) setActiveNos(snap.nos);
+      if (snap.scope) setScope(snap.scope);
+    } catch {
+      // Corrupted snapshot — ignore. We'll overwrite on the next change.
+    }
   }, [searchParams]);
+
+  // Persist the current filter set as the user types/clicks. Debounced so
+  // every keystroke isn't a write. localStorage only — no server roundtrip.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const t = setTimeout(() => {
+      try {
+        window.localStorage.setItem(
+          "dl-search-last",
+          JSON.stringify({ q, court: activeCourt, nos: activeNos, scope })
+        );
+      } catch {
+        // Quota / blocked / privacy mode — fail silently.
+      }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [q, activeCourt, activeNos, scope]);
 
   const currentQuery = useMemo(
     () => ({ q, court: activeCourt, nos: activeNos, scope }),
