@@ -16,7 +16,10 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
-  title: "DocketLens vs PACER",
+  // `title.absolute` bypasses the root layout's `%s — DocketLens` template
+  // because the page title already starts with "DocketLens"; without this
+  // override the rendered <title> reads "DocketLens vs PACER — DocketLens".
+  title: { absolute: "DocketLens vs PACER" },
   description:
     "Honest comparison: PACER's per-page paywall and 1995 UX versus DocketLens's $0–$49/mo flat pricing, AI summaries, watchlists, and alerts.",
   openGraph: {

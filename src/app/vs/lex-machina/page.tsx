@@ -16,7 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbJsonLd, ArticleJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
-  title: "DocketLens vs Lex Machina",
+  // Avoid the "DocketLens vs Lex Machina — DocketLens" doubling that the
+  // root layout's `%s — DocketLens` title template would otherwise produce.
+  title: { absolute: "DocketLens vs Lex Machina" },
   description:
     "Honest comparison: Lex Machina is the gold standard for enterprise litigation analytics — at enterprise pricing. DocketLens is the same kind of work done at a price an individual or small firm can actually pay.",
   openGraph: {
