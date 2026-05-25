@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
@@ -69,6 +70,13 @@ export default async function DemoDocketPage({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Demo cases", url: "/demo" },
+          { name: docket.caseNameShort, url: `/demo/${docket.id}` },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-6 py-12">

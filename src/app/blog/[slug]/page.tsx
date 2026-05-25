@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { POSTS } from "@/content/posts";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata({
   params,
@@ -28,6 +29,13 @@ export default async function BlogPost({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
+          { name: post.title, url: `/blog/${post.slug}` },
+        ]}
+      />
       <SiteHeader />
       <article className="flex-1 mx-auto max-w-2xl px-6 py-16 md:py-24">
         <Link

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Markdown } from "@/lib/markdown";
 import { PUBLIC_DOCS, getPublicDoc } from "@/content/public-docs";
+import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
 export const revalidate = 60;
 
@@ -52,6 +53,13 @@ export default async function DocPage({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Documentation", url: "/docs" },
+          { name: doc.title, url: `/docs/${doc.slug}` },
+        ]}
+      />
       <SiteHeader />
       <main className="flex-1">
         <div className="mx-auto max-w-4xl px-6 pt-12 md:pt-16 pb-6">

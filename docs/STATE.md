@@ -365,6 +365,20 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] BreadcrumbList JSON-LD on deep pages. New shared helper
+      `src/lib/structured-data.tsx` exposes
+      `<BreadcrumbJsonLd items={[…]} />` that emits a clean
+      schema.org BreadcrumbList from a relative or absolute URL
+      list (relative paths get joined to NEXT_PUBLIC_APP_URL).
+      Wired into three routes:
+        /blog/[slug]   →  Home → Blog → <post title>
+        /docs/[slug]   →  Home → Documentation → <doc title>
+        /demo/[id]     →  Home → Demo cases → <case short name>
+      All three verified end-to-end (positions 1–3, full
+      absolute URLs, doc-typed strings render correctly).
+      Single source of truth for the breadcrumb helper —
+      future deep routes drop in one component, no JSON
+      boilerplate.
 - [x] SoftwareApplication JSON-LD on the marketing root (/).
       Companion to the FAQPage block on /pricing. Payload:
       `@type: SoftwareApplication`, `BusinessApplication` /
@@ -765,9 +779,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **BreadcrumbList JSON-LD on deep pages** — /blog/[slug],
-      /docs/[slug], /demo/[id]. Small JSON-LD island per page.
-      Helps Google understand the IA.
 - [ ] **Organization JSON-LD on /about** — `@type: Organization`
       with founder, logo, sameAs[]. Pairs with the
       SoftwareApplication entity on /.
