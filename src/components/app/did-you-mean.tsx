@@ -95,7 +95,25 @@ export function DidYouMean() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setRequested(window.location.pathname);
+    const pathname = window.location.pathname;
+    setRequested(pathname);
+    // Fire-and-forget telemetry — privacy-preserving aggregate.
+    // Suppressed via the global Do-Not-Track signal so users who set
+    // navigator.doNotTrack="1" never ping the endpoint.
+    const dnt =
+      typeof navigator !== "undefined" &&
+      (navigator.doNotTrack === "1" ||
+        (window as unknown as { doNotTrack?: string }).doNotTrack === "1");
+    if (!dnt) {
+      fetch("/api/log-404", {
+        method: "POST",
+        keepalive: true,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: pathname }),
+      }).catch(() => {
+        /* swallow — telemetry, not user-blocking */
+      });
+    }
   }, []);
 
   if (!requested) return null;

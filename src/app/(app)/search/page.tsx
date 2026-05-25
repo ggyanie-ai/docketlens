@@ -183,16 +183,58 @@ export default function SearchPage() {
     });
   };
 
-  // ⌘E / Ctrl+E → export current results. Skip when a contenteditable is
-  // focused (the browser's "open bookmark bar" Ctrl+E is rare; we'd rather
-  // not fight the user inside form inputs).
+  // ⌘E / Ctrl+E → export current results. ↑/↓ → walk between result rows
+  // and `Enter` opens the focused one. Both gated on the active element
+  // NOT being a text input so typing isn't hijacked.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "e") return;
       const tag = (document.activeElement?.tagName ?? "").toLowerCase();
-      if (tag === "input" || tag === "textarea") return;
-      e.preventDefault();
-      exportCsv();
+      const editable =
+        tag === "input" ||
+        tag === "textarea" ||
+        (document.activeElement as HTMLElement | null)?.isContentEditable;
+
+      // ⌘E export
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "e") {
+        if (editable) return;
+        e.preventDefault();
+        exportCsv();
+        return;
+      }
+
+      // Arrow-key row navigation
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Enter")
+        return;
+      if (editable) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const rows = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>(
+          'ul > li a[href^="/dockets/"]'
+        )
+      );
+      if (rows.length === 0) return;
+
+      // Figure out current index from active element if it's a row link.
+      const active = document.activeElement as HTMLAnchorElement | null;
+      const currentIdx = active ? rows.indexOf(active) : -1;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = rows[Math.min(currentIdx + 1, rows.length - 1)] ?? rows[0];
+        next.focus({ preventScroll: true });
+        next.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (currentIdx <= 0) return;
+        const prev = rows[currentIdx - 1];
+        prev.focus({ preventScroll: true });
+        prev.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "Enter" && currentIdx >= 0) {
+        // Anchor.click() respects modifier keys + opens via the router.
+        // No preventDefault — let the browser navigate.
+        rows[currentIdx].click();
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
