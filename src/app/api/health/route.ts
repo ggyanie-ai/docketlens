@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { PROMPT_VERSION } from "@/lib/ai/prompts";
+import { courtListenerPoolSnapshot } from "@/lib/courtlistener/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,11 +52,25 @@ export async function GET() {
   const ts = new Date().toISOString();
   const db = await pingDb();
 
+  // CourtListener pool budget is informational — running low is not an
+  // outage for the web app (the ingest worker absorbs the impact), so we
+  // include it under `checks.cl_pool` but don't gate `ok` on it.
+  const clSnap = courtListenerPoolSnapshot();
+  const clPoolOk = clSnap.remaining.per_day > 0;
+
   const checks = {
     db: { ok: db.ok, latency_ms: db.latencyMs, error: db.error },
+    cl_pool: {
+      ok: clPoolOk,
+      limits: clSnap.limits,
+      remaining: clSnap.remaining,
+      note: "Informational. Pool saturation slows ingest, not the web app.",
+    },
   };
 
-  const allOk = Object.values(checks).every((c) => c.ok);
+  // `ok` is the gated-on subset (currently just db). Informational checks
+  // sit alongside in `checks` but don't downgrade status.
+  const allOk = checks.db.ok;
 
   const body = {
     ok: allOk,

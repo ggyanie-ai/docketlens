@@ -34,6 +34,16 @@ class RateLimiter {
     this.windows.hour   = this.windows.hour.filter((t)   => now - t < 3_600_000);
     this.windows.day    = this.windows.day.filter((t)    => now - t < 86_400_000);
   }
+  /** Snapshot of how many slots remain in each window, without taking one. */
+  snapshot(): { perMinRemaining: number; perHrRemaining: number; perDayRemaining: number } {
+    const now = Date.now();
+    this.prune(now);
+    return {
+      perMinRemaining: Math.max(0, RATE.perMin - this.windows.minute.length),
+      perHrRemaining: Math.max(0, RATE.perHr - this.windows.hour.length),
+      perDayRemaining: Math.max(0, RATE.perDay - this.windows.day.length),
+    };
+  }
   async take(): Promise<void> {
     while (true) {
       const now = Date.now();
@@ -61,6 +71,23 @@ class RateLimiter {
 }
 
 const globalLimiter = new RateLimiter();
+
+/**
+ * Read-only snapshot of the shared CourtListener leaky-bucket. Used by
+ * /api/health so ops monitors can see how close we are to saturating the
+ * pooled token's budget without actually taking a slot.
+ */
+export function courtListenerPoolSnapshot() {
+  const snap = globalLimiter.snapshot();
+  return {
+    limits: { per_minute: RATE.perMin, per_hour: RATE.perHr, per_day: RATE.perDay },
+    remaining: {
+      per_minute: snap.perMinRemaining,
+      per_hour: snap.perHrRemaining,
+      per_day: snap.perDayRemaining,
+    },
+  };
+}
 
 export class CourtListenerError extends Error {
   constructor(

@@ -60,15 +60,37 @@ const ACTOR_BADGE: Record<AuditEvent["actor"]["kind"], string> = {
 };
 
 type Filter = "all" | AuditCategory;
+type DateRange = "24h" | "7d" | "30d" | "all";
+
+const RANGE_MS: Record<DateRange, number | null> = {
+  "24h": 86_400_000,
+  "7d": 86_400_000 * 7,
+  "30d": 86_400_000 * 30,
+  all: null,
+};
+
+const RANGE_LABEL: Record<DateRange, string> = {
+  "24h": "Last 24h",
+  "7d": "Last 7 days",
+  "30d": "Last 30 days",
+  all: "All time",
+};
 
 export default function AuditLogPage() {
   const [filter, setFilter] = useState<Filter>("all");
+  const [range, setRange] = useState<DateRange>("all");
   const [q, setQ] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const events = useMemo(() => {
+    const cutoff = RANGE_MS[range];
+    const now = Date.now();
     return SAMPLE_AUDIT_EVENTS.filter((e) => {
       if (filter !== "all" && e.category !== filter) return false;
+      if (cutoff !== null) {
+        const occurred = new Date(e.occurredAt).getTime();
+        if (now - occurred > cutoff) return false;
+      }
       if (q) {
         const hay =
           `${e.action} ${e.actor.name} ${e.actor.detail ?? ""} ${e.target ?? ""}`.toLowerCase();
@@ -79,7 +101,7 @@ export default function AuditLogPage() {
       (a, b) =>
         new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
     );
-  }, [filter, q]);
+  }, [filter, range, q]);
 
   // Stats — based on the full set, not the filtered view
   const stats = useMemo(() => {
@@ -214,6 +236,50 @@ export default function AuditLogPage() {
               </TabsList>
             </Tabs>
           </Card>
+
+          {/* Date-range chip row */}
+          <div
+            role="radiogroup"
+            aria-label="Filter by time range"
+            className="flex flex-wrap items-center gap-2"
+          >
+            <span className="font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)] mr-1">
+              Range
+            </span>
+            {(Object.keys(RANGE_LABEL) as DateRange[]).map((r) => {
+              const active = range === r;
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setRange(r)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] transition-colors",
+                    active
+                      ? "border-[color:var(--color-accent)]/40 bg-[color:var(--color-accent-soft)]/50 text-[color:var(--color-fg)]"
+                      : "border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] text-[color:var(--color-fg-muted)] hover:border-[color:var(--color-border-strong)] hover:text-[color:var(--color-fg)]"
+                  )}
+                >
+                  {RANGE_LABEL[r]}
+                </button>
+              );
+            })}
+            {(filter !== "all" || range !== "all" || q.trim() !== "") && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFilter("all");
+                  setRange("all");
+                  setQ("");
+                }}
+                className="ml-1 font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-muted)] hover:text-[color:var(--color-fg)] underline underline-offset-2"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
 
           {/* Timeline */}
           {events.length === 0 ? (

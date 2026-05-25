@@ -867,13 +867,6 @@ of work, sized to fit one wakeup.
 - [ ] **Sixth blog post** — "How we picked our pricing:
       anchoring to the Bloomberg Law seat, not to PACER's per-page
       cost." Industry tag. Covers the framing math.
-- [ ] **Two more glossary terms** — "scheduling order" and
-      "Daubert motion." Both come up constantly in patent +
-      product-liability dockets.
-- [ ] **`/comparison` table refresh** — current table is from
-      0.1.0. Add three more rows (CourtListener Recap Email Alerts,
-      Docket Alarm Tracker, Pacer Pro) so the comparison reads as
-      thorough instead of selective.
 
 ### Features
 - [ ] **/docs/structured-data.md internal doc** — single page
@@ -919,6 +912,12 @@ of work, sized to fit one wakeup.
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
       Google OAuth gated on env. Schema is already ready.
+
+### Parallel branches pending user merge (2026-05-25)
+- [x] `worktree-agent-afbd4f9582cd409c9` — /comparison refresh
+      (3 new competitors + at-a-glance matrix) + ARCHITECTURE,
+      API, RUNBOOK doc refreshes. 4 commits. typecheck green.
+      Not duplicated on main.
 
 ### Tests (shipped 2026-05-25 on a parallel branch)
 - [x] 134 vitest tests landed on
