@@ -110,13 +110,9 @@ export default function SecurityPage() {
                 </div>
                 <div>
                   <p className="eyebrow mb-1">Encryption</p>
-                  <p className="font-mono text-sm">
-                    <a
-                      href="/security/pgp.asc"
-                      className="text-[color:var(--color-fg)] hover:text-[color:var(--color-accent)] underline underline-offset-4"
-                    >
-                      PGP key (pgp.asc)
-                    </a>
+                  <p className="text-sm text-[color:var(--color-fg-muted)]">
+                    PGP key publication pending — for now, email is plain.
+                    Reach out before sending sensitive payloads.
                   </p>
                 </div>
               </div>
