@@ -24,6 +24,7 @@ import { AiExecSummaryCard } from "@/components/app/ai-exec-summary-card";
 import { TimelineKeyboardNav } from "@/components/app/timeline-keyboard-nav";
 import { DocketNotesCard } from "@/components/app/docket-notes-card";
 import { SAMPLE_DOCKETS, type SampleDocket } from "@/lib/sample-data";
+import { PROMPT_VERSION } from "@/lib/ai/prompts";
 
 const ENTRY_ICON: Record<string, typeof FileText> = {
   Complaint: FileText,
@@ -203,10 +204,18 @@ export default async function DocketDetailPage({
                           </p>
                           {e.summaryOne && (
                             <div className="mt-3 rounded-[var(--radius-md)] border border-[color:var(--color-accent)]/30 bg-[color:var(--color-accent-soft)]/30 p-3">
-                              <p className="eyebrow mb-1">
-                                <Sparkles className="inline size-3 mr-1 -translate-y-px" />
-                                One-line summary
-                              </p>
+                              <div className="mb-1 flex items-center justify-between gap-2">
+                                <p className="eyebrow">
+                                  <Sparkles className="inline size-3 mr-1 -translate-y-px" />
+                                  One-line summary
+                                </p>
+                                <span
+                                  title="Prompt version this summary was generated under"
+                                  className="font-mono text-[9.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]"
+                                >
+                                  prompt {PROMPT_VERSION}
+                                </span>
+                              </div>
                               <p className="text-[14px] leading-snug text-[color:var(--color-fg)]">
                                 {e.summaryOne}
                               </p>
