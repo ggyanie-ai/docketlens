@@ -2,6 +2,76 @@
 
 We track changes by ISO date (UTC). Stable shipping starts at 1.0.0.
 
+## 0.1.6 — 2026-05-25 (production cutover + test suite)
+
+First production deploy + the vitest suite from a parallel branch
+folded into mainline. No code-behavior changes shipped in this
+release beyond the health-route hardening; everything else is
+infra + test infrastructure.
+
+### Added — production deployment
+
+- **Live at https://docketlens-pi.vercel.app** under the
+  `ggyanieai-4551s-projects` Vercel team. SSO deployment protection
+  disabled via the API so the marketing site is publicly reachable.
+- **GitHub mirror at https://github.com/ggyanie-ai/docketlens** —
+  full history pushed to the `.ai` account to keep GitHub ↔ Vercel
+  ownership aligned. The original `donnowyu/docketlens` remote is
+  retained.
+
+### Added — tests
+
+- **vitest bootstrap** (happy-dom + v8 coverage). 135 passing tests
+  across four files cherry-picked from the parallel agent branch:
+  `src/lib/search/filter.test.ts`,
+  `src/lib/alerts/matcher.test.ts`,
+  `src/lib/structured-data.test.tsx`,
+  `src/lib/widget-pings.test.ts`.
+- **`docs/TESTING.md`** documents what's covered + how to run.
+- **`.github/workflows/ci.yml`** now runs `pnpm test` after typecheck.
+
+### Fixed — health route hardening
+
+- **`/api/health` + `/api/v1/health/db`** were returning HTTP 500
+  in production (libSQL fails to open the default `file:./docketlens.db`
+  on Vercel's read-only filesystem, and the static `import { db }` at
+  the route module level threw before any handler could run). Both
+  routes now dynamic-import `@/lib/db` inside the GET body so the
+  failure is caught and returned as a parseable 503 with the actual
+  libSQL error message in the JSON envelope.
+
+### Fixed — git commit authorship
+
+- Local git config (this repo only — not global) now uses
+  `ggyanie-ai <ggyanie.ai@gmail.com>` so commits match the Vercel
+  Hobby team owner. Earlier commits authored as
+  `gianilingampalli-dotcom <giani.lingampalli@gmail.com>` were
+  re-authored for the head three commits that needed to deploy.
+
+### Removed — parallel-agent worktrees
+
+- `worktree-agent-a15024f436e5cce40` (tests + CI) — useful commits
+  cherry-picked above; branch + worktree retired.
+- `worktree-agent-afbd4f9582cd409c9` (/comparison + docs refresh) —
+  base too divergent; would have reverted 25+ commits' worth of work
+  on a naive merge. Discarded.
+
+### Known gaps (still pending user input)
+
+All require values the assistant can't fabricate — see "Pending"
+section in the live conversation for the precise env-var commands.
+
+- `DATABASE_URL` not wired to Neon on Vercel → health endpoints
+  return 503 in prod (correctly, with the libSQL error visible).
+- `ANTHROPIC_API_KEY` not wired → AI summaries return seeded text
+  marked `source: "demo"`.
+- `RESEND_API_KEY` not wired → email delivery stubs out.
+- `COURTLISTENER_TOKEN` not wired → ingestion worker has no upstream.
+- Custom domain `docketlens.ai` not attached to the Vercel project.
+- Better-Auth runtime still stubbed; the dev-fallback session in
+  `src/lib/auth/index.ts` is intact and works locally.
+- Stripe checkout still TODO.
+
 ## 0.1.5 — 2026-05-25 (SEO, build hygiene, accessibility)
 
 A late-day pass focused on three things: making every public page
