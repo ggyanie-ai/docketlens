@@ -489,6 +489,200 @@ export const openapi = {
         },
       },
     },
+    "/api/v1/dockets/{id}/ai-summaries/refresh": {
+      post: {
+        tags: ["Dockets"],
+        summary: "Queue an on-demand AI summary regen",
+        description:
+          "Queues a fresh summarization pass for the docket. Returns 202 with an opaque `job_id`; the worker consumes from this queue out-of-band. Per-docket 60-second cooldown — repeated calls inside the window return 429 with `retry_after_seconds`. Pro+ only.",
+        operationId: "refreshDocketAiSummaries",
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", pattern: "^dkt_[A-Za-z0-9_-]+$" },
+          },
+        ],
+        responses: {
+          "202": {
+            description: "Job queued",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["job_id", "docket_id", "status", "prompt_version"],
+                  properties: {
+                    job_id: { type: "string", example: "job_F3kQ9pR2Lm" },
+                    docket_id: { type: "string" },
+                    status: { type: "string", enum: ["queued"] },
+                    prompt_version: { type: "string" },
+                    requested_at: { type: "string", format: "date-time" },
+                    poll: { type: "string" },
+                    note: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "404": { $ref: "#/components/responses/NotFound" },
+          "429": {
+            description: "Per-docket cooldown (60s) still active",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
+    "/api/v1/dockets/{id}/notes": {
+      get: {
+        tags: ["Dockets"],
+        summary: "Get this org's private note for a docket",
+        description:
+          "Returns the calling org's note. Always 200 — `exists: false` and an empty `body` when no row yet. Notes are private per-org; two orgs watching the same case see only their own.",
+        operationId: "getDocketNote",
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", pattern: "^dkt_[A-Za-z0-9_-]+$" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Note payload",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/DocketNote" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        },
+      },
+      put: {
+        tags: ["Dockets"],
+        summary: "Create or replace a docket note",
+        description:
+          "Replace-on-write. 20KB body cap. Empty body deletes. Pro+ only.",
+        operationId: "putDocketNote",
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", pattern: "^dkt_[A-Za-z0-9_-]+$" },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["body"],
+                properties: {
+                  body: { type: "string", maxLength: 20000 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Saved (or deleted, if body was empty)",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/DocketNote" } },
+            },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "404": { $ref: "#/components/responses/NotFound" },
+          "422": {
+            description: "Validation failed",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+      delete: {
+        tags: ["Dockets"],
+        summary: "Delete this org's note for a docket",
+        description: "Idempotent. Pro+ only.",
+        operationId: "deleteDocketNote",
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", pattern: "^dkt_[A-Za-z0-9_-]+$" },
+          },
+        ],
+        responses: {
+          "204": { description: "Deleted (or already deleted)" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
+    "/api/v1/digest/preview": {
+      get: {
+        tags: ["System"],
+        summary: "Preview the next outgoing digest",
+        description:
+          "Returns exactly what the next digest email for the calling org would look like, using the same renderer the worker uses in production. `format=json` (default) returns the subject + body + html together; `format=html` and `format=text` return the raw envelope with the matching content-type so a setup wizard can iframe-render it.",
+        operationId: "digestPreview",
+        parameters: [
+          {
+            name: "cadence",
+            in: "query",
+            description: "Free plan supports daily only; Pro+ unlocks hourly and instant.",
+            schema: {
+              type: "string",
+              enum: ["instant", "hourly", "daily"],
+              default: "daily",
+            },
+          },
+          {
+            name: "format",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: ["json", "html", "text"],
+              default: "json",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Digest preview",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/DigestPreview" } },
+              "text/html": { schema: { type: "string", format: "html" } },
+              "text/plain": { schema: { type: "string" } },
+            },
+          },
+          "400": {
+            description: "Bad cadence or format",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "402": {
+            description: "Plan upgrade required (hourly + instant)",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+          },
+        },
+      },
+    },
     "/api/v1/dockets/{id}/ai-summaries": {
       get: {
         tags: ["Dockets"],
@@ -996,6 +1190,32 @@ export const openapi = {
             },
           },
         ],
+      },
+      DocketNote: {
+        type: "object",
+        required: ["docket_id", "org_id", "body", "exists"],
+        properties: {
+          docket_id: { type: "string" },
+          org_id: { type: "string" },
+          body: { type: "string", maxLength: 20000 },
+          exists: { type: "boolean" },
+          updated_at: { type: ["string", "null"], format: "date-time" },
+        },
+      },
+      DigestPreview: {
+        type: "object",
+        required: ["subject", "body", "html", "cadence", "items_count"],
+        properties: {
+          subject: { type: "string" },
+          body: { type: "string", description: "Plain-text body." },
+          html: { type: "string", description: "HTML envelope, exactly as the worker sends." },
+          cadence: {
+            type: "string",
+            enum: ["instant", "hourly", "daily"],
+          },
+          items_count: { type: "integer", minimum: 0 },
+          note: { type: "string" },
+        },
       },
       DocketEntry: {
         type: "object",
