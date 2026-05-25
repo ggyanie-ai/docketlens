@@ -17,6 +17,8 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/courts",          desc: "List CourtListener-mirrored courts we cache" },
       { method: "GET",  path: "/api/v1/dockets",         desc: "List recent dockets" },
       { method: "GET",  path: "/api/v1/dockets/:id",     desc: "Get one docket with entries + parties" },
+      { method: "GET",  path: "/api/v1/dockets/:id/parties", desc: "Narrow: parties only" },
+      { method: "GET",  path: "/api/v1/dockets/:id/entries", desc: "Narrow: entries only (since/limit params)" },
       { method: "GET",  path: "/api/v1/dockets/:id/ai-summaries", desc: "Extractive AI summaries (tier-gated)" },
       { method: "GET",  path: "/api/v1/search?q=",       desc: "Search cases by name / party / docket number" },
       { method: "GET",  path: "/api/v1/watchlists",      desc: "List org watchlists" },
