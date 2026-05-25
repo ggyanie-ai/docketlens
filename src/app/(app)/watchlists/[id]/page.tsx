@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { WatchlistEditForm } from "@/components/app/watchlist-edit-form";
+import { WatchlistDeleteButton } from "@/components/app/watchlist-delete-button";
 import { WatchlistActivityChart } from "@/components/app/watchlist-activity-chart";
 import { SAMPLE_WATCHLISTS, SAMPLE_DOCKETS } from "@/lib/sample-data";
 import { timeAgo } from "@/lib/utils";
@@ -192,14 +193,16 @@ export default async function WatchlistDetailPage({
                 <Pause className="size-4" />
                 Pause
               </Button>
-              <Button
-                variant="outline"
-                size="md"
-                className="text-[color:var(--color-danger)] hover:text-[color:var(--color-danger)] hover:border-[color:var(--color-danger)]"
-              >
-                <Trash2 className="size-4" />
-                Delete
-              </Button>
+              <WatchlistDeleteButton
+                watchlistId={watchlist.id}
+                watchlistName={watchlist.name}
+              />
+              {/* Trash2 import retained for symmetry in the icon set;
+                  the actual delete trigger lives inside the new
+                  client island. */}
+              <span className="hidden" aria-hidden>
+                <Trash2 className="size-0" />
+              </span>
             </div>
           </header>
 

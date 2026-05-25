@@ -834,61 +834,59 @@ of work, sized to fit one wakeup.
 
 ### Polish (high impact, low risk)
 - [ ] **/dockets/[id] AI-summary cache stamp** — render the
-      cached `prompt_version` next to the summary so power users
-      can see what generation it came from. (PROMPT_VERSION
-      already in the exec-summary meta strip; this is the
-      same treatment on the always-shown per-entry one-liners.)
+      cached `prompt_version` next to the per-entry one-liners
+      (already in the exec-summary meta strip).
 - [ ] **Tabs ARIA spot-check** — verify TabsTrigger sets
-      `aria-selected` correctly on the 6-tab /settings panel.
-- [ ] **`/audit-log` shareable URL banner** — when the page
-      loads with non-default filter URL params, show a small
-      "Filtered view · share this URL" banner above the
-      timeline.
-- [ ] **`/dockets/[id]` notes UI** — render the API we shipped
-      (POST/PUT/DELETE /api/v1/dockets/{id}/notes) into a small
-      "Org notes" panel under the timeline. Save-on-blur.
-- [ ] **Empty-state for /api-keys** — currently always shows a
-      mock key. Add `?empty=1` empty state with a "Generate
-      your first key" CTA + one-time secret reveal demo.
-- [ ] **/watchlists DELETE-undo toast** — when delete fires from
-      the in-app, show a 5-second sonner toast with an "Undo"
-      action that hits the new PATCH endpoint to unset
-      deleted_at.
+      `aria-selected` correctly on /settings's 6-tab panel.
+- [ ] **/alerts test-webhook button → real ping** — currently
+      the "Send a test webhook" CTA is a stub; fire an actual
+      sample payload to the configured endpoint with the
+      existing HMAC signing pipeline. Returns the response
+      status inline.
+- [ ] **Skeleton on /watchlists/[id]** — already has a
+      loading.tsx if any; tune to mimic the actual page shape.
+- [ ] **/inbox archived-message indicator** — currently
+      archived rows just disappear; add a small "Archived"
+      bucket count in the topbar so users can find them
+      again.
 
 ### Content
-- [ ] **Fourteenth blog post** — "Building a vim mode for a
-      timeline (and why we didn't use a library)." Engineering
-      tag. Walks through the j/k handler shipped in fa1ece0,
-      the focus-management edge cases, and the 6-line
-      one-time-hint pattern.
-- [ ] **Three more glossary terms** — "vacatur" (procedural),
-      "Lanham Act §43(a)" (pleadings), "treble damages"
-      (pleadings).
+- [ ] **Fifteenth blog post** — "Where the AI summaries come
+      from: a tour of /docs/api-reference and the prompt
+      pinning model." Engineering tag, 5 min. Plays up the
+      stale-flag mechanism in the summaries API.
+- [ ] **Two more glossary terms** — "interlocutory appeal" and
+      "ad damnum clause."
 
 ### Features
-- [ ] **Bulk DELETE /api/v1/watchlists** — counterpart to the
-      bulk POST we shipped. Accept an array of ids; soft-delete
-      all in one transaction. Returns `{ deleted: [ids] }`.
-- [ ] **`/api/v1/dockets/{id}/notes` markdown render endpoint** —
-      `GET .../notes/render` returns the HTML rendering of the
-      stored markdown body via the existing in-house
-      src/lib/markdown.tsx pipeline. Saves the client a
-      round-trip + a library bundle.
-- [ ] **`/api/v1/audit` read endpoint** — Team+ only. Returns
-      the audit log scoped to the calling org with pagination.
-      The /audit-log page should also call this once auth wires.
-- [ ] **`/api/v1/webhooks` listing endpoint** — returns the
-      configured webhook destinations for the calling org, last
-      24h delivery success rate, and the next retry attempt for
-      any failing ones. Pairs with the WebhookDeliveries UI on
-      /alerts.
-- [ ] **`/api/v1/widget-pings/aggregate?days=30`** — exposes
-      the widget-impressions rollup data the dashboard already
-      shows in card form. Useful for embedders who want their
-      own analytics dashboards.
-- [ ] **WS keepalive `/api/v1/events`** — long-lived SSE
-      endpoint that streams `match.created` events to a logged-in
-      client. Phase-1 stub today; live wire happens Tuesday.
+- [ ] **`/api/v1/orgs/me` rename suggestion** — `/api/v1/me`
+      returns key+org+limits but the field structure is verbose.
+      Add a thin alias `/api/v1/orgs/me` that returns just the
+      org subset for callers that already have the key info.
+- [ ] **`/api/v1/dockets/{id}/related`** — given a docket, return
+      up to N "related" dockets sharing a party, judge, or
+      law firm. Reuses the watchlist-matcher under the hood
+      with the calling docket as the input entity.
+- [ ] **`/api/v1/webhooks/{id}/test` POST** — fire a sample
+      payload at one specific webhook with the standard HMAC
+      signing. Returns `{ status, latency_ms, response_excerpt }`.
+- [ ] **Watchlist sharing via /p/{id}** — `/p/{id}` already
+      handles `wl_` → /preview; add a "Copy share link" action
+      on the in-app /watchlists/[id] header that copies the
+      short URL instead of the canonical preview URL.
+- [ ] **`/dashboard` activity-chart range picker** — current
+      30-day fixed window; add 7d / 30d / 90d toggle in the
+      card header. Recomputes the bars from the same source.
+- [ ] **Empty-state polish for /search** — add a recent-courts
+      strip when the search box is empty + no filters applied.
+      Default "popular last 7 days" surface.
+- [ ] **`/api/v1/health/db` ping-only** — `/api/health` does a
+      DB ping under `checks.db`. Some monitors want the bare
+      DB check without parsing the envelope. Cheap alias that
+      returns 200 if `select 1` succeeds, 503 otherwise. No
+      body.
+
+### Refresh next loop (operational)
 
 ### Refresh next loop
 - [ ] **OpenAPI servers entry update** — when production domain
