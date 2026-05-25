@@ -392,6 +392,43 @@ export default function SearchPage() {
             </div>
           </div>
 
+          {/* Recent-courts strip — only shown on a fresh /search view
+              (no query + no filters). Surfaces the top 6 courts by case
+              count across the seeded corpus as a one-click filter shortcut. */}
+          {!q && !activeCourt && !activeNos && scope === "all" && (() => {
+            const counts: Record<string, number> = {};
+            for (const d of SAMPLE_DOCKETS) {
+              counts[d.court] = (counts[d.court] ?? 0) + 1;
+            }
+            const top = Object.entries(counts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 6);
+            if (top.length === 0) return null;
+            return (
+              <div className="rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-bg-subtle)]/40 p-4">
+                <p className="font-mono text-[10.5px] uppercase tracking-wider text-[color:var(--color-fg-subtle)] mb-2.5">
+                  Popular last 7 days
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {top.map(([court, n]) => (
+                    <button
+                      key={court}
+                      type="button"
+                      onClick={() => setActiveCourt(court)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-3 py-1 font-mono text-[11.5px] text-[color:var(--color-fg)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-bg-elevated)] transition-colors"
+                      aria-label={`Filter to ${court} (${n} cases)`}
+                    >
+                      <span>{court}</span>
+                      <span className="text-[color:var(--color-fg-subtle)]">
+                        {n}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
           {filtered.length === 0 ? (
             <Empty
               icon={SearchIcon}
