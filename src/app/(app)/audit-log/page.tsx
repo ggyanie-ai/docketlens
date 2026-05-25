@@ -26,6 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { Empty } from "@/components/ui/empty";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, timeAgo } from "@/lib/utils";
+import { downloadCsv } from "@/lib/csv";
+import { toast } from "sonner";
 import {
   SAMPLE_AUDIT_EVENTS,
   type AuditCategory,
@@ -148,7 +150,36 @@ export default function AuditLogPage() {
                 compliance reviews.
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const rows = events.map((e) => ({
+                  id: e.id,
+                  occurred_at: e.occurredAt,
+                  category: e.category,
+                  action: e.action,
+                  actor_kind: e.actor.kind,
+                  actor_name: e.actor.name,
+                  actor_detail: e.actor.detail ?? "",
+                  target: e.target ?? "",
+                  ip_address: e.ipAddress ?? "",
+                  user_agent: e.userAgent ?? "",
+                  metadata: e.metadata ? JSON.stringify(e.metadata) : "",
+                }));
+                if (rows.length === 0) {
+                  toast("Nothing to export", {
+                    description: "Clear filters or broaden the search.",
+                  });
+                  return;
+                }
+                const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCsv(rows, `docketlens-audit-${stamp}.csv`);
+                toast.success(`Exported ${rows.length} events`, {
+                  description: "Open in Excel, Numbers, or Google Sheets.",
+                });
+              }}
+            >
               <Download className="size-3.5" />
               Export CSV
             </Button>

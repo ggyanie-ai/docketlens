@@ -13,6 +13,7 @@ export async function GET() {
     health: "/api/health",
     endpoints: [
       { method: "GET",  path: "/api/v1/me",              desc: "Caller identity + plan + rate-limit ceilings" },
+      { method: "GET",  path: "/api/v1/usage",           desc: "Per-key call-volume vs. ceiling (counters land Tuesday)" },
       { method: "GET",  path: "/api/v1/courts",          desc: "List CourtListener-mirrored courts we cache" },
       { method: "GET",  path: "/api/v1/dockets",         desc: "List recent dockets" },
       { method: "GET",  path: "/api/v1/dockets/:id",     desc: "Get one docket with entries + parties" },
