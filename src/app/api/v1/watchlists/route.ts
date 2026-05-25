@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   );
 }
 
-const CreateBody = z.object({
+const SingleCreate = z.object({
   name: z.string().min(1),
   entity_type: z.enum(["party", "attorney", "judge", "lawfirm", "case", "term"]),
   match_value: z.string().min(1),
@@ -50,7 +50,30 @@ const CreateBody = z.object({
       natureOfSuitCodes: z.array(z.string()).optional(),
     })
     .optional(),
+  priority: z.number().int().min(0).max(100).optional(),
 });
+
+// Accept either a single object or an array of up to 50. Single returns
+// 201 { id }; bulk returns 201 { count, ids } so the shape disambiguates.
+const CreateBody = z.union([SingleCreate, z.array(SingleCreate).min(1).max(50)]);
+
+type SingleCreate = z.infer<typeof SingleCreate>;
+
+function buildRow(orgId: string, keyId: string, p: SingleCreate) {
+  return {
+    id: ids.watchlist(),
+    orgId,
+    createdBy: keyId, // placeholder — API-key-created watches reference the key
+    name: p.name,
+    entityType: p.entity_type,
+    matchValue: p.match_value,
+    matchValueNormalized: normalizeEntityName(p.match_value),
+    filters: p.filters ?? {},
+    isActive: true,
+    refreshCadence: p.refresh_cadence,
+    priority: p.priority ?? 50,
+  };
+}
 
 export async function POST(req: NextRequest) {
   const auth = await authenticateApiRequest(req.headers.get("authorization"));
@@ -72,19 +95,21 @@ export async function POST(req: NextRequest) {
     return err("validation failed", 422, { issues: parsed.error.issues });
   }
 
-  const id = ids.watchlist();
-  await db.insert(watchlists).values({
-    id,
-    orgId: auth.orgId,
-    createdBy: auth.keyId, // placeholder — API-key-created watches reference the key
-    name: parsed.data.name,
-    entityType: parsed.data.entity_type,
-    matchValue: parsed.data.match_value,
-    matchValueNormalized: normalizeEntityName(parsed.data.match_value),
-    filters: parsed.data.filters ?? {},
-    isActive: true,
-    refreshCadence: parsed.data.refresh_cadence,
-  });
+  // Bulk path: array of bodies, single transaction
+  if (Array.isArray(parsed.data)) {
+    const rows = parsed.data.map((p) => buildRow(auth.orgId, auth.keyId, p));
+    await db.insert(watchlists).values(rows);
+    return ok(
+      {
+        count: rows.length,
+        ids: rows.map((r) => r.id),
+      },
+      { status: 201 }
+    );
+  }
 
-  return ok({ id }, { status: 201 });
+  // Single path: legacy shape — return { id }
+  const row = buildRow(auth.orgId, auth.keyId, parsed.data);
+  await db.insert(watchlists).values(row);
+  return ok({ id: row.id }, { status: 201 });
 }

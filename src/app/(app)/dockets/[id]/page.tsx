@@ -126,13 +126,28 @@ export default async function DocketDetailPage({
           <div className="grid lg:grid-cols-[1fr_320px] gap-8">
             {/* Timeline */}
             <section>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                 <h2 className="font-serif text-xl tracking-tight">
                   Docket timeline
                 </h2>
-                <p className="text-xs font-mono text-[color:var(--color-fg-subtle)]">
-                  {docket.entries.length} entries
-                </p>
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden
+                    className="hidden md:inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-fg-subtle)]"
+                    title="Press j/k or ↓/↑ to move between entries · g/G for first/last · / focuses search"
+                  >
+                    <kbd className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] px-1.5 py-0.5">
+                      j
+                    </kbd>
+                    <kbd className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg-elevated)] px-1.5 py-0.5">
+                      k
+                    </kbd>
+                    <span className="ml-0.5">to navigate</span>
+                  </span>
+                  <p className="text-xs font-mono text-[color:var(--color-fg-subtle)]">
+                    {docket.entries.length} entries
+                  </p>
+                </div>
               </div>
 
               <Card className="overflow-hidden">
