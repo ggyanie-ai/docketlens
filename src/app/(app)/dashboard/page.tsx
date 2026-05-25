@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SAMPLE_DOCKETS, SAMPLE_WATCHLISTS } from "@/lib/sample-data";
 import { timeAgo } from "@/lib/utils";
-import { ActivityChart } from "@/components/app/activity-chart";
+import { ActivityChartCard } from "@/components/app/activity-chart-card";
 import { CourtHeatmap } from "@/components/app/court-heatmap";
 import { Leaderboard } from "@/components/app/leaderboard";
 import { OnboardingChecklist } from "@/components/app/onboarding-checklist";
@@ -159,28 +159,8 @@ export default async function DashboardPage({
           </section>
 
           <section className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
-            {/* Activity chart */}
-            <Card className="p-6">
-              <div className="flex items-start justify-between mb-1">
-                <div>
-                  <CardTitle className="text-sm">Activity — last 30 days</CardTitle>
-                  <CardDescription className="text-xs mt-0.5">
-                    New filings matched across all your watchlists.
-                  </CardDescription>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-3xl tabular leading-none">
-                    312
-                  </span>
-                  <span className="text-xs text-[color:var(--color-success)] font-mono">
-                    +24%
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 -mx-2">
-                <ActivityChart />
-              </div>
-            </Card>
+            {/* Activity chart with 7d / 30d / 90d range picker */}
+            <ActivityChartCard />
 
             {/* Watchlists summary */}
             <Card className="p-6">

@@ -120,6 +120,7 @@ export default function InboxPage() {
     messages.find((m) => m.id === selectedId) ?? filtered[0] ?? null;
 
   const unreadCount = messages.filter((m) => m.status === "unread").length;
+  const archivedCount = messages.filter((m) => m.status === "archived").length;
 
   function setStatus(id: string, status: InboxStatus) {
     setMessages((prev) =>
@@ -234,7 +235,14 @@ export default function InboxPage() {
                     )}
                   </TabsTrigger>
                   <TabsTrigger value="read">Read</TabsTrigger>
-                  <TabsTrigger value="archived">Archived</TabsTrigger>
+                  <TabsTrigger value="archived">
+                    Archived
+                    {archivedCount > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-[color:var(--color-bg-subtle)] border border-[color:var(--color-border)] text-[color:var(--color-fg-muted)] text-[10px] font-mono tabular px-1.5 min-w-4">
+                        {archivedCount}
+                      </span>
+                    )}
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
               <Button

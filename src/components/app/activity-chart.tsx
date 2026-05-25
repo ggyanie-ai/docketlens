@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -10,28 +11,33 @@ import {
   CartesianGrid,
 } from "recharts";
 
-function makeData() {
-  const days = 30;
+function makeData(days: number) {
   const now = Date.now();
   return Array.from({ length: days }, (_, i) => {
     const d = new Date(now - (days - 1 - i) * 86400000);
     const wkend = [0, 6].includes(d.getDay());
     const base = wkend ? 2 : 10 + Math.sin(i / 3) * 4;
-    const noise = Math.random() * 6;
+    // Deterministic per-day jitter so the chart doesn't flicker between
+    // renders for the same range; mulberry32-style mix of (days, i).
+    const jitterSeed = (days * 13 + i * 31) % 997;
+    const jitter = (jitterSeed / 997) * 6;
     return {
       label: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      filings: Math.max(0, Math.round(base + noise)),
+      filings: Math.max(0, Math.round(base + jitter)),
     };
   });
 }
 
-const DATA = makeData();
-
-export function ActivityChart() {
+export function ActivityChart({
+  days = 30,
+}: {
+  days?: 7 | 30 | 90;
+}) {
+  const data = useMemo(() => makeData(days), [days]);
   return (
     <div style={{ width: "100%", height: 180, minHeight: 180 }}>
       <ResponsiveContainer minWidth={0} minHeight={0}>
-        <AreaChart data={DATA} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="dl-area" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--color-accent)" stopOpacity={0.5} />
