@@ -40,7 +40,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Theme overrides
+ *  • Explicit `?theme=dark` on the embed (article gets data-theme="dark"):
+ *    always render dark, regardless of host OS preference.
+ *  • Explicit `?theme=light` (data-theme="light"): always light. Defaults
+ *    apply, no override needed.
+ *  • Default `?theme=auto` (data-theme="auto"): follow host OS via the
+ *    prefers-color-scheme media query.
+ *  Descendant + root selectors both match so future refactors can hoist
+ *  the attribute without breaking the theme cascade.
+ */
+.docketlens-widget-root [data-theme="dark"],
+.docketlens-widget-root[data-theme="dark"] {
+  --w-bg: oklch(16% 0.012 250);
+  --w-bg-elev: oklch(20% 0.015 250);
+  --w-fg: oklch(96% 0.005 250);
+  --w-fg-muted: oklch(70% 0.012 250);
+  --w-border: oklch(28% 0.015 250);
+  --w-accent: oklch(72% 0.16 270);
+  --w-hot: oklch(72% 0.18 28);
+}
+
 @media (prefers-color-scheme: dark) {
+  .docketlens-widget-root [data-theme="auto"],
   .docketlens-widget-root[data-theme="auto"] {
     --w-bg: oklch(16% 0.012 250);
     --w-bg-elev: oklch(20% 0.015 250);

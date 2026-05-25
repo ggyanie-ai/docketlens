@@ -60,6 +60,16 @@ export const metadata: Metadata = {
     title: "DocketLens",
     description: "AI-summarized federal court dockets.",
   },
+  alternates: {
+    // i18n: we ship en-US only today. Setting `x-default` to the same URL
+    // tells Google "this is the canonical language-agnostic version" so
+    // SERPs don't synthesize machine-translated alternates. Locale-specific
+    // entries will be added per-page once we have real translations.
+    languages: {
+      "x-default": "https://docketlens.ai",
+      en: "https://docketlens.ai",
+    },
+  },
 };
 
 /* ============================================================================

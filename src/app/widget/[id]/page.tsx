@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import { SAMPLE_DOCKETS } from "@/lib/sample-data";
 
 export const runtime = "nodejs";
-export const dynamic = "force-static";
+// `force-dynamic` so /widget/[id]?theme=… can vary the data-theme attribute
+// per request. The page is tiny — no caching loss matters.
+export const dynamic = "force-dynamic";
+
+type Theme = "light" | "dark" | "auto";
+function pickTheme(raw: string | string[] | undefined): Theme {
+  const v = Array.isArray(raw) ? raw[0] : raw;
+  return v === "light" || v === "dark" ? v : "auto";
+}
 
 const SITE = process.env.NEXT_PUBLIC_APP_URL ?? "https://docketlens.ai";
 
@@ -48,10 +56,14 @@ function fmtDate(iso: string): string {
  * ==========================================================================*/
 export default async function WidgetCasePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ theme?: string }>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
+  const theme = pickTheme(sp.theme);
   const d = SAMPLE_DOCKETS.find((x) => x.id === id);
 
   if (!d) {
@@ -70,7 +82,7 @@ export default async function WidgetCasePage({
   const href = `${SITE}/demo/${d.id}`;
 
   return (
-    <article aria-label={`DocketLens widget — ${d.caseName}`}>
+    <article aria-label={`DocketLens widget — ${d.caseName}`} data-theme={theme}>
       <div className="dlw-eyebrow">
         <span className="dlw-dot" aria-hidden />
         <span>

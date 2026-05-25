@@ -17,8 +17,14 @@ import { normalizeEntityName } from "@/lib/db/ids";
  *  Match precedence:
  *    1. exact normalized equality on the canonical field
  *    2. token-subset (every word in the watchlist value appears in the
- *       candidate, in order, after normalization)
- *    3. corporate-suffix-stripped equality
+ *       candidate, in order, after normalization). This subsumes a naive
+ *       substring check — a single-token needle is `hay.indexOf(needle)`,
+ *       and a multi-token needle whose literal appears in the candidate
+ *       has its tokens in order by construction.
+ *
+ *  (An earlier revision shipped a tier-3 substring fallback. We removed
+ *  it after the test pass on 2026-05-25 proved it was unreachable —
+ *  see commit history + docs/TESTING.md.)
  * ==========================================================================*/
 
 export interface MatchContext {
@@ -139,14 +145,6 @@ function matchAgainstNames(
     if (!c) continue;
     if (tokenSubset(n, c)) {
       return { matched: true, score: 0.85, reason: `token-subset ${label} match` };
-    }
-  }
-  // last resort — substring (only if needle is reasonably specific)
-  if (n.length >= 5) {
-    for (const c of candidates) {
-      if (c?.includes(n)) {
-        return { matched: true, score: 0.6, reason: `substring ${label} match` };
-      }
     }
   }
   return NEGATIVE;

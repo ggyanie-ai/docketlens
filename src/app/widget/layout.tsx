@@ -21,9 +21,7 @@ export const metadata: Metadata = {
 export default function WidgetLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <div className="docketlens-widget-root" data-theme="auto">
-      {children}
-    </div>
-  );
+  // `data-theme` is set by the page (not here) so /widget/[id]?theme=…
+  // can override the default. The page falls back to "auto".
+  return <div className="docketlens-widget-root">{children}</div>;
 }
