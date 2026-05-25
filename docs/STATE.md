@@ -860,54 +860,50 @@ of work, sized to fit one wakeup.
       scroll.
 
 ### Content
-- [ ] **Fifth blog post** — "Three months of RECAP throughput:
-      what a free public archive can and can't deliver in May
-      2026." Engineering tag, ~7 min read, real numbers from
-      ingest worker traces.
-- [ ] **Sixth blog post** — "How we picked our pricing:
-      anchoring to the Bloomberg Law seat, not to PACER's per-page
-      cost." Industry tag. Covers the framing math.
+- [ ] **Seventh blog post** — "What we learned the first time we
+      tried to summarize a 400-page Markman ruling." Engineering
+      tag. Covers the chunking strategy + the safety rails.
+- [ ] **Eighth blog post** — "We picked Free Law Project as our
+      data source. Here's how we donate back." Industry tag.
+      Recap of the /donate page in essay form.
+- [ ] **Three more glossary terms** — "MDL transferee judge",
+      "JPML", "Section 1782 discovery." Common in international
+      patent + securities crossover cases.
 
 ### Features
-- [ ] **/docs/structured-data.md internal doc** — single page
-      listing every JSON-LD entity we ship and where, so future
-      maintainers don't accidentally duplicate or contradict
-      them. Pair with a one-paragraph "how to add a new entity"
-      checklist.
-- [ ] **Healthcheck includes CourtListener pool budget** —
-      `/api/health` currently checks DB only. Extend with a
-      best-effort cached read of the leaky-bucket budget so ops
-      monitors can see when we're rate-limit-saturated.
-- [ ] **`/api/v1/me`** — returns the current API key's plan,
-      keyId, orgId, scopes, lastUsedAt, and the rate-limit
-      remaining for the window. Standard endpoint every API has;
-      we don't yet.
-- [ ] **Webhook delivery dashboard** — read-only table on /alerts
-      showing the last 30 webhook deliveries with status, latency,
-      response code, and a retry button. Already have the
-      schema for `alert_deliveries`.
-- [ ] **Audit-log filter chips** — /audit-log currently shows a
-      raw timeline. Add chips for `event_type` (sign-in, watchlist
-      created, API key revoked, etc.) and a date range picker
-      that drives URL params.
-- [ ] **Saved-search "Run" preview** — clicking a saved search
-      on /search currently sets the form; add a small in-place
-      results count badge so users see "47 matches" without
-      submitting.
-- [ ] **/widget/[id]?theme=light|dark|auto** query param —
-      already auto-themed; explicit override lets embedders match
-      their host page's theme without media-query guesswork.
-- [ ] **`<a hreflang="x-default">` on i18n-future pages** —
-      placeholder for /pricing and /. Sets up the eventual
-      i18n story without committing to translations now.
-- [ ] **`/api/v1/courts`** — return the list of courts we cover
-      (id, full_name, short_name, jurisdiction, in_use) so API
-      consumers can populate dropdowns without scraping
-      /jurisdictions.
-- [ ] **Watchlist "share preview"** — read-only public URL like
-      `/watchlists/{id}/preview` that shows the watchlist title +
-      latest 5 matches without auth. Linkable in Slack/email.
-      Owner can toggle on/off in settings.
+- [ ] **Audit-log URL state** — current /audit-log filters (q,
+      category, range) live in useState. Promote them to
+      `useSearchParams` so URLs are shareable + back-button works.
+- [ ] **Watchlist preview share button + copy URL** —
+      /watchlists/[id]/preview ships; add a Copy URL button to
+      the preview banner so users can share it from the page
+      itself, not just from the owner's app view.
+- [ ] **Inbox empty-state** — /inbox currently always shows
+      sample messages. Add `?empty=1` empty-state with a "Send
+      your first alert" CTA that links to /watchlists?empty=1.
+- [ ] **/lookup form keyboard hint** — the docket-lookup field
+      could use the same `⌘K` chip treatment as /search.
+- [ ] **Settings audit-log preview** — small "Last 10 events in
+      this org" card on /settings's General tab linking to
+      /audit-log.
+- [ ] **/api/v1/usage** — counter endpoint reporting calls/day
+      against the per-plan ceiling. Pairs with /api/v1/me to give
+      a complete picture.
+- [ ] **/api/v1/dockets/{id}/parties + /entries split** — split
+      the existing combined response into two endpoints for
+      consumers that only need one shape. Keep the combined
+      endpoint as the convenience default.
+- [ ] **CSV export for /audit-log** — button already in the UI
+      but stubbed. Wire it to the existing CSV writer in
+      `src/lib/csv.ts` and emit the visible filtered rows.
+- [ ] **Search results CSV export keyboard shortcut** — `⌘E` on
+      /search downloads the current results.csv.
+- [ ] **Dark-mode opengraph image** — currently we have one OG.
+      Detect `?theme=dark` on /opengraph-image and ship a dark
+      variant for embedders that opt in.
+- [ ] **Public read-only `/p/[id]` pretty preview redirect** —
+      shorter URL that 302s to `/watchlists/[id]/preview`. Easier
+      to paste in tweets.
 
 ### Auth (Tuesday wire-up — don't break the stub)
 - [ ] Install Better-Auth, write the adapter, wire magic-link flow,
