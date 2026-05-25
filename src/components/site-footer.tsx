@@ -64,7 +64,7 @@ export function SiteFooter() {
             </Link>
             <p className="text-sm text-[color:var(--color-fg-muted)] max-w-xs leading-relaxed">
               AI court intelligence built on public docket data. Watch the cases
-              that matter. Skip PACER's per-page fees and 1995 UX.
+              that matter. Skip PACER&apos;s per-page fees and 1995 UX.
             </p>
             <p className="text-[10.5px] uppercase tracking-[0.18em] text-[color:var(--color-fg-subtle)]">
               Made with care for lawyers, journalists, and investors.

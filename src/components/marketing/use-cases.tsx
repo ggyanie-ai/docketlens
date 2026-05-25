@@ -51,7 +51,7 @@ export function UseCases() {
         <div className="max-w-2xl mb-14">
           <p className="eyebrow mb-4">Who uses it</p>
           <h2 className="display-2">
-            For people who can't afford a $50k/yr{" "}
+            For people who can&apos;t afford a $50k/yr{" "}
             <span className="italic">Bloomberg Law</span> seat.
           </h2>
         </div>
@@ -70,7 +70,7 @@ export function UseCases() {
               </p>
               <figure className="border-l-2 border-[color:var(--color-accent)] pl-4 mt-auto">
                 <blockquote className="font-serif text-lg leading-snug text-[color:var(--color-fg)]">
-                  "{p.quote}"
+                  &quot;{p.quote}&quot;
                 </blockquote>
                 <figcaption className="mt-2 text-xs text-[color:var(--color-fg-subtle)] font-mono">
                   {p.who}

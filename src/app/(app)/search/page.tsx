@@ -239,7 +239,7 @@ export default function SearchPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // exportCsv captures the latest `filtered` via closure on every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   });
 
   const filtered = useMemo(() => {

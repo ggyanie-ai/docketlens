@@ -84,7 +84,7 @@ export function DocketNotesCard({ docketId }: { docketId: string }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // closure captures latest `body` + `savedBody` via fresh render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   });
 
   return (

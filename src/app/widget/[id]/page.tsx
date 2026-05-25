@@ -153,7 +153,10 @@ export default async function WidgetCasePage({
       )}
 
       {/* Privacy-preserving impression pixel — counts only docket_id + day.
-          No IP, UA, referrer, cookies. See src/lib/widget-pings.ts. */}
+          No IP, UA, referrer, cookies. See src/lib/widget-pings.ts.
+          Must be a raw <img>: next/image lazy-loads + optimizes, which
+          defeats the "fire one GET per render" tracking-pixel pattern. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`/api/widget-ping?id=${encodeURIComponent(d.id)}`}
         width={1}

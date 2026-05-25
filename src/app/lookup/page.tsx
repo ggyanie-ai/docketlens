@@ -120,7 +120,7 @@ export default function LookupPage() {
             <h1 className="display-1">
               Paste a docket number,{" "}
               <span className="italic text-[color:var(--color-accent)]">
-                we'll take it from there.
+                we&apos;ll take it from there.
               </span>
             </h1>
             <p className="mt-6 text-lg text-[color:var(--color-fg-muted)] leading-relaxed max-w-2xl mx-auto">

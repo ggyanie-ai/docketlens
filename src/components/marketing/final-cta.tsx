@@ -18,7 +18,7 @@ export function FinalCta() {
         </h2>
         <p className="mt-6 text-lg text-[color:var(--color-fg-muted)] max-w-2xl mx-auto leading-relaxed">
           Free tier is genuinely free. Five watchlists, daily digest, no card.
-          Upgrade when you're ready. Most users do, within two weeks.
+          Upgrade when you&apos;re ready. Most users do, within two weeks.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild variant="accent" size="xl">

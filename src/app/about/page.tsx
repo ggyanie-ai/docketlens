@@ -79,7 +79,7 @@ export default function AboutPage() {
               </li>
               <li>
                 Pricing should be{" "}
-                <strong className="text-[color:var(--color-fg)]">honest and on the page</strong>. No "contact sales" walls below $200/mo.
+                <strong className="text-[color:var(--color-fg)]">honest and on the page</strong>. No &quot;contact sales&quot; walls below $200/mo.
               </li>
               <li>
                 The product should be{" "}

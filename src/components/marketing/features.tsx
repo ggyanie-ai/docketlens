@@ -73,13 +73,13 @@ export function Features() {
     <section id="features" className="relative scroll-mt-20">
       <div className="mx-auto max-w-7xl px-6 py-24 md:py-32">
         <div className="max-w-2xl mb-14">
-          <p className="eyebrow mb-4">What's inside</p>
+          <p className="eyebrow mb-4">What&apos;s inside</p>
           <h2 className="display-2 text-[color:var(--color-fg)]">
             Nine systems quietly working{" "}
             <span className="italic text-[color:var(--color-fg-muted)]">while you sleep.</span>
           </h2>
           <p className="mt-5 text-lg text-[color:var(--color-fg-muted)] leading-relaxed">
-            DocketLens isn't a search box on top of PACER. It's a full data pipeline,
+            DocketLens isn&apos;t a search box on top of PACER. It&apos;s a full data pipeline,
             entity-resolution layer, AI summarization stack, and alerting engine — built
             for the way modern litigation actually moves.
           </p>

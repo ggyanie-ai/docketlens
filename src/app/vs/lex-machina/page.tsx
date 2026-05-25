@@ -282,7 +282,7 @@ export default function VsLexMachinaPage() {
           <div className="mx-auto max-w-7xl px-6 py-20">
             <div className="flex items-center gap-2 mb-3">
               <p className="eyebrow">Where Lex Machina actually wins</p>
-              <Badge variant="outline">we're honest</Badge>
+              <Badge variant="outline">we&apos;re honest</Badge>
             </div>
             <h2 className="font-serif text-3xl tracking-tight mb-2">
               Reasons to pay enterprise prices

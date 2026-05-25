@@ -67,10 +67,10 @@ export function PricingPreview({ withHeading = true }: { withHeading?: boolean }
           <div className="max-w-2xl mb-14">
             <p className="eyebrow mb-4">Pricing</p>
             <h2 className="display-2">
-              Honest pricing. <span className="italic text-[color:var(--color-fg-muted)]">No "contact sales" walls.</span>
+              Honest pricing. <span className="italic text-[color:var(--color-fg-muted)]">No &quot;contact sales&quot; walls.</span>
             </h2>
             <p className="mt-5 text-lg text-[color:var(--color-fg-muted)] leading-relaxed">
-              Free tier covers what you'd actually try first. Pro replaces the monthly
+              Free tier covers what you&apos;d actually try first. Pro replaces the monthly
               hours you spend on PACER. Team is what a single Bloomberg Law seat would
               cost — for your whole firm.
             </p>

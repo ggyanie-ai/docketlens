@@ -163,7 +163,7 @@ export default function SecurityPage() {
                 <strong className="text-[color:var(--color-fg)]">
                   Your preferred public-credit name
                 </strong>{" "}
-                (or "stay anonymous") for the Hall of Fame.
+                (or &quot;stay anonymous&quot;) for the Hall of Fame.
               </li>
               <li>
                 <strong className="text-[color:var(--color-fg)]">

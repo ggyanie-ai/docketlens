@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Parallel-agent worktrees under .claude/ — already excluded from
+    // git (.gitignore) but the linter still walks them, doubling every
+    // warning.
+    ".claude/**",
   ]),
 ]);
 

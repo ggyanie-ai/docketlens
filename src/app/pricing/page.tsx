@@ -164,7 +164,7 @@ export default function PricingPage() {
             <h1 className="display-1">
               Three tiers.{" "}
               <span className="italic text-[color:var(--color-fg-muted)]">
-                No "contact sales" walls.
+                No &quot;contact sales&quot; walls.
               </span>
             </h1>
             <p className="mt-6 text-lg text-[color:var(--color-fg-muted)] leading-relaxed">
