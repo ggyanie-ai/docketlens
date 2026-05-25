@@ -365,6 +365,13 @@
 - [x] Ingestion worker (scripts/ingest.ts) with idempotent persistence
 - [x] Seed script (scripts/seed.ts)
 - [x] REST API v1 — discovery, dockets, search, watchlists, bearer auth
+- [x] OnboardingChecklist "Create your first watchlist" step now
+      routes through `/watchlists?empty=1` (instead of jumping
+      straight to /watchlists/new), surfacing the six prebuilt
+      template cards one click earlier. CTA text updated to "Pick
+      a watchlist" and body copy now hints at the templates so
+      users know what's coming. Pure data tweak; comment notes
+      the routing rationale for future maintainers.
 - [x] Pricing-specific FAQ inline on /pricing — eight pre-empts
       between the comparison table and the existing global Faq:
         1. What can I actually do on Free?
@@ -735,10 +742,6 @@ of work, sized to fit one wakeup.
 - _(none currently queued — Content queue is now empty)_
 
 ### Features
-- [ ] **OnboardingChecklist "create a watchlist" step links to
-      `?empty=1`** — currently the checklist links to /watchlists/new;
-      routing through the empty-state surfaces our new templates
-      one click earlier.
 - [ ] **Pricing-FAQ FAQPage JSON-LD** — pricing FAQs are
       semantically valuable for SERPs. Emit `application/ld+json`
       with `@type: FAQPage` for the eight Q/A pairs so Google can

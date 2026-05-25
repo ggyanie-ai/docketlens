@@ -46,10 +46,12 @@ const STEPS: Step[] = [
   {
     slug: "watchlist",
     title: "Create your first watchlist",
-    body: "Pick a party, judge, or law firm. We resolve aliases so Apple Inc. matches APPLE INC. and Apple Computer.",
+    body: "Pick a party, judge, or law firm. We resolve aliases so Apple Inc. matches APPLE INC. and Apple Computer. Six starter templates on the next screen if you want a head start.",
     icon: Bookmark,
-    href: "/watchlists/new",
-    cta: "New watchlist",
+    // Route through the empty-state surface so users see the six prebuilt
+    // templates one click earlier than going straight to the blank form.
+    href: "/watchlists?empty=1",
+    cta: "Pick a watchlist",
   },
   {
     slug: "channel",
