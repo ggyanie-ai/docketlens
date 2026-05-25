@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -151,6 +151,53 @@ export default function InboxPage() {
       setStatus(m.id, "read");
     }
   }
+
+  // Gmail-style keyboard bindings. `e` archives the currently-selected
+  // message; `j` / `k` (or arrows) walk through the filtered list.
+  // Skipped inside inputs / contenteditable so typing isn't hijacked.
+  useEffect(() => {
+    function onKey(ev: KeyboardEvent) {
+      const tag = (document.activeElement?.tagName ?? "").toLowerCase();
+      const editable =
+        tag === "input" ||
+        tag === "textarea" ||
+        (document.activeElement as HTMLElement | null)?.isContentEditable;
+      if (editable) return;
+      if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+
+      const list = filtered;
+      if (list.length === 0) return;
+      const currentIdx = selected
+        ? list.findIndex((m) => m.id === selected.id)
+        : -1;
+
+      if (ev.key === "e") {
+        if (!selected) return;
+        ev.preventDefault();
+        setStatus(selected.id, "archived");
+        toast.success("Archived", { description: selected.subject });
+        // Auto-advance to next message so the user can blow through a stack
+        const next = list[currentIdx + 1] ?? list[currentIdx - 1] ?? null;
+        if (next) setSelectedId(next.id);
+        return;
+      }
+      if (ev.key === "j" || ev.key === "ArrowDown") {
+        ev.preventDefault();
+        const next = list[Math.min(currentIdx + 1, list.length - 1)] ?? list[0];
+        if (next) selectMessage(next);
+        return;
+      }
+      if (ev.key === "k" || ev.key === "ArrowUp") {
+        ev.preventDefault();
+        if (currentIdx > 0) selectMessage(list[currentIdx - 1]);
+        return;
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // selectMessage + setStatus capture state via closure each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 
   return (
     <>

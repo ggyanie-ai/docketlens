@@ -38,6 +38,7 @@ export async function GET() {
       { method: "GET",  path: "/api/v1/saved-searches/:id/feed.xml", desc: "RSS 2.0 feed of matches for a saved search" },
       { method: "GET",  path: "/api/v1/saved-searches/:id/feed.atom", desc: "Atom 1.0 sibling of the saved-search feed" },
       { method: "GET",  path: "/api/v1/saved-searches/:id/feed.json", desc: "JSON Feed 1.1 sibling of the saved-search feed" },
+      { method: "GET",  path: "/api/v1/digest/preview",   desc: "Preview the next digest (?cadence=&format=)" },
     ],
   });
 }
