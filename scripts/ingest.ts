@@ -7,7 +7,6 @@ import {
   parties,
 } from "../src/lib/db/schema";
 import { ids, normalizeEntityName } from "../src/lib/db/ids";
-import { eq } from "drizzle-orm";
 
 /* ============================================================================
  *  Ingestion worker

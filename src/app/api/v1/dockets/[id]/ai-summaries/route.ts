@@ -140,7 +140,7 @@ export async function GET(
   // `summaryOne` and `summaryPara` on SAMPLE_DOCKETS act as the seeded
   // extractive copy that ships with the demo cases.
 
-  function buildEntryPayload(entryId: string, sampleShort?: string) {
+  function buildEntryPayload(entryId: string) {
     const out: Record<string, unknown> = {};
     const cache = lookup("entry", entryId);
     const seed = sample?.entries.find((e) => e.id === entryId);
@@ -215,7 +215,7 @@ export async function GET(
         entry_id: e.id,
         date_filed: e.dateFiled,
         short_description: e.short,
-        summaries: buildEntryPayload(e.id, e.short),
+        summaries: buildEntryPayload(e.id),
       })),
       meta: {
         prompt_version_current: PROMPT_VERSION,

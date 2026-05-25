@@ -22,7 +22,6 @@ import {
   DropdownSeparator,
 } from "@/components/ui/dropdown";
 import {
-  newSavedSearch,
   summarizeQuery,
   suggestName,
   type SavedSearch,
