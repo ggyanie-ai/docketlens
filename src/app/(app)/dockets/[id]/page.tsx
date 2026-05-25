@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AiExecSummaryCard } from "@/components/app/ai-exec-summary-card";
 import { TimelineKeyboardNav } from "@/components/app/timeline-keyboard-nav";
+import { DocketNotesCard } from "@/components/app/docket-notes-card";
 import { SAMPLE_DOCKETS, type SampleDocket } from "@/lib/sample-data";
 
 const ENTRY_ICON: Record<string, typeof FileText> = {
@@ -319,6 +320,8 @@ export default async function DocketDetailPage({
                     : undefined
                 }
               />
+
+              <DocketNotesCard docketId={docket.id} />
             </aside>
           </div>
         </div>
