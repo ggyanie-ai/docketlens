@@ -3,7 +3,18 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
-export const metadata = { title: "Privacy Policy" };
+export const metadata = {
+  title: "Privacy Policy",
+  description:
+    "How DocketLens collects, stores, and shares data. We minimize data, never sell it, and don't track you with cookies on the marketing site.",
+  openGraph: {
+    title: "DocketLens Privacy Policy",
+    description:
+      "How DocketLens collects, stores, and shares data. We minimize data, never sell it, and don't track you with cookies on the marketing site.",
+    url: "/legal/privacy",
+    type: "article" as const,
+  },
+};
 
 export default function PrivacyPage() {
   return (

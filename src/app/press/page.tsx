@@ -12,6 +12,12 @@ export const metadata = {
   title: "Press kit",
   description:
     "Logos, brand colors, founder quote, screenshots, and boilerplate copy for journalists writing about DocketLens.",
+  openGraph: {
+    title: "DocketLens press kit",
+    description: "Logos, brand colors, founder quote, screenshots, and boilerplate copy for journalists writing about DocketLens.",
+    url: "/press",
+    type: "website" as const,
+  },
 };
 
 const COLORS = [

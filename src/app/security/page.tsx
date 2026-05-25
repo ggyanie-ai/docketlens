@@ -19,6 +19,12 @@ export const metadata = {
   title: "Security disclosure policy",
   description:
     "How to responsibly report a vulnerability to DocketLens — scope, response times, safe-harbor, PGP key, and our Hall of Fame.",
+  openGraph: {
+    title: "DocketLens security disclosure policy",
+    description: "How to responsibly report a vulnerability to DocketLens — scope, response times, safe-harbor, PGP key, and our Hall of Fame.",
+    url: "/security",
+    type: "article" as const,
+  },
 };
 
 /* ============================================================================

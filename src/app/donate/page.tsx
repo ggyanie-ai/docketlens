@@ -21,6 +21,12 @@ export const metadata = {
   title: "Donate to the Free Law Project",
   description:
     "DocketLens rides entirely on the public RECAP archive maintained by the Free Law Project. Here's how to support the upstream — and what we do too.",
+  openGraph: {
+    title: "Donate to the Free Law Project",
+    description: "DocketLens rides entirely on the public RECAP archive maintained by the Free Law Project. Here's how to support the upstream — and what we do too.",
+    url: "/donate",
+    type: "website" as const,
+  },
 };
 
 /* ============================================================================

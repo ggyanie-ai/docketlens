@@ -13,6 +13,12 @@ export const metadata = {
   title: "Documentation",
   description:
     "Reference, engineering notes, and the accessibility audit for DocketLens.",
+  openGraph: {
+    title: "Documentation",
+    description: "Reference, engineering notes, and the accessibility audit for DocketLens.",
+    url: "/docs",
+    type: "website" as const,
+  },
 };
 
 export default function DocsIndex() {

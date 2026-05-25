@@ -23,6 +23,12 @@ export const metadata = {
   title: "Status",
   description:
     "Live operational status of every DocketLens service — web app, REST API, ingest worker, AI summarization, email delivery, and the database.",
+  openGraph: {
+    title: "DocketLens status",
+    description: "Live operational status of every DocketLens service — web app, REST API, ingest worker, AI summarization, email delivery, and the database.",
+    url: "/status",
+    type: "website" as const,
+  },
 };
 
 /* ============================================================================

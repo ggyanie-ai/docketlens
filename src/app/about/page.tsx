@@ -8,7 +8,18 @@ import {
   OrganizationJsonLd,
 } from "@/lib/structured-data";
 
-export const metadata = { title: "About" };
+export const metadata = {
+  title: "About",
+  description:
+    "DocketLens is the modern, AI-powered alternative to PACER — built by a small team that believes federal court records should be searchable, monitorable, and affordable.",
+  openGraph: {
+    title: "About DocketLens",
+    description:
+      "DocketLens is the modern, AI-powered alternative to PACER — built by a small team that believes federal court records should be searchable, monitorable, and affordable.",
+    url: "/about",
+    type: "website" as const,
+  },
+};
 
 export default function AboutPage() {
   return (

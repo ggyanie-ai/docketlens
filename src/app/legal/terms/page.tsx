@@ -3,7 +3,18 @@ import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { BreadcrumbJsonLd } from "@/lib/structured-data";
 
-export const metadata = { title: "Terms of Service" };
+export const metadata = {
+  title: "Terms of Service",
+  description:
+    "The terms governing your use of DocketLens — what we provide, what you agree to, and how disputes get handled.",
+  openGraph: {
+    title: "DocketLens Terms of Service",
+    description:
+      "The terms governing your use of DocketLens — what we provide, what you agree to, and how disputes get handled.",
+    url: "/legal/terms",
+    type: "article" as const,
+  },
+};
 
 export default function TermsPage() {
   return (

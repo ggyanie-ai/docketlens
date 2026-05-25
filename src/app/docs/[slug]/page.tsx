@@ -21,7 +21,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const doc = getPublicDoc(slug);
   if (!doc) return { title: "Not found" };
-  return { title: doc.title, description: doc.summary };
+  return {
+    title: doc.title,
+    description: doc.summary,
+    openGraph: {
+      title: doc.title,
+      description: doc.summary,
+      url: `/docs/${doc.slug}`,
+      type: "article" as const,
+    },
+  };
 }
 
 async function loadDoc(file: string): Promise<string | null> {

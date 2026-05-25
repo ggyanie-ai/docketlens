@@ -21,6 +21,12 @@ export const metadata = {
   title: "Glossary",
   description:
     "Plain-English definitions for the legal terms used inside DocketLens — NOS, MDL, TRO, Rule 12(b)(6), Markman, and more.",
+  openGraph: {
+    title: "DocketLens glossary",
+    description: "Plain-English definitions for the legal terms used inside DocketLens — NOS, MDL, TRO, Rule 12(b)(6), Markman, and more.",
+    url: "/glossary",
+    type: "website" as const,
+  },
 };
 
 const GLOSSARY_DESCRIPTION =

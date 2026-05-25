@@ -10,6 +10,12 @@ export const metadata = {
   title: "Verify webhook signature",
   description:
     "Paste a payload and X-DocketLens-Signature header — we'll compute the expected HMAC and tell you whether it matches. Runs entirely in your browser.",
+  openGraph: {
+    title: "Verify a webhook signature",
+    description: "Paste a payload and X-DocketLens-Signature header — we'll compute the expected HMAC and tell you whether it matches. Runs entirely in your browser.",
+    url: "/tools/verify-webhook",
+    type: "website" as const,
+  },
 };
 
 export default function VerifyWebhookPage() {

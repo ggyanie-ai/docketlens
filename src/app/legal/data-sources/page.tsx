@@ -5,7 +5,18 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { DatasetJsonLd, BreadcrumbJsonLd } from "@/lib/structured-data";
 
-export const metadata = { title: "Data sources" };
+export const metadata = {
+  title: "Data sources",
+  description:
+    "Where DocketLens gets its federal court records — the RECAP archive from Free Law Project, refreshed continuously, with lineage you can audit.",
+  openGraph: {
+    title: "DocketLens data sources",
+    description:
+      "Where DocketLens gets its federal court records — the RECAP archive from Free Law Project, refreshed continuously, with lineage you can audit.",
+    url: "/legal/data-sources",
+    type: "article" as const,
+  },
+};
 
 export default function DataSourcesPage() {
   return (

@@ -17,6 +17,12 @@ export const metadata = {
   title: "Jurisdictions we cover",
   description:
     "Every federal court DocketLens indexes — 13 Courts of Appeals, 94 District Courts, ~90 Bankruptcy Courts, the Supreme Court, and the specialty federal courts.",
+  openGraph: {
+    title: "Jurisdictions we cover",
+    description: "Every federal court DocketLens indexes — 13 Courts of Appeals, 94 District Courts, ~90 Bankruptcy Courts, the Supreme Court, and the specialty federal courts.",
+    url: "/jurisdictions",
+    type: "website" as const,
+  },
 };
 
 /* ============================================================================

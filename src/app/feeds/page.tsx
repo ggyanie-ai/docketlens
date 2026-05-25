@@ -11,6 +11,12 @@ export const metadata = {
   title: "Feeds",
   description:
     "Every RSS, Atom, and JSON Feed DocketLens publishes — for the blog, the changelog, and any saved search.",
+  openGraph: {
+    title: "DocketLens feeds",
+    description: "Every RSS, Atom, and JSON Feed DocketLens publishes — for the blog, the changelog, and any saved search.",
+    url: "/feeds",
+    type: "website" as const,
+  },
 };
 
 const SITE = "https://docketlens.ai";

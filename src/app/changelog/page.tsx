@@ -31,6 +31,12 @@ export const metadata = {
       "application/rss+xml": "/changelog/feed.xml",
     },
   },
+  openGraph: {
+    title: "DocketLens changelog",
+    description: "Every shipped change to DocketLens, by release. We track changes by ISO date (UTC).",
+    url: "/changelog",
+    type: "website" as const,
+  },
 };
 
 /** Number of milliseconds the file content cache is allowed to live. */
