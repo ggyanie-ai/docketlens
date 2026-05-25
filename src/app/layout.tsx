@@ -56,9 +56,13 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
+    // Card type is constant across the site. Title + description are
+    // intentionally omitted so per-page metadata flows through — Next.js
+    // derives twitter:title and twitter:description from the page-level
+    // `title` and `description` fields when no explicit twitter block
+    // sets them. This is what makes `/blog/<post>` and `/vs/*` show
+    // their actual titles on link previews instead of "DocketLens".
     card: "summary_large_image",
-    title: "DocketLens",
-    description: "AI-summarized federal court dockets.",
   },
   alternates: {
     // i18n: we ship en-US only today. Setting `x-default` to the same URL
