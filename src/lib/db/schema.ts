@@ -1,48 +1,53 @@
 import { sql } from "drizzle-orm";
 import {
-  sqliteTable,
+  pgTable,
   text,
   integer,
-  real,
+  boolean,
+  timestamp,
+  jsonb,
+  doublePrecision,
   uniqueIndex,
   index,
   primaryKey,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 
 /* =============================================================================
- *  DocketLens schema
+ *  DocketLens schema (Postgres / Neon)
  *
  *  Design notes:
  *   - Surrogate `id` is text (cuid/nanoid) for client-friendly URLs and to
  *     decouple from CourtListener's numeric IDs.
  *   - Every CourtListener-mirrored entity keeps its CL id under `cl_id` for
  *     re-fetch + dedupe.
- *   - Timestamps are unix ms (sqlite-friendly, easy to migrate to Postgres).
+ *   - Timestamps are TIMESTAMPTZ (was unix ms on the original SQLite layout);
+ *     Drizzle drops them in as JS Date objects.
  *   - Soft-delete via `deleted_at` for user-owned data; hard-delete for cache.
+ *   - jsonb (not text) for everything previously `mode: "json"`.
  * ===========================================================================*/
 
 const timestamps = {
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
-    .default(sql`(unixepoch('now') * 1000)`),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
-    .default(sql`(unixepoch('now') * 1000)`),
+    .defaultNow(),
 };
 
 /* -------------------- Users / Orgs / Auth ------------------- */
 
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
-  emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
+  emailVerified: boolean("email_verified").notNull().default(false),
   name: text("name"),
   image: text("image"),
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   ...timestamps,
 });
 
-export const sessions = sqliteTable(
+export const sessions = pgTable(
   "sessions",
   {
     id: text("id").primaryKey(),
@@ -50,7 +55,7 @@ export const sessions = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     ...timestamps,
@@ -58,7 +63,7 @@ export const sessions = sqliteTable(
   (t) => [index("sessions_user_idx").on(t.userId)]
 );
 
-export const accounts = sqliteTable(
+export const accounts = pgTable(
   "accounts",
   {
     id: text("id").primaryKey(),
@@ -69,7 +74,7 @@ export const accounts = sqliteTable(
     providerAccountId: text("provider_account_id").notNull(),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
     tokenType: text("token_type"),
     scope: text("scope"),
     idToken: text("id_token"),
@@ -82,19 +87,19 @@ export const accounts = sqliteTable(
   ]
 );
 
-export const verifications = sqliteTable(
+export const verifications = pgTable(
   "verifications",
   {
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     ...timestamps,
   },
   (t) => [index("verifications_id_value_idx").on(t.identifier, t.value)]
 );
 
-export const orgs = sqliteTable("orgs", {
+export const orgs = pgTable("orgs", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
@@ -109,7 +114,7 @@ export const orgs = sqliteTable("orgs", {
   ...timestamps,
 });
 
-export const orgMembers = sqliteTable(
+export const orgMembers = pgTable(
   "org_members",
   {
     orgId: text("org_id")
@@ -129,7 +134,7 @@ export const orgMembers = sqliteTable(
   ]
 );
 
-export const apiKeys = sqliteTable(
+export const apiKeys = pgTable(
   "api_keys",
   {
     id: text("id").primaryKey(),
@@ -139,13 +144,10 @@ export const apiKeys = sqliteTable(
     name: text("name").notNull(),
     tokenHash: text("token_hash").notNull().unique(),
     tokenPrefix: text("token_prefix").notNull(),
-    scopes: text("scopes", { mode: "json" })
-      .notNull()
-      .default(sql`'[]'`)
-      .$type<string[]>(),
-    lastUsedAt: integer("last_used_at", { mode: "timestamp_ms" }),
-    expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
-    revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
+    scopes: jsonb("scopes").notNull().default([]).$type<string[]>(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [index("api_keys_org_idx").on(t.orgId)]
@@ -153,17 +155,17 @@ export const apiKeys = sqliteTable(
 
 /* -------------------- Court entities (cached from CourtListener) -------- */
 
-export const courts = sqliteTable("courts", {
+export const courts = pgTable("courts", {
   id: text("id").primaryKey(), // CL slug e.g. "nysd", "cand"
   fullName: text("full_name").notNull(),
   shortName: text("short_name").notNull(),
   jurisdiction: text("jurisdiction").notNull(), // F, FB, FS, FD, etc.
   citationString: text("citation_string"),
-  inUse: integer("in_use", { mode: "boolean" }).notNull().default(true),
+  inUse: boolean("in_use").notNull().default(true),
   ...timestamps,
 });
 
-export const dockets = sqliteTable(
+export const dockets = pgTable(
   "dockets",
   {
     id: text("id").primaryKey(), // our cuid
@@ -178,14 +180,14 @@ export const dockets = sqliteTable(
     natureOfSuit: text("nature_of_suit"),
     cause: text("cause"),
     juryDemand: text("jury_demand"),
-    dateFiled: integer("date_filed", { mode: "timestamp_ms" }),
-    dateTerminated: integer("date_terminated", { mode: "timestamp_ms" }),
-    dateLastFiling: integer("date_last_filing", { mode: "timestamp_ms" }),
+    dateFiled: timestamp("date_filed", { withTimezone: true }),
+    dateTerminated: timestamp("date_terminated", { withTimezone: true }),
+    dateLastFiling: timestamp("date_last_filing", { withTimezone: true }),
     assignedTo: text("assigned_to"), // judge name (resolved separately)
     referredTo: text("referred_to"),
     appellateCaseTypeInformation: text("appellate_case_type"),
     sourceCount: integer("source_count").notNull().default(0),
-    raw: text("raw", { mode: "json" }).$type<Record<string, unknown>>(),
+    raw: jsonb("raw").$type<Record<string, unknown>>(),
     ...timestamps,
   },
   (t) => [
@@ -195,7 +197,7 @@ export const dockets = sqliteTable(
   ]
 );
 
-export const docketEntries = sqliteTable(
+export const docketEntries = pgTable(
   "docket_entries",
   {
     id: text("id").primaryKey(),
@@ -204,11 +206,11 @@ export const docketEntries = sqliteTable(
       .notNull()
       .references(() => dockets.id, { onDelete: "cascade" }),
     entryNumber: integer("entry_number"),
-    dateFiled: integer("date_filed", { mode: "timestamp_ms" }),
+    dateFiled: timestamp("date_filed", { withTimezone: true }),
     description: text("description").notNull().default(""),
     shortDescription: text("short_description"),
     documentNumber: text("document_number"),
-    raw: text("raw", { mode: "json" }).$type<Record<string, unknown>>(),
+    raw: jsonb("raw").$type<Record<string, unknown>>(),
     ...timestamps,
   },
   (t) => [
@@ -217,7 +219,7 @@ export const docketEntries = sqliteTable(
   ]
 );
 
-export const parties = sqliteTable(
+export const parties = pgTable(
   "parties",
   {
     id: text("id").primaryKey(),
@@ -237,7 +239,7 @@ export const parties = sqliteTable(
   ]
 );
 
-export const attorneys = sqliteTable(
+export const attorneys = pgTable(
   "attorneys",
   {
     id: text("id").primaryKey(),
@@ -250,7 +252,7 @@ export const attorneys = sqliteTable(
   (t) => [index("attorneys_name_idx").on(t.nameNormalized)]
 );
 
-export const partyAttorneys = sqliteTable(
+export const partyAttorneys = pgTable(
   "party_attorneys",
   {
     partyId: text("party_id")
@@ -263,7 +265,7 @@ export const partyAttorneys = sqliteTable(
   (t) => [primaryKey({ columns: [t.partyId, t.attorneyId] })]
 );
 
-export const judges = sqliteTable(
+export const judges = pgTable(
   "judges",
   {
     id: text("id").primaryKey(),
@@ -279,7 +281,7 @@ export const judges = sqliteTable(
 
 /* -------------------- Watchlists + Alerts ------------------- */
 
-export const watchlists = sqliteTable(
+export const watchlists = pgTable(
   "watchlists",
   {
     id: text("id").primaryKey(),
@@ -297,9 +299,9 @@ export const watchlists = sqliteTable(
     }).notNull(),
     matchValue: text("match_value").notNull(), // string to match
     matchValueNormalized: text("match_value_normalized").notNull(),
-    filters: text("filters", { mode: "json" })
+    filters: jsonb("filters")
       .notNull()
-      .default(sql`'{}'`)
+      .default({})
       .$type<{
         courts?: string[];
         natureOfSuitCodes?: string[];
@@ -309,7 +311,7 @@ export const watchlists = sqliteTable(
         startDate?: string;
         endDate?: string;
       }>(),
-    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    isActive: boolean("is_active").notNull().default(true),
     refreshCadence: text("refresh_cadence", {
       enum: ["realtime", "hourly", "daily"],
     })
@@ -319,9 +321,9 @@ export const watchlists = sqliteTable(
     // daily digests + show first in the dashboard "your watchlists" list.
     // 0..100; default 50. UI for adjusting it lands in 0.2.0.
     priority: integer("priority").notNull().default(50),
-    lastRunAt: integer("last_run_at", { mode: "timestamp_ms" }),
+    lastRunAt: timestamp("last_run_at", { withTimezone: true }),
     matchCount: integer("match_count").notNull().default(0),
-    deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [
@@ -331,7 +333,7 @@ export const watchlists = sqliteTable(
   ]
 );
 
-export const watchlistMatches = sqliteTable(
+export const watchlistMatches = pgTable(
   "watchlist_matches",
   {
     id: text("id").primaryKey(),
@@ -342,11 +344,9 @@ export const watchlistMatches = sqliteTable(
       .notNull()
       .references(() => dockets.id, { onDelete: "cascade" }),
     entryId: text("entry_id").references(() => docketEntries.id, { onDelete: "cascade" }),
-    matchedAt: integer("matched_at", { mode: "timestamp_ms" })
-      .notNull()
-      .default(sql`(unixepoch('now') * 1000)`),
+    matchedAt: timestamp("matched_at", { withTimezone: true }).notNull().defaultNow(),
     matchReason: text("match_reason"),
-    score: real("score"),
+    score: doublePrecision("score"),
   },
   (t) => [
     index("matches_watchlist_idx").on(t.watchlistId, t.matchedAt),
@@ -354,7 +354,7 @@ export const watchlistMatches = sqliteTable(
   ]
 );
 
-export const alertRules = sqliteTable(
+export const alertRules = pgTable(
   "alert_rules",
   {
     id: text("id").primaryKey(),
@@ -371,26 +371,26 @@ export const alertRules = sqliteTable(
       .notNull()
       .default("daily"),
     digestHour: integer("digest_hour").default(7), // 24h, user-local
-    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
   (t) => [index("alert_rules_watchlist_idx").on(t.watchlistId)]
 );
 
-export const alertDeliveries = sqliteTable(
+export const alertDeliveries = pgTable(
   "alert_deliveries",
   {
     id: text("id").primaryKey(),
     ruleId: text("rule_id")
       .notNull()
       .references(() => alertRules.id, { onDelete: "cascade" }),
-    payload: text("payload", { mode: "json" })
+    payload: jsonb("payload")
       .notNull()
       .$type<{ matches: string[]; subject: string; body: string }>(),
     status: text("status", { enum: ["queued", "sent", "failed", "skipped"] })
       .notNull()
       .default("queued"),
-    sentAt: integer("sent_at", { mode: "timestamp_ms" }),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
     error: text("error"),
     ...timestamps,
   },
@@ -399,7 +399,7 @@ export const alertDeliveries = sqliteTable(
 
 /* -------------------- AI summaries (cached) ------------------- */
 
-export const aiSummaries = sqliteTable(
+export const aiSummaries = pgTable(
   "ai_summaries",
   {
     id: text("id").primaryKey(),
@@ -426,7 +426,7 @@ export const aiSummaries = sqliteTable(
 
 /* -------------------- Saved searches ------------------- */
 
-export const savedSearches = sqliteTable("saved_searches", {
+export const savedSearches = pgTable("saved_searches", {
   id: text("id").primaryKey(),
   orgId: text("org_id")
     .notNull()
@@ -435,10 +435,8 @@ export const savedSearches = sqliteTable("saved_searches", {
     .notNull()
     .references(() => users.id),
   name: text("name").notNull(),
-  query: text("query", { mode: "json" })
-    .notNull()
-    .$type<Record<string, unknown>>(),
-  isPinned: integer("is_pinned", { mode: "boolean" }).notNull().default(false),
+  query: jsonb("query").notNull().$type<Record<string, unknown>>(),
+  isPinned: boolean("is_pinned").notNull().default(false),
   ...timestamps,
 });
 
@@ -447,7 +445,7 @@ export const savedSearches = sqliteTable("saved_searches", {
 /* Private per-org annotation attached to a docket. Markdown body, one row
    per (org, docket) — replace-on-write. Lives separately from `dockets`
    because the docket row is shared across orgs; notes are scoped. */
-export const docketNotes = sqliteTable(
+export const docketNotes = pgTable(
   "docket_notes",
   {
     id: text("id").primaryKey(),
@@ -468,7 +466,7 @@ export const docketNotes = sqliteTable(
 
 /* -------------------- Audit log ------------------- */
 
-export const auditEvents = sqliteTable(
+export const auditEvents = pgTable(
   "audit_events",
   {
     id: text("id").primaryKey(),
@@ -476,18 +474,22 @@ export const auditEvents = sqliteTable(
     userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
     action: text("action").notNull(),
     target: text("target"),
-    metadata: text("metadata", { mode: "json" }).$type<Record<string, unknown>>(),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    occurredAt: integer("occurred_at", { mode: "timestamp_ms" })
+    occurredAt: timestamp("occurred_at", { withTimezone: true })
       .notNull()
-      .default(sql`(unixepoch('now') * 1000)`),
+      .defaultNow(),
   },
   (t) => [
     index("audit_org_idx").on(t.orgId, t.occurredAt),
     index("audit_action_idx").on(t.action),
   ]
 );
+
+// Silence unused-import warning for `sql` (kept for any inline raw fragments
+// in derived queries elsewhere in the codebase).
+export { sql };
 
 /* -------------------- Type exports ------------------- */
 

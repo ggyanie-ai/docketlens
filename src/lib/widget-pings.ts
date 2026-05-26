@@ -24,7 +24,7 @@ let initialized = false;
 
 async function ensureTable() {
   if (initialized) return;
-  await db.run(sql`
+  await db.execute(sql`
     CREATE TABLE IF NOT EXISTS widget_pings (
       docket_id TEXT NOT NULL,
       day       TEXT NOT NULL,
@@ -47,7 +47,7 @@ function utcDay(d: Date = new Date()): string {
 export async function recordWidgetImpression(docketId: string): Promise<void> {
   await ensureTable();
   const day = utcDay();
-  await db.run(sql`
+  await db.execute(sql`
     INSERT INTO widget_pings (docket_id, day, count)
     VALUES (${docketId}, ${day}, 1)
     ON CONFLICT(docket_id, day) DO UPDATE SET count = count + 1
@@ -66,11 +66,11 @@ export async function widgetStats(
   const cutoff = new Date();
   cutoff.setUTCDate(cutoff.getUTCDate() - (days - 1));
   const cutoffDay = utcDay(cutoff);
-  const rows = await db.all<{ day: string; count: number }>(sql`
+  const rows = (await db.execute<{ day: string; count: number }>(sql`
     SELECT day, count FROM widget_pings
     WHERE docket_id = ${docketId} AND day >= ${cutoffDay}
     ORDER BY day DESC
-  `);
+  `)).rows;
   return rows;
 }
 
@@ -87,13 +87,13 @@ export async function widgetTopDockets(
   const cutoff = new Date();
   cutoff.setUTCDate(cutoff.getUTCDate() - (days - 1));
   const cutoffDay = utcDay(cutoff);
-  const rows = await db.all<{ docket_id: string; total: number }>(sql`
+  const rows = (await db.execute<{ docket_id: string; total: number }>(sql`
     SELECT docket_id, SUM(count) AS total FROM widget_pings
     WHERE day >= ${cutoffDay}
     GROUP BY docket_id
     ORDER BY total DESC
     LIMIT ${limit}
-  `);
+  `)).rows;
   return rows.map((r) => ({ docketId: r.docket_id, total: Number(r.total) }));
 }
 
@@ -103,9 +103,9 @@ export async function widgetTotal(days = 30): Promise<number> {
   const cutoff = new Date();
   cutoff.setUTCDate(cutoff.getUTCDate() - (days - 1));
   const cutoffDay = utcDay(cutoff);
-  const rows = await db.all<{ total: number }>(sql`
+  const rows = (await db.execute<{ total: number }>(sql`
     SELECT COALESCE(SUM(count), 0) AS total FROM widget_pings
     WHERE day >= ${cutoffDay}
-  `);
+  `)).rows;
   return rows[0]?.total ?? 0;
 }

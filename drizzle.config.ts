@@ -4,9 +4,9 @@ import "dotenv/config";
 export default {
   schema: "./src/lib/db/schema.ts",
   out: "./drizzle/migrations",
-  dialect: "sqlite",
+  dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "file:./docketlens.db",
+    url: process.env.DATABASE_URL!,
   },
   verbose: true,
   strict: true,

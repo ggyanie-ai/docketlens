@@ -61,7 +61,7 @@ async function pingDb(): Promise<{ ok: boolean; error?: string; latencyMs: numbe
       import("drizzle-orm"),
       import("../src/lib/db"),
     ]);
-    await db.run(sql`select 1`);
+    await db.execute(sql`select 1`);
     return { ok: true, latencyMs: Math.round(performance.now() - t0) };
   } catch (err) {
     return {

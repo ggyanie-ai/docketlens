@@ -37,7 +37,7 @@ export const dynamic = "force-dynamic";
 let initialized = false;
 async function ensureTable() {
   if (initialized) return;
-  await db.run(sql`
+  await db.execute(sql`
     CREATE TABLE IF NOT EXISTS ai_summary_refresh_queue (
       job_id        TEXT PRIMARY KEY,
       docket_id     TEXT NOT NULL,
@@ -51,7 +51,7 @@ async function ensureTable() {
       error         TEXT
     )
   `);
-  await db.run(sql`
+  await db.execute(sql`
     CREATE INDEX IF NOT EXISTS ai_summary_refresh_queue_docket_idx
       ON ai_summary_refresh_queue(docket_id, requested_at DESC)
   `);
@@ -89,11 +89,11 @@ export async function POST(
   await ensureTable();
 
   // Per-docket cooldown to prevent budget burn from a hot poll loop.
-  const recent = await db.all<{ requested_at: number }>(sql`
+  const recent = (await db.execute<{ requested_at: number }>(sql`
     SELECT requested_at FROM ai_summary_refresh_queue
     WHERE docket_id = ${id}
     ORDER BY requested_at DESC LIMIT 1
-  `);
+  `)).rows;
   const last = recent[0]?.requested_at ?? 0;
   const now = Date.now();
   if (now - last < COOLDOWN_MS) {
@@ -104,7 +104,7 @@ export async function POST(
   }
 
   const jobId = newId("job");
-  await db.run(sql`
+  await db.execute(sql`
     INSERT INTO ai_summary_refresh_queue
       (job_id, docket_id, org_id, requested_by, prompt_version, requested_at)
     VALUES

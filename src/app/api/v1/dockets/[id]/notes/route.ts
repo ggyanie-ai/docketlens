@@ -36,7 +36,7 @@ export const dynamic = "force-dynamic";
 let initialized = false;
 async function ensureTable() {
   if (initialized) return;
-  await db.run(sql`
+  await db.execute(sql`
     CREATE TABLE IF NOT EXISTS docket_notes (
       id          TEXT PRIMARY KEY,
       org_id      TEXT NOT NULL,

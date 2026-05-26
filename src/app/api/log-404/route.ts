@@ -30,7 +30,7 @@ let initialized = false;
 
 async function ensureTable() {
   if (initialized) return;
-  await db.run(sql`
+  await db.execute(sql`
     CREATE TABLE IF NOT EXISTS not_found_pings (
       path  TEXT NOT NULL,
       day   TEXT NOT NULL,
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     await ensureTable();
-    await db.run(sql`
+    await db.execute(sql`
       INSERT INTO not_found_pings (path, day, count) VALUES (${path}, ${utcDay()}, 1)
       ON CONFLICT(path, day) DO UPDATE SET count = count + 1
     `);

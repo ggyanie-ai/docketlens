@@ -48,3 +48,4 @@ drizzle/migrations/meta
 
 # Agent worktrees (isolated branches spawned via the Agent tool)
 .claude/
+.playwright-state/

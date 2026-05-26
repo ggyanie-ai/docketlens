@@ -26,7 +26,7 @@ export async function GET() {
       import("@/lib/db"),
     ]);
     await Promise.race([
-      (async () => db.run(sql`select 1`))(),
+      (async () => db.execute(sql`select 1`))(),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("db ping timeout")), timeoutMs)
       ),
