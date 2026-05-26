@@ -13,6 +13,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts",
     "ingest": "tsx scripts/ingest.ts",
+    "preflight": "tsx scripts/preflight.ts",
+    "setup:prod-env": "tsx scripts/setup-prod-env.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -22,6 +24,7 @@
     "@libsql/client": "^0.17.3",
     "@tanstack/react-query": "^5.100.13",
     "@tanstack/react-query-devtools": "^5.100.13",
+    "better-auth": "^1.6.11",
     "better-sqlite3": "^12.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
