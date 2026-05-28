@@ -2,9 +2,12 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LiveDocketStream } from "@/components/marketing/live-docket-stream";
+import {
+  LiveDocketStream,
+  type StreamEntry,
+} from "@/components/marketing/live-docket-stream";
 
-export function Hero() {
+export function Hero({ entries }: { entries?: StreamEntry[] }) {
   return (
     <section className="relative overflow-hidden">
       {/* Background ornament */}
@@ -71,7 +74,7 @@ export function Hero() {
           </div>
 
           <div className="relative">
-            <LiveDocketStream />
+            <LiveDocketStream entries={entries} />
           </div>
         </div>
       </div>

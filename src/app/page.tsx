@@ -10,6 +10,11 @@ import { PricingPreview } from "@/components/marketing/pricing-preview";
 import { Faq } from "@/components/marketing/faq";
 import { FinalCta } from "@/components/marketing/final-cta";
 import { WebSiteJsonLd } from "@/lib/structured-data";
+import { recentStreamEntries } from "@/lib/marketing/recent-stream";
+
+// Revalidate every 5 min so freshly-ingested entries surface without paying
+// DB cost on every homepage hit.
+export const revalidate = 300;
 
 const SITE = "https://docketlens.ai";
 
@@ -94,7 +99,8 @@ const SOFTWARE_LD = {
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const liveEntries = await recentStreamEntries(5);
   return (
     <>
       <script
@@ -104,7 +110,7 @@ export default function HomePage() {
       <WebSiteJsonLd />
       <SiteHeader />
       <main id="main" className="flex-1">
-        <Hero />
+        <Hero entries={liveEntries} />
         <Stats />
         <LogoStrip />
         <Features />
