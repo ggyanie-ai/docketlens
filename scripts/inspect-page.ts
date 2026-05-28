@@ -17,7 +17,9 @@ if (!URL) {
   console.error("usage: pnpm tsx scripts/inspect-page.ts <url>");
   process.exit(1);
 }
-const USER_DATA_DIR = path.resolve(".playwright-state/courtlistener");
+const USER_DATA_DIR = path.resolve(
+  process.env.PW_STATE_DIR ?? ".playwright-state/courtlistener"
+);
 
 async function main() {
   await mkdir(".audit", { recursive: true });
