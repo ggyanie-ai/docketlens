@@ -159,6 +159,14 @@ export class CourtListenerClient {
       return this.request(path, schema, init, attempt + 1);
     }
 
+    // Transient 5xx — CL's /dockets/ in particular 504s under load.
+    // Exponential backoff: 2s, 6s, 14s across 3 retries.
+    if (res.status >= 500 && res.status < 600 && attempt < 3) {
+      const wait = (2 ** attempt) * 1000 + 1000;
+      await new Promise((r) => setTimeout(r, wait));
+      return this.request(path, schema, init, attempt + 1);
+    }
+
     if (!res.ok) {
       let body: unknown;
       try { body = await res.json(); } catch { body = await res.text().catch(() => undefined); }
