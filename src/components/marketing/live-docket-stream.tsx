@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileText, Gavel, Scale, Building2, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -17,6 +17,8 @@ type FauxEntry = {
   summary: string;
   tag?: { variant: "accent" | "info" | "warning" | "danger" | "success"; label: string };
 };
+
+type RenderedEntry = FauxEntry & { renderKey: string };
 
 const FAUX: FauxEntry[] = [
   {
@@ -82,14 +84,29 @@ const FAUX: FauxEntry[] = [
 ];
 
 export function LiveDocketStream() {
-  const [visible, setVisible] = useState(FAUX.slice(0, 3));
+  // Each visible entry carries a *unique* renderKey so React + AnimatePresence
+  // can identify which items are entering, leaving, and unchanged across
+  // ticks. The previous version keyed off `e.id + cursor`, which made all
+  // three keys change every tick — every cycle remounted all three rows
+  // and animated their heights from 0 → auto, oscillating the card's
+  // height. The browser's overflow-anchor logic compensated for that by
+  // scrolling the page, which read as "the homepage scrolls itself".
+  const keyRef = useRef(2);
+  const [visible, setVisible] = useState<RenderedEntry[]>(() =>
+    FAUX.slice(0, 3).map((e, i) => ({ ...e, renderKey: `${e.id}-${i}` }))
+  );
   const [cursor, setCursor] = useState(3);
 
   useEffect(() => {
     const t = setInterval(() => {
       setCursor((c) => {
         const next = (c + 1) % FAUX.length;
-        setVisible((v) => [FAUX[next], ...v.slice(0, 2)]);
+        keyRef.current += 1;
+        const incoming: RenderedEntry = {
+          ...FAUX[next],
+          renderKey: `${FAUX[next].id}-${keyRef.current}`,
+        };
+        setVisible((v) => [incoming, ...v.slice(0, 2)]);
         return next;
       });
     }, 4200);
@@ -97,7 +114,12 @@ export function LiveDocketStream() {
   }, []);
 
   return (
-    <Card className="relative overflow-hidden shadow-soft bg-[color:var(--color-bg-elevated)]">
+    <Card
+      // Min-height pins the card so a slightly-taller entry doesn't push
+      // adjacent content; the inner list still fills naturally.
+      className="relative overflow-hidden shadow-soft bg-[color:var(--color-bg-elevated)] min-h-[420px]"
+      style={{ overflowAnchor: "none" }}
+    >
       <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-4 py-2.5">
         <div className="flex items-center gap-2">
           <span className="relative inline-flex size-2">
@@ -115,11 +137,14 @@ export function LiveDocketStream() {
         <AnimatePresence initial={false}>
           {visible.map((e) => (
             <motion.div
-              key={e.id + cursor}
-              initial={{ opacity: 0, y: -8, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              key={e.renderKey}
+              // No height animation — that was the source of the
+              // container reflow + page-scroll-anchor jitter. Just a
+              // soft fade + tiny vertical glide for the new row.
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className="border-b border-[color:var(--color-border)] last:border-b-0"
             >
               <div className="flex gap-3 px-4 py-4">
